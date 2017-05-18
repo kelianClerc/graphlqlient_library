@@ -50,7 +50,7 @@ public class MainActivity extends BaseActivity implements MainViewContract {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.onLaunchRequest();
+                presenter.onLaunchRequest(request.getText().toString());
             }
         };
     }
@@ -62,6 +62,37 @@ public class MainActivity extends BaseActivity implements MainViewContract {
 
     @Override
     public void showResponse(String responseText) {
+        response.setText(formatJson(responseText));
+    }
 
+    private String formatJson(String raw) {
+        StringBuilder json = new StringBuilder();
+        String indentString = "";
+
+        for (int i = 0; i < raw.length(); i++) {
+            char letter = raw.charAt(i);
+            switch (letter) {
+                case '{':
+                case '[':
+                    json.append("\n" + indentString + letter + "\n");
+                    indentString = indentString + "\t";
+                    json.append(indentString);
+                    break;
+                case '}':
+                case ']':
+                    indentString = indentString.replaceFirst("\t", "");
+                    json.append("\n" + indentString + letter);
+                    break;
+                case ',':
+                    json.append(letter + "\n" + indentString);
+                    break;
+
+                default:
+                    json.append(letter);
+                    break;
+            }
+        }
+
+        return json.toString();
     }
 }

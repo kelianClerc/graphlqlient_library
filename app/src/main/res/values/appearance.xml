@@ -78,7 +78,7 @@
         <item name="android:textColor">@color/greeny_blue</item>
     </style>
     <style
-        name="AppTextAppearance.Title.Soufflet"
+        name="AppTextAppearance.Title.GraphQL"
         parent="AppTextAppearance.RobotoMedium"
         >
         <item name="android:textSize">14sp</item>
@@ -86,106 +86,106 @@
         <item name="android:textAllCaps">true</item>
     </style>
     <style
-        name="AppTextAppearance.Title.Soufflet.Small"
-        parent="AppTextAppearance.Title.Soufflet"
+        name="AppTextAppearance.Title.GraphQL.Small"
+        parent="AppTextAppearance.Title.GraphQL"
         >
         <item name="android:textColor">@color/dark_sky_blue</item>
         <item name="android:textAllCaps">false</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.Bold.Body"
+        name="AppTextAppearance.GraphQL.Bold.Body"
         parent="AppTextAppearance.RobotoMedium"
         >
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/dusty_gray</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.Body"
+        name="AppTextAppearance.GraphQL.Body"
         parent="AppTextAppearance.RobotoRegular"
         >
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/dusty_gray</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.Body.Small"
-        parent="AppTextAppearance.Soufflet.Body"
+        name="AppTextAppearance.GraphQL.Body.Small"
+        parent="AppTextAppearance.GraphQL.Body"
         >
         <item name="android:textSize">12sp</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.Body.Small.Dark"
-        parent="AppTextAppearance.Soufflet.Body.Small"
+        name="AppTextAppearance.GraphQL.Body.Small.Dark"
+        parent="AppTextAppearance.GraphQL.Body.Small"
         >
         <item name="android:textColor">@color/shark</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.Body.Dark"
-        parent="AppTextAppearance.Soufflet.Body"
+        name="AppTextAppearance.GraphQL.Body.Dark"
+        parent="AppTextAppearance.GraphQL.Body"
         >
         <item name="android:textColor">@color/shark</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.Big"
+        name="AppTextAppearance.GraphQL.Big"
         parent="AppTextAppearance.RobotoMedium"
         >
         <item name="android:textSize">14sp</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.Big.White"
-        parent="AppTextAppearance.Soufflet.Big"
+        name="AppTextAppearance.GraphQL.Big.White"
+        parent="AppTextAppearance.GraphQL.Big"
         >
         <item name="android:textColor">@color/white</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.Bold.Big"
+        name="AppTextAppearance.GraphQL.Bold.Big"
         parent="AppTextAppearance.RobotoMedium"
         >
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/shark</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.Big.Light"
+        name="AppTextAppearance.GraphQL.Big.Light"
         parent="AppTextAppearance.RobotoRegular"
         >
         <item name="android:textSize">20sp</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.Big.Light.White"
-        parent="AppTextAppearance.Soufflet.Big.Light"
+        name="AppTextAppearance.GraphQL.Big.Light.White"
+        parent="AppTextAppearance.GraphQL.Big.Light"
         >
         <item name="android:textColor">@color/white</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.Bigger.White"
+        name="AppTextAppearance.GraphQL.Bigger.White"
         parent="AppTextAppearance.RobotoRegular"
         >
         <item name="android:textSize">42sp</item>
         <item name="android:textColor">@color/white</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.Subtitle.Bold"
+        name="AppTextAppearance.GraphQL.Subtitle.Bold"
         parent="AppTextAppearance.RobotoMedium"
         >
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.Subtitle.Bold.White"
-        parent="AppTextAppearance.Soufflet.Subtitle.Bold"
+        name="AppTextAppearance.GraphQL.Subtitle.Bold.White"
+        parent="AppTextAppearance.GraphQL.Subtitle.Bold"
         >
         <item name="android:textColor">@color/white</item>
         <item name="android:textAllCaps">true</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.DataInfo"
+        name="AppTextAppearance.GraphQL.DataInfo"
         parent="AppTextAppearance.RobotoItalic"
         >
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/white</item>
     </style>
     <style
-        name="AppTextAppearance.Soufflet.DataInfo.Gray"
-        parent="AppTextAppearance.Soufflet.DataInfo"
+        name="AppTextAppearance.GraphQL.DataInfo.Gray"
+        parent="AppTextAppearance.GraphQL.DataInfo"
         >
         <item name="android:textColor">@color/dusty_gray</item>
     </style>
@@ -204,5 +204,18 @@
         <item name="android:textColor">@color/dusty_gray</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="AppTextAppearance.GraphQL.Data"
+        parent="AppTextAppearance.RobotoRegular"
+        >
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/shark</item>
+    </style>
+    <style name="AppTextAppearance.GraphQL.Data.Title"
+        parent="AppTextAppearance.RobotoRegular"
+        >
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 </resources>
