@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="generic_error_message">Une erreur est survenue.</string>
+    <string name="error_unreachable_service_message">"Serveur injoignable. Vérifiez votre connexion."</string>
+    <string name="error_unavailable_service_message">"Serveur indisponible. Réessayer dans un instant."</string>
+</resources>

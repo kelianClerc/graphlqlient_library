@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GraphQL</string>
+    <string name="read_me">
+        <![CDATA[
+        <h1>README</h1>
+        <p>Bravo ! Vous venez de créer un projet à partir du <strong>Templater Android ®</strong>.
+        Avant de commencer le développement de votre application, vous devez vous assurer que les étapes listées ci-dessous
+        ont été réalisées :</p>
+
+        <h2>Fonts</h2>
+        <p>Changer les fonts par celles de la charte graphique dans le dossier <i>app/src/main/assets/fonts</i></p>
+        <p>Changer la font par défaut dans le fichier <i>GraphQL_Android.java</i></p>
+        <p>Changer les fonts dans le fichier <i>app/src/main/res/values/fonts.xml</i> et renommer les styles associés</p>
+
+        <h2>Palette</h2>
+        <p>Changer les couleurs dans le fichier <i>app/src/main/res/values/fonts.xml</i> par celles de la charte graphique.
+            (Veillez à utiliser le site <a href="http://chir.ag/projects/name-that-color/">name-that-color</a> afin de donner des noms cohérents aux différentes couleurs)</p>
+
+        <h2>Endpoints</h2>
+        <p>Changer les endpoints de stubs, preprod et prod dans les fichiers <i>app/config/stubs.yml</i>
+            et <i>app/config/preprod.yml</i>, <i>app/config/default.yml</i></p>
+
+        <h2>Styles</h2>
+        <p>Changer les styles dans <i>app/main/res/values/appearance.xml</i></p>
+
+        <h2>Exemples</h2>
+        <p>Jeter un coup d\'oeil puis supprimer les différents fichiers d\'exemples comme cette Activity.
+            Ce sont les fichiers dans les packages contenant le mot <i>example</i></p>
+        ]]>
+    </string>
+</resources>

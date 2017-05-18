@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style
+        name="AppTextAppearance.RobotoRegular"
+        parent="TextAppearance.AppCompat"
+        >
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+    <style
+        name="AppTextAppearance.RobotoBold"
+        parent="TextAppearance.AppCompat"
+        >
+        <item name="fontPath">fonts/Roboto-Bold.ttf</item>
+    </style>
+    <style
+        name="AppTextAppearance.RobotoItalic"
+        parent="TextAppearance.AppCompat"
+        >
+        <item name="fontPath">fonts/Roboto-Italic.ttf</item>
+    </style>
+    <style
+        name="AppTextAppearance.RobotoMedium"
+        parent="TextAppearance.AppCompat"
+        >
+        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
+    </style>
+    <style
+        name="AppTextAppearance.RobotoBoldItalic"
+        parent="TextAppearance.AppCompat"
+        >
+        <item name="fontPath">fonts/Roboto-BoldItalic.ttf</item>
+    </style>
+    <style
+        name="AppTextAppearance.GeorgiaItalic"
+        parent="TextAppearance.AppCompat"
+        >
+        <item name="fontPath">fonts/Georgia-Italic.ttf</item>
+    </style>
+</resources>

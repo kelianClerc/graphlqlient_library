@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Use the website "http://chir.ag/projects/name-that-color/" to name the colors -->
+    <color name="greeny_blue">#59b9a7</color>
+    <color name="greeny_blue_40">#6659b9a7</color>
+    <color name="greeny_blue_dark">#389d89</color>
+    <color name="dark_sky_blue">#4a8fed</color>
+    <color name="dark_sky_blue_70">#B34a8fed</color>
+    <color name="dark_sky_blue_40">#664a8fed</color>
+    <color name="dark_sky_blue_10">#1A4a8fed</color>
+    <color name="avocado">#89bb38</color>
+    <color name="gradient_middle">#71ba6f</color>
+    <color name="gallery">#f0f0f0</color>
+    <color name="dusty_gray">#9b9b9b</color>
+    <color name="light_gray">#e5e5e5</color>
+    <color name="shark">#2e2e30</color>
+    <color name="white">#ffffff</color>
+    <color name="white_60">#99ffffff</color>
+    <color name="white_20">#26ffffff</color>
+    <color name="divider">#d8d8d8</color>
+    <color name="orangey_red">#ff3939</color>
+    <color name="mango">#ffa52d</color>
+    <color name="mango_40">#66ffa52d</color>
+</resources>

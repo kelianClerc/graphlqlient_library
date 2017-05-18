@@ -1,0 +1,288 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'com.tmiyamon.config'
+apply plugin: 'com.archinamon.aspectj'
+apply from: '../quality/sonar.gradle'
+apply from: '../quality/jacoco.gradle'
+
+android {
+    compileSdkVersion versions.compileSdk
+    buildToolsVersion versions.buildTools
+
+    defaultConfig {
+        applicationId "com.applidium.graphql.client"
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+        versionCode getVersionCode(1)
+        versionName getVersionName("0.1")
+        resConfigs "en", "fr"
+        multiDexEnabled true
+    }
+
+    dexOptions {
+        preDexLibraries true
+        javaMaxHeapSize "4g"
+        dexInProcess = true
+    }
+
+    testOptions {
+        unitTests.all {
+            testLogging {
+                events "passed", "failed", "skipped"
+            }
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    productFlavors {
+        stubs
+        preprod
+        prod
+    }
+
+    variantFilter { variant -> associateProdWithRelease(variant) }
+
+    signingConfigs {
+        release {
+            Properties props = new Properties()
+            props.load(new FileInputStream(file("../keystores/release.properties")))
+            storeFile file(props['storeFile'])
+            storePassword props['storePassword']
+            keyAlias props['keyAlias']
+            keyPassword props['keyPassword']
+        }
+    }
+
+    buildTypes {
+        debug {
+            testCoverageEnabled true
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+            proguardFiles getProguardConfigForLibraries()
+        }
+        distrib {
+            initWith debug
+            shrinkResources true
+            minifyEnabled true
+        }
+        release {
+            signingConfig signingConfigs.release
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+            proguardFiles getProguardConfigForLibraries()
+        }
+    }
+
+    decorateFlavors()
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    // Open finder on the apks when doing release builds
+    applicationVariants.all { variant ->
+        variant.assemble.doLast {
+            //If this is a 'release' build, reveal the compiled apk in finder/explorer
+            if (variant.buildType.name.contains('release')) {
+
+                def path = null;
+                variant.outputs.each { output ->
+                    path = output.outputFile
+                }
+
+                exec {
+                    if (System.properties['os.name'].toLowerCase().contains('mac os x')) {
+                        ['open', '-R', path].execute()
+                    } else if (System.properties['os.name'].toLowerCase().contains('windows')) {
+                        ['explorer', '/select,', path].execute()
+                    }
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+
+    // UI
+    compile "com.android.support:appcompat-v7:$versions.androidSupport"
+    apt "com.jakewharton:butterknife-compiler:$versions.butterKnife"
+    compile "com.jakewharton:butterknife:$versions.butterKnife"
+    compile "com.squareup.picasso:picasso:$versions.picasso"
+    compile "uk.co.chrisjenx:calligraphy:$versions.calligraphy"
+    compile "com.android.support:design:$versions.androidSupport"
+    compile "com.android.support.constraint:constraint-layout:$versions.constraintLayout"
+
+    // Logging
+    compile "com.jakewharton.timber:timber:$versions.timber"
+
+    // Networking
+    compile "com.squareup.retrofit2:retrofit:$versions.retrofit"
+    compile "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+    compile "com.squareup.okhttp3:logging-interceptor:$versions.loggingInterceptor"
+
+    // DB
+    apt "com.raizlabs.android:DBFlow-Compiler:$versions.dbFlow"
+    compile "com.raizlabs.android:DBFlow:$versions.dbFlow"
+
+    // Utils
+    debugCompile "net.danlew:android.joda:$versions.jodaAndroid"
+    distribCompile "net.danlew:android.joda:$versions.jodaAndroid"
+    releaseCompile "net.danlew:android.joda:$versions.jodaAndroid"
+    compile "com.android.support:support-annotations:$versions.androidSupport"
+    compile "net.hockeyapp.android:HockeySDK:$versions.hockeyApp"
+    compile "com.android.support:multidex:$versions.multidex"
+
+    // Value objects
+    provided "javax.annotation:javax.annotation-api:$versions.javax"
+    apt "io.norberg:auto-matter:$versions.autoMatter"
+    compile "io.norberg:auto-matter-gson:$versions.autoMatter"
+
+    // DI
+    compile "com.google.dagger:dagger:$versions.dagger"
+    apt "com.google.dagger:dagger-compiler:$versions.dagger"
+
+    // Permissions
+    compile "com.canelmas.let:let-runtime:$versions.let"
+    compile "com.canelmas.let:let-annotations:$versions.let"
+
+    // DEBUG
+    debugCompile "com.squareup.leakcanary:leakcanary-android:$versions.leakCanary"
+    debugCompile "com.facebook.stetho:stetho-okhttp:$versions.stetho"
+    debugCompile "com.frogermcs.androiddevmetrics:androiddevmetrics-runtime:$versions.androiddevmetrics"
+    releaseCompile "com.frogermcs.androiddevmetrics:androiddevmetrics-runtime-noop:$versions.androiddevmetrics"
+
+    // Unit tests
+    testCompile "junit:junit:$versions.junit"
+    testCompile "org.mockito:mockito-core:$versions.mockito"
+    testApt "com.google.dagger:dagger-compiler:$versions.dagger"
+    testCompile "joda-time:joda-time:$versions.joda"
+    testCompile "de.bechte.junit:junit-hierarchicalcontextrunner:$versions.hierarchicalRunner"
+}
+
+private decorateFlavors() {
+    android.buildTypes.all { type ->
+
+        if (!type.debuggable) {
+            return
+        }
+
+        def version = android.defaultConfig.versionCode
+        def sha1 = 'git rev-parse --short HEAD'.execute().text.trim()
+
+        applicationIdSuffix = ".${type.name}"
+        versionNameSuffix = "-${version}-${sha1}-${type.name}"
+    }
+    android.productFlavors.all { flavor ->
+        def String name = flavor.name
+
+        if ("prod".equals(name)) {
+            return
+        }
+
+        applicationId = appendedApplicationId(name)
+        versionName = appendedVersionName(name)
+    }
+}
+
+private String appendedVersionName(String name) {
+    android.defaultConfig.versionName + toAppend(name, "-")
+}
+
+private String appendedApplicationId(String name) {
+    android.defaultConfig.applicationId + toAppend(name, ".")
+}
+
+private String toAppend(String name, String sep) {
+    name.isEmpty() ? "" : sep + name
+}
+
+Closure associateProdWithRelease(variant) {
+    def isRelease = variant.buildType.name.equals('release')
+    def isProd = variant.getFlavors().get(0).name.equals('prod')
+
+    if (isRelease) {
+        variant.setIgnore(!isProd);
+    }
+}
+
+def getVersionName(defaultVName) {
+    if (project.hasProperty('vName') && project.vName) {
+        return project.vName
+    }
+    return defaultVName
+}
+
+def getVersionCode(defaultVCode) {
+    if (project.hasProperty('vCode') && project.vCode) {
+        return project.vCode.toInteger()
+    }
+    return defaultVCode
+}
+
+private Object[] getProguardConfigForLibraries() {
+    // Get library specific files from here:
+    // https://github.com/krschultz/android-proguard-snippets/tree/master/libraries
+    // Adding .asList().toArray() as a workaround for this issue
+    // https://code.google.com/p/android/issues/detail?id=212882
+    fileTree(dir: 'proguard', include: ['*.pro']).asList().toArray()
+}
+
+task('getVCode') << {
+    print android.defaultConfig.versionCode
+}
+
+task('getVName') << {
+    if (!project.hasProperty('variant')) {
+        println "Specify a flavor via -Pvariant="
+        println "Variants available: ${android.applicationVariants.collect { it.name }}"
+        return
+    }
+    def v = android.applicationVariants.findResult({
+        it.name.toLowerCase().contains(variant.toLowerCase()) ? it : null
+    })
+    print v.versionName
+}
+
+task('getVariantInfo') << {
+    println "Variants:\n"
+    android.applicationVariants.all { v ->
+        println "#Variant:"
+        println v.name
+        println v.versionName
+        println v.applicationId
+        println "#Build type:"
+        println v.buildType.name
+        println v.buildType.applicationIdSuffix
+        println v.buildType.versionNameSuffix
+        println "#Flavor:"
+        println v.mergedFlavor.versionName
+        println v.mergedFlavor.applicationId
+        println ""
+    }
+}
+
+task updateIcon << {
+    def scriptDir = "/script";
+    exec {
+        commandLine 'bash', "$rootProject.rootDir$scriptDir/icon-gen.sh", android.defaultConfig.versionName, rootProject.rootDir, scriptDir
+    }
+}
+
+def installAll = tasks.create('installAll')
+installAll.description = 'Install all applications.'
+android.applicationVariants.all { variant ->
+    if (!variant.buildType.name.equals('release')) {
+        installAll.dependsOn(variant.install)
+    }
+    installAll.group = variant.install.group
+}

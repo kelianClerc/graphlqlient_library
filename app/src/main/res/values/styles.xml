@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style
+        name="AppTheme"
+        parent="Theme.AppCompat.Light.DarkActionBar"
+        >
+        <item name="colorPrimary">@color/greeny_blue</item>
+        <item name="colorPrimaryDark">@color/greeny_blue</item>
+        <item name="colorAccent">@color/dark_sky_blue</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style
+        name="AppTheme.TranslucentStatus"
+        parent="AppTheme"
+        />
+
+    <style name="AppTheme.Main"
+        parent="AppTheme"
+        >
+        <item name="android:actionBarSize">@dimen/abc_action_bar_default_height_material</item>
+        <item name="android:actionBarStyle">@style/Widget.ActionBar.Preview</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="runtimeTheme">@style/AppTheme.TranslucentStatus</item>
+    </style>
+
+    <style
+        name="AppTheme.Preview"
+        parent="android:Theme.Holo.Light.DarkActionBar"
+        >
+        <item name="android:actionBarSize">@dimen/abc_action_bar_default_height_material</item>
+        <item name="android:actionBarStyle">@style/Widget.ActionBar.Preview</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="runtimeTheme">@style/AppTheme.TranslucentStatus</item>
+    </style>
+
+    <style
+        name="Widget.ActionBar.Preview"
+        parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse"
+        >
+        <item name="android:background">@color/greeny_blue</item>
+        <item name="android:displayOptions">disableHome</item>
+    </style>
+
+</resources>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/unit_2"
+    >
+    <TextView
+        android:id="@+id/request_label"
+        android:text="Request :"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="@dimen/unit_1"
+        android:background="@color/greeny_blue"
+        android:textColor="@color/white"
+        />
+    <TextView
+        android:id="@+id/request"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/request_label"
+        android:padding="@dimen/unit_1"
+        android:background="@color/greeny_blue_40"
+        />
+
+    <Button
+        android:id="@+id/launch"
+        android:text="Launch Request"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/unit_1"
+        app:layout_constraintTop_toBottomOf="@id/request"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:background="@drawable/button_forecast"
+        android:paddingStart="@dimen/unit_4"
+        android:paddingEnd="@dimen/unit_4"
+        android:clickable="true"
+        android:foreground="?selectableItemBackground"
+        />
+
+    <TextView
+        android:id="@+id/response_label"
+        android:text="Response :"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/launch"
+        android:layout_marginTop="@dimen/unit_3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="@dimen/unit_1"
+        android:background="@color/mango"
+        android:textColor="@color/white"
+        />
+    <TextView
+        android:id="@+id/response"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/response_label"
+        android:padding="@dimen/unit_1"
+        android:background="@color/mango_40"
+        />
+
+</android.support.constraint.ConstraintLayout>

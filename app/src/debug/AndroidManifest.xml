@@ -1,0 +1,10 @@
+<manifest
+    package="com.applidium.graphql.client"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+    <application
+        android:name=".app.DebugGraphQL_Applicaltion"
+        tools:replace="android:name"
+        />
+</manifest>

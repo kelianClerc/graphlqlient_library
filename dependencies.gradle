@@ -1,0 +1,59 @@
+ext.versions = [
+    compileSdk : 25,
+    buildTools : '25.0.1',
+    minSdk : 19,
+    targetSdk : 25,
+
+    androidSupport : '25.1.0',
+
+    // UI
+    butterKnife : '8.4.0',
+    picasso : '2.5.2',
+    calligraphy : '2.2.0',
+    constraintLayout : '1.0.2',
+
+    // Logging
+    timber : '4.1.2',
+
+    // Network
+    retrofit : '2.1.0',
+    loggingInterceptor : '3.3.1',
+
+    // DB
+    dbFlow : '2.2.1',
+
+    // Utils
+    jodaAndroid : '2.9.4.1',
+    hockeyApp : '4.1.1',
+    multidex : '1.0.1',
+
+    // Permissions
+    let : '0.1.11',
+
+    // Value objects
+    autoMatter : '0.13.3',
+    javax : '1.2',
+
+    // DI
+    dagger : '2.8',
+
+    // DEBUG
+    leakCanary : '1.4',
+    stetho : '1.4.0',
+    androiddevmetrics : '0.4',
+
+    // Unit tests
+    junit : '4.12',
+    mockito: '2.3.9',
+    joda : '2.9.7',
+    hierarchicalRunner: '4.12.1'
+]
+
+
+ext.pluginsVersion = [
+    androidGradle : '2.2.3',
+    gradleConfig : '0.2.1',
+    androidApt : '1.8',
+    androidAspectJ : '2.3.0',
+    sonarqubeGradle : '2.2.1'
+]

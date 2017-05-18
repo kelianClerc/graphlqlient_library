@@ -1,0 +1,4 @@
+network:
+    base_url: "http://prod.httpbin.org/" # Keep the '/' at the end
+crashes:
+    app_id: "c510887cfff5452cb795ede15ab3db82" # HockeyApp prod distrib AppID

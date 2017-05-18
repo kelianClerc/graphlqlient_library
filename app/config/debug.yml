@@ -1,0 +1,15 @@
+network:
+    logging:
+        enabled: true
+        level: BODY # HttpLoggingInterceptor.Level{NONE, BASIC, HEADERS, BODY}
+logging:
+    enabled: true
+    show_hashs: false
+performance:
+    show_memory_leaks: true
+    dev_metrics: true
+    stetho: true
+errors:
+    rethrow: false
+crashes:
+    enabled: false

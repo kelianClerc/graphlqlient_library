@@ -1,0 +1,17 @@
+{
+    "global_config": {
+        "hockeyapp_api_token": "TODO",
+        "slack_hook_url":"TODO_OR_REMOVE"
+    },
+    "apps": [
+        {
+            "target": "TEMPLATE",
+            "bundle_id": "com.applidium.TEMPLATE",
+            "hockeyapp": {
+                "stubs": "TODO",
+                "preprod": "TODO",
+                "prod": "TODO"
+            }
+        } 
+    ]
+}

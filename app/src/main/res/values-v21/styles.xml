@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style
+        name="AppTheme.TranslucentStatus"
+        parent="AppTheme"
+        >
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+    <style
+        name="AppTheme.Preview"
+        parent="android:Theme.Holo.Light.DarkActionBar"
+        >
+        <item name="android:actionBarSize">@dimen/abc_action_bar_default_height_material</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:actionBarStyle">@style/Widget.ActionBar.Preview</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="runtimeTheme">@style/AppTheme.TranslucentStatus</item>
+    </style>
+</resources>

@@ -1,0 +1,27 @@
+network:
+    base_url: "https://httpbin.org/" # Keep the '/' at the end
+    timeout_seconds: 10
+    cache:
+        size_mb: 10
+        enabled: true
+    logging:
+        enabled: false
+        level: NONE # HttpLoggingInterceptor.Level{NONE, BASIC, HEADERS, BODY}
+logging:
+    enabled: false
+    show_hashs: false
+tracing:
+    enabled: true
+performance:
+    show_memory_leaks: false
+    dev_metrics: false
+    stetho: false
+errors:
+    rethrow: true
+crashes:
+    enabled: true
+    additional_data: false
+    max_network: 10
+    max_trace: 10
+    max_component: 10
+    # Change app_id in stubs.yml, preprod.yml, prod.yml and release.yml

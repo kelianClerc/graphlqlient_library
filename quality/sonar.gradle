@@ -1,0 +1,109 @@
+apply plugin: 'org.sonarqube'
+
+final variant = "stubsDebug"
+final sonarProjectName = "GraphQL_Android_Android"
+final sonarProjectKey = "GraphQL_Android_Android-Gerrit:app"
+
+sonarqube {
+    setAndroidVariant(variant)
+    properties {
+        setServer(properties)
+        setAnalysisMode(project, properties)
+        setBasicConfiguration(project, properties, sonarProjectName, sonarProjectKey)
+        setReports(properties)
+        importUnitTestsResults(properties, variant)
+        importJacocoCoverageResults(properties, variant)
+        importLintResults(project, properties)
+        setSourcesOptions(properties)
+    }
+}
+
+private void setServer(properties) {
+    properties.put("sonar.host.url", "http://sonar.applidium.net/")
+}
+
+private void setAnalysisMode(project, properties) {
+    final persistSonarAnalysisPropertyName = "persistSonarAnalysis"
+    if (project.hasProperty("${persistSonarAnalysisPropertyName}")) {
+        properties.put("sonar.analysis.mode", "publish")
+    } else {
+        properties.put("sonar.analysis.mode", "preview")
+    }
+}
+
+private void setBasicConfiguration(project, properties, sonarProjectName, sonarProjectKey) {
+    properties.put("sonar.projectName", sonarProjectName)
+    properties.put("sonar.projectKey", sonarProjectKey)
+    properties.put("sonar.projectVersion", makeProjectVersion(project))
+}
+
+private void setReports(properties) {
+    properties.put("sonar.issuesReport.html.enable", "true")
+    properties.put("sonar.issuesReport.json.enable", "true")
+    properties.put("sonar.report.export.path", "sonar-report.json")
+}
+
+private void setSourcesOptions(properties) {
+    String exclusions = makeExclusions()
+    properties.put("sonar.exclusions", exclusions)
+    properties.put("sonar.test.exclusions", exclusions)
+    properties.put("sonar.sourceEncoding", "UTF-8")
+}
+
+private String makeExclusions() {
+    StringBuilder exclusions = new StringBuilder()
+    addExclusion(exclusions, "**/*.png")
+    addExclusion(exclusions, "**/*.jpg")
+    addExclusion(exclusions, "**/*.bin")
+    addExclusion(exclusions, "**/*.ttf")
+    addExclusion(exclusions, "**/ComponentManager.java")
+    addExclusion(exclusions, "**/generated/**/*")
+    return exclusions.toString()
+}
+
+private addExclusion(StringBuilder builder, String exclusion) {
+    if (builder.length() != 0) {
+        builder.append(',')
+    }
+    builder.append(exclusion)
+}
+
+private void importUnitTestsResults(properties, variant) {
+    properties.put("sonar.junit.reportsPath", "build/test-results/$variant")
+}
+
+private void importJacocoCoverageResults(properties, variant) {
+    properties.put(
+            "sonar.jacoco.reportPaths",
+            "build/jacoco/test${getTaskNameForVariant(variant)}UnitTest.exec"
+    )
+}
+
+private void importLintResults(project, properties) {
+    properties.put("sonar.import_unknown_files", true);
+    properties.put("sonar.android.lint.report", "$project.buildDir/reports/lint/lint-result.xml")
+}
+
+private String makeProjectVersion(project) {
+    final commitIdPropertyName = "commitId"
+    def StringBuilder projectVersionBuilder = new StringBuilder(getVersionName("0.1"))
+    if (project.hasProperty("${commitIdPropertyName}")) {
+        projectVersionBuilder.append("-").append(project.property("${commitIdPropertyName}"))
+    }
+    return projectVersionBuilder.toString()
+}
+
+private String getTaskNameForVariant(variantName) {
+    variantName.substring(0, 1).toUpperCase() + variantName.substring(1);
+}
+
+task exportLibs(type: Copy) {
+    into "$buildDir/output/libs"
+    from(configurations.debugCompile, configurations.testCompile)
+}
+
+project.tasks["sonarqube"].dependsOn(
+    'exportLibs',
+    "lint${getTaskNameForVariant(variant)}",
+    "test${getTaskNameForVariant(variant)}UnitTest"
+)
