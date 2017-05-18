@@ -1,9 +1,12 @@
 package com.applidium.graphql.client.di;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
+import com.applidium.graphql.client.app.main.ui.MainViewContract;
 import com.applidium.graphql.client.di.common.ApplicationComponent;
+import com.applidium.graphql.client.di.common.ContextModule;
 import com.applidium.graphql.client.di.common.DaggerApplicationComponent;
 import com.applidium.graphql.client.di.common.PreferencesModule;
 import com.applidium.graphql.client.di.common.RepositoryModule;
@@ -12,6 +15,9 @@ import com.applidium.graphql.client.di.crashes.CrashesComponent;
 import com.applidium.graphql.client.di.crashes.CrashesModule;
 import com.applidium.graphql.client.di.logging.LoggingComponent;
 import com.applidium.graphql.client.di.logging.LoggingModule;
+import com.applidium.graphql.client.di.main.DaggerMainComponent;
+import com.applidium.graphql.client.di.main.MainComponent;
+import com.applidium.graphql.client.di.main.MainModule;
 import com.applidium.graphql.client.di.threading.ThreadingComponent;
 import com.applidium.graphql.client.di.threading.ThreadingModule;
 import com.applidium.graphql.client.di.trace.TracerModule;
@@ -101,5 +107,14 @@ public class ComponentManager {
     private static void fail() {
         String message = "ComponentManager.init() was not called on Application#onCreate()";
         throw new RuntimeException(message);
+    }
+
+    public static MainComponent getMainComponent(MainViewContract viewContract, Context context) {
+        return DaggerMainComponent
+            .builder()
+            .applicationComponent(getApplicationComponent())
+            .mainModule(new MainModule(viewContract))
+            .contextModule(new ContextModule(context))
+            .build();
     }
 }

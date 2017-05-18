@@ -5,6 +5,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    style="@style/AppTheme.Main"
     android:padding="@dimen/unit_2"
     >
     <TextView
@@ -16,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:padding="@dimen/unit_1"
         android:background="@color/greeny_blue"
-        android:textColor="@color/white"
+        style="@style/AppTextAppearance.GraphQL.Data.Title"
         />
     <TextView
         android:id="@+id/request"
@@ -26,6 +27,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/request_label"
         android:padding="@dimen/unit_1"
+        style="@style/AppTextAppearance.GraphQL.Data"
         android:background="@color/greeny_blue_40"
         />
 
@@ -45,6 +47,7 @@
         android:paddingEnd="@dimen/unit_4"
         android:clickable="true"
         android:foreground="?selectableItemBackground"
+        style="@style/AppTextAppearance.GraphQL.Data.Title"
         />
 
     <TextView
@@ -58,7 +61,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:padding="@dimen/unit_1"
         android:background="@color/mango"
-        android:textColor="@color/white"
+        style="@style/AppTextAppearance.GraphQL.Data.Title"
         />
     <TextView
         android:id="@+id/response"
@@ -69,6 +72,7 @@
         app:layout_constraintTop_toBottomOf="@id/response_label"
         android:padding="@dimen/unit_1"
         android:background="@color/mango_40"
+        style="@style/AppTextAppearance.GraphQL.Data"
         />
 
 </android.support.constraint.ConstraintLayout>
