@@ -3,8 +3,12 @@ package com.applidium.graphql.client.app.main.presenter;
 import com.applidium.graphql.client.app.common.Presenter;
 import com.applidium.graphql.client.app.main.ui.MainViewContract;
 
+import javax.inject.Inject;
+
 public class MainPresenter extends Presenter<MainViewContract> {
-    public MainPresenter(MainViewContract view) {
+
+    @Inject
+    MainPresenter(MainViewContract view) {
         super(view);
     }
 

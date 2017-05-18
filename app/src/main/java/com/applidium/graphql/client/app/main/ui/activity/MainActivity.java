@@ -7,8 +7,11 @@ import android.widget.TextView;
 
 import com.applidium.graphql.client.R;
 import com.applidium.graphql.client.app.common.BaseActivity;
+import com.applidium.graphql.client.app.main.presenter.MainPresenter;
 import com.applidium.graphql.client.app.main.ui.MainViewContract;
 import com.applidium.graphql.client.di.ComponentManager;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,6 +22,7 @@ public class MainActivity extends BaseActivity implements MainViewContract {
     @BindView(R.id.request) TextView request;
     @BindView(R.id.response) TextView response;
 
+    @Inject MainPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,17 +33,13 @@ public class MainActivity extends BaseActivity implements MainViewContract {
 
     @Override
     protected void injectDependencies() {
-        ComponentManager.getLoggingComponent().inject(this);
+        ComponentManager.getMainComponent(this, this).inject(this);
     }
 
     private void setupView() {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        showRequest("{\n" +
-            "\tusers {\n" +
-            "    \t\tname\n" +
-            "\t}\n" +
-            "}");
+        showRequest("{post(id:1){title}}");
     }
 
     private void setupListeners() {
@@ -50,7 +50,7 @@ public class MainActivity extends BaseActivity implements MainViewContract {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //presenter.onLaunchRequest();
+                presenter.onLaunchRequest();
             }
         };
     }
