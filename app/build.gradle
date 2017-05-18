@@ -167,6 +167,7 @@ dependencies {
     testApt "com.google.dagger:dagger-compiler:$versions.dagger"
     testCompile "joda-time:joda-time:$versions.joda"
     testCompile "de.bechte.junit:junit-hierarchicalcontextrunner:$versions.hierarchicalRunner"
+    compile project(path: ':graphqlient')
 }
 
 private decorateFlavors() {
