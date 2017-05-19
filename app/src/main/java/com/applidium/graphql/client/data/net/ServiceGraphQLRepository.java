@@ -7,6 +7,7 @@ import com.applidium.graphqlient.tree.QLLeaf;
 import com.applidium.graphqlient.tree.QLNode;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.inject.Inject;
 
@@ -31,12 +32,14 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
     public QLQuery computeTree() {
         QLQuery qlQuery = new QLQuery("test");
 
-        QLNode postsNode = new QLNode("posts");
-        postsNode.addChild(new QLNode("title"));
 
-        QLNode root = new QLNode("users");
-        root.addChild(new QLLeaf("name"));
-        root.addChild(postsNode);
+        HashMap<String, Object> paramsId = new HashMap<>();
+        paramsId.put("id", 1);
+        String alias = "Perso";
+        QLNode root = new QLNode("user", alias, paramsId);
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("length", 4);
+        root.addChild(new QLLeaf("name", params));
 
         qlQuery.append(root);
 
