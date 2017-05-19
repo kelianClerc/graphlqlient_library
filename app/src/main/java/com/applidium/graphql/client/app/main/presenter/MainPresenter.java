@@ -32,8 +32,9 @@ public class MainPresenter extends Presenter<MainViewContract> implements SendRe
     }
 
     @Override
-    public void onSendRequestResponse(String response) {
+    public void onSendRequestResponse(String response, String request) {
         view.showResponse(response);
+        view.showRequest(request);
     }
 
     @Override

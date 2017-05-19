@@ -39,7 +39,6 @@ public class MainActivity extends BaseActivity implements MainViewContract {
     private void setupView() {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        showRequest("{users{name,posts{title}}}");
     }
 
     private void setupListeners() {
