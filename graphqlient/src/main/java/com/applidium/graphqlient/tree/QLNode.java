@@ -2,6 +2,7 @@ package com.applidium.graphqlient.tree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class QLNode extends QLElement {
 
@@ -12,6 +13,15 @@ public class QLNode extends QLElement {
 
     public QLNode(String name) {
         super(name);
+    }
+    public QLNode(String name, String alias) {
+        super(name, alias);
+    }
+    public QLNode(String name, Map<String, Object> params) {
+        super(name, params);
+    }
+    public QLNode(String name, String alias, Map<String, Object> params) {
+        super(name, alias, params);
     }
 
     public void addChild(QLElement child) {

@@ -36,14 +36,14 @@ public class SendRequestInteractor {
     }
 
     private void sendRequest() throws IOException {
-        String response = repository.getStringResponse(request);
-        handleSuccess(response);
+        Response response = repository.getResponse(request);
+        handleSuccess(response.getResponse(), response.getRequest());
     }
 
     @RunOnPostExecutionThread
-    private void handleSuccess(String response) {
+    private void handleSuccess(String response, String request) {
         if (listener != null) {
-            listener.onSendRequestResponse(response);
+            listener.onSendRequestResponse(response, request);
         }
     }
 
