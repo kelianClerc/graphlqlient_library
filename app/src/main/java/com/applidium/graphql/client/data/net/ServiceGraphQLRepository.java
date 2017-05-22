@@ -27,7 +27,7 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
         qlQuery = new QLQuery("test");
 
         Endpoint endpoints = new Endpoint();
-        qlQuery.append(endpoints.getUser());
+        qlQuery.append(endpoints.getUsers());
 
         String printQuery = qlQuery.printQuery();
         Timber.i(printQuery);

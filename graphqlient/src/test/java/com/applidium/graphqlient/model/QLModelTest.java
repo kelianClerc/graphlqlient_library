@@ -22,6 +22,36 @@ import static org.junit.Assert.assertThat;
 
 public class QLModelTest {
 
+    private class StandardTypeSample {
+        String a = "dfs";
+        @Alias(name = "A string")
+        int b = 1;
+        @Parameters(table = {
+            @Argument(argumentName = "id", argumentValue = "1"),
+            @Argument(argumentName = "id2", argumentValue = "2"),
+            @Argument(argumentName = "id3", argumentValue = "3"),
+        })
+        int b2;
+        Integer c = 2;
+        long d = 3;
+        Long e = Long.valueOf(3);
+        boolean f = true;
+        Boolean g = false;
+        float h = 1f;
+        Float i = 2f;
+        TestEnum j = A;
+        TestEnum k = B;
+        QLModel test;
+        Object o;
+        List<String> stringList;
+    }
+
+    private class Sample2 {
+        int aa;
+        StandardTypeSample bb;
+        List<StandardTypeSample> cc;
+    }
+
     private QLModel qlModel;
 
     @Before
@@ -45,6 +75,7 @@ public class QLModelTest {
         assertEqualsType("k", QLLeaf.class);
         assertEqualsType("test", QLNode.class);
         assertEqualsType("o", null);
+        assertEqualsType("stringList", QLLeaf.class);
     }
 
     private void assertEqualsType(String field, Class<?> shouldBe) throws NoSuchFieldException {
@@ -55,34 +86,6 @@ public class QLModelTest {
         } else {
             assertTrue(elements.size() == 0);
         }
-    }
-
-    private class StandardTypeSample {
-        String a = "dfs";
-        @Alias(name = "A string")
-        int b = 1;
-        @Parameters(table = {
-            @Argument(argumentName = "id", argumentValue = "1"),
-            @Argument(argumentName = "id2", argumentValue = "2"),
-            @Argument(argumentName = "id3", argumentValue = "3"),
-        })
-        int b2;
-        Integer c = 2;
-        long d = 3;
-        Long e = Long.valueOf(3);
-        boolean f = true;
-        Boolean g = false;
-        float h = 1f;
-        Float i = 2f;
-        TestEnum j = A;
-        TestEnum k = B;
-        QLModel test;
-        Object o;
-    }
-
-    private class Sample2 {
-        int aa;
-        StandardTypeSample bb;
     }
 
     enum TestEnum {
@@ -135,6 +138,12 @@ public class QLModelTest {
         QLElement element = qlModel.createNodeFromField(field);
         assertTrue(element instanceof QLNode);
         assertTrue(element.getName().equals("bb"));
-        assertTrue(((QLNode) element).getChildren().size() == 11);
+        assertTrue(((QLNode) element).getChildren().size() == 12);
+
+        Field field2 = Sample2.class.getDeclaredField("cc");
+        QLElement element2 = qlModel.createNodeFromField(field2);
+        assertTrue(element2 instanceof QLNode);
+        assertTrue(element2.getName().equals("cc"));
+        assertTrue(((QLNode) element2).getChildren().size() == 12);
     }
 }

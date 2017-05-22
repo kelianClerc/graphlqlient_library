@@ -3,7 +3,6 @@ package com.applidium.graphql.client.data.net.graphql.model;
 import com.applidium.graphqlient.annotations.Argument;
 import com.applidium.graphqlient.annotations.Parameters;
 import com.applidium.graphqlient.model.QLModel;
-import com.applidium.graphqlient.tree.QLElement;
 import com.applidium.graphqlient.tree.QLNode;
 
 import java.util.List;
@@ -27,7 +26,7 @@ public class Endpoint extends QLModel {
         return null;
     }
 
-    public QLElement getUsers() {
+    public QLNode getUsers() {
         try {
             return createNodeFromField(getClass().getDeclaredField("users"));
         } catch (NoSuchFieldException e) {
