@@ -8,6 +8,9 @@ public class QLLeaf extends QLElement {
         super(name);
     }
 
+    public QLLeaf(QLElement element) {
+        super(element);
+    }
     public QLLeaf(String name, String alias) {
         super(name, alias);
     }

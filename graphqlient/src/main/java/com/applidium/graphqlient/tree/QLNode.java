@@ -11,6 +11,9 @@ public class QLNode extends QLElement {
     private static final String SEPARATION_SUBFIELD_CHARACTER = ",";
     private final ArrayList<QLElement> children = new ArrayList<>();
 
+    public QLNode(QLElement element) {
+        super(element);
+    }
     public QLNode(String name) {
         super(name);
     }
@@ -26,6 +29,9 @@ public class QLNode extends QLElement {
 
     public void addChild(QLElement child) {
         children.add(child);
+    }
+    public void setAllChild(List<QLElement> allChild) {
+        children.addAll(allChild);
     }
 
     public void removeChild(QLElement child) {
