@@ -110,4 +110,8 @@ public class QLElement {
         this.parameters.clear();
         this.parameters.putAll(params);
     }
+
+    public QLElement getElement() {
+        return this;
+    }
 }
