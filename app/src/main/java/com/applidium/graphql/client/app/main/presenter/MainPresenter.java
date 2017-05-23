@@ -4,6 +4,7 @@ import com.applidium.graphql.client.app.common.Presenter;
 import com.applidium.graphql.client.app.main.ui.MainViewContract;
 import com.applidium.graphql.client.core.interactor.sendrequest.SendRequestInteractor;
 import com.applidium.graphql.client.core.interactor.sendrequest.SendRequestListener;
+import com.applidium.graphql.client.utils.trace.Trace;
 
 import javax.inject.Inject;
 
@@ -31,13 +32,13 @@ public class MainPresenter extends Presenter<MainViewContract> implements SendRe
         interactor.execute(request, this);
     }
 
-    @Override
+    @Override @Trace @Deprecated
     public void onSendRequestResponse(String response, String request) {
         view.showResponse(response);
         view.showRequest(request);
     }
 
-    @Override
+    @Override @Trace @Deprecated
     public void onSendRequestError(String message) {
 
     }

@@ -37,6 +37,7 @@ public class SendRequestInteractor {
 
     private void sendRequest() throws IOException {
         Response response = repository.getResponse(request);
+        response = repository.createResponseFromString(response.getRequest());
         handleSuccess(response.getResponse(), response.getRequest());
     }
 
