@@ -2,6 +2,8 @@ package com.applidium.graphqlient.tree;
 
 import android.support.annotation.Nullable;
 
+import com.applidium.graphqlient.QLVariablesElement;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,7 +81,9 @@ public class QLElement {
         // TODO (kelianclerc) 19/5/17 handle params being dependent of variable field of request
         // http://graphql.org/learn/queries/#variables
         Object o = parameters.get(key);
-        if (o instanceof String) {
+        if (o instanceof QLVariablesElement) {
+            return ((QLVariablesElement) o).printVariableName();
+        } else if (o instanceof String) {
             return "\"" + String.valueOf(o) + "\"";
         }
         return String.valueOf(o);
