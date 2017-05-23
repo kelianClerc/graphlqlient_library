@@ -62,4 +62,8 @@ public class QLQuery {
     private void appendEnd(StringBuilder stringBuilder) {
         stringBuilder.append(QUERY_CLOSING_CHARACTER);
     }
+
+    public void setName(@Nullable String name) {
+        this.name = name;
+    }
 }
