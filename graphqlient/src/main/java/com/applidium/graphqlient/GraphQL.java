@@ -32,4 +32,9 @@ public class GraphQL {
 
         return response.body().string();
     }
+
+    public QLQuery createQueryFromString(String query) {
+        QLParser qlParser = new QLParser(query);
+        return qlParser.begin();
+    }
 }
