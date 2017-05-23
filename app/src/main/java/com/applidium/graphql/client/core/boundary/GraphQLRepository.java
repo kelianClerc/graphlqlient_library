@@ -6,4 +6,5 @@ import java.io.IOException;
 
 public interface GraphQLRepository {
     Response getResponse(String request) throws IOException;
+    Response createResponseFromString(String request) throws IOException;
 }

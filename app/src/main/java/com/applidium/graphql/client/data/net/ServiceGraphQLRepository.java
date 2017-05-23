@@ -27,11 +27,18 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
         qlQuery = new QLQuery("test");
 
         Endpoint endpoints = new Endpoint();
-        qlQuery.append(endpoints.getUsers());
+        qlQuery.append(endpoints.getUser());
 
         String printQuery = qlQuery.printQuery();
         Timber.i(printQuery);
         return new Response(graphQL.sendRequest(printQuery), printQuery);
+    }
+
+    @Override
+    public Response createResponseFromString(String request) throws IOException {
+        QLQuery qlQuery1 = graphQL.createQueryFromString(request);
+        Timber.i(qlQuery1.printQuery());
+        return new Response(graphQL.sendRequest(qlQuery1.printQuery()), qlQuery1.printQuery());
     }
 
 }
