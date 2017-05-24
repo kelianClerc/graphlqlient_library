@@ -1,5 +1,7 @@
 package com.applidium.graphqlient;
 
+import android.support.annotation.Nullable;
+
 import java.io.IOException;
 
 import okhttp3.HttpUrl;
@@ -18,11 +20,18 @@ public class GraphQL {
     }
 
     public String sendRequest(String query) throws IOException {
+        return sendRequest(query, null);
+    }
 
-        HttpUrl toCallUrl = HttpUrl.parse(BASE_URL)
-            .newBuilder()
-            .addQueryParameter(QUERY_PARAMETER, query)
-            .build();
+    public String sendRequest(String query, @Nullable String variables) throws IOException {
+
+        HttpUrl.Builder builder = HttpUrl.parse(BASE_URL).newBuilder();
+
+        builder.addQueryParameter(QUERY_PARAMETER, query);
+        if (variables != null) {
+            builder.addQueryParameter(VARIABLE_PARAMETER, variables);
+        }
+        HttpUrl toCallUrl = builder.build();
 
         Request request = new Request.Builder()
             .url(toCallUrl)
