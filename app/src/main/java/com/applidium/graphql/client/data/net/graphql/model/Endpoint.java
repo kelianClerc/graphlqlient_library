@@ -11,8 +11,13 @@ public class Endpoint extends QLModel {
     @Parameters(table={
         @Argument(argumentName = "id", argumentValue = "1")
     })
-    private User user;
+    //private User user;
     private List<User> users;
+
+    @Parameters(table={
+        @Argument(argumentName = "id", argumentVariable = "userId")
+    })
+    private User user;
 
     public Endpoint() {
     }
@@ -29,6 +34,15 @@ public class Endpoint extends QLModel {
     public QLNode getUsers() {
         try {
             return createNodeFromField(getClass().getDeclaredField("users"));
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public QLNode getUserParam() {
+        try {
+            return createNodeFromField(getClass().getDeclaredField("user"));
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
