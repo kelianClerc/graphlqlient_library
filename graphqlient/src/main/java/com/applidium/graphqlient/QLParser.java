@@ -1,6 +1,7 @@
 package com.applidium.graphqlient;
 
 import com.applidium.graphqlient.tree.QLElement;
+import com.applidium.graphqlient.tree.QLFragment;
 import com.applidium.graphqlient.tree.QLLeaf;
 import com.applidium.graphqlient.tree.QLNode;
 
@@ -8,26 +9,34 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class QLParser {
 
     public static final String QUERY_KEYWORD = "query";
+    public static final String FRAGMENT_KEYWORD = "fragment";
+    private String initialString;
     private String toParse;
     private QLQuery query;
+    private List<QLFragment> fragments;
     private final Map<Integer, QLNode> currentPosition = new HashMap<>();
     private int elevation = 0;
+    private QueryDelimiter delimiter;
 
     public QLParser() {
+        delimiter = new QueryDelimiter();
     }
 
     public QLParser(String toParse) {
+        super();
         toParse = toParse.replaceAll("[\n\r]", "");
-        this.toParse = toParse;
+        this.toParse = initialString = toParse;
     }
 
     public void setToParse(String toParse) {
         toParse = toParse.replaceAll("[\n\r]", "");
-        this.toParse = toParse;
+        this.toParse = initialString = toParse;
     }
 
     public QLQuery begin() {
@@ -36,9 +45,25 @@ public class QLParser {
         if (toParse == null || toParse.isEmpty()) {
             return null; // TODO (kelianclerc) 23/5/17 create exception
         }
+        parseFragment(initialString);
         getHeader();
         getRootElement();
         return query;
+    }
+
+    private void parseFragment(String searchString) {
+        Pattern pattern = Pattern.compile(FRAGMENT_KEYWORD + "\\s[a-zA-Z0-9]*\\son\\s[a-zA-Z0-9]*\\s\\{");
+        Matcher matcher = pattern.matcher(searchString);
+        if (matcher.find()) {
+            int beginIndex = matcher.start();
+            String fragmentString = blockFetch(searchString, beginIndex);
+            processFragment();
+            parseFragment(searchString.substring(beginIndex + fragmentString.length() + 1));
+        }
+    }
+
+    private void processFragment() {
+        // TODO (kelianclerc) 31/5/17  
     }
 
     private void getHeader() {
@@ -50,7 +75,8 @@ public class QLParser {
         String substring = toParse.substring(0, endIndex);
         if (substring.startsWith(QUERY_KEYWORD)) {
             parseQuery(endIndex, substring);
-        } else if (substring.length() == 0) {
+        }
+        else if (substring.length() == 0) {
             parseQuery(0, "");
         }
     }
@@ -98,7 +124,7 @@ public class QLParser {
             return;
         }
 
-        QueryDelimiter delimiter = new QueryDelimiter();
+        delimiter.analyze(toParse);
 
 
         if (delimiter.isNextCloseCurly()) {
@@ -259,6 +285,34 @@ public class QLParser {
         return element;
     }
 
+    private String blockFetch(String globalString, String beginString) {
+        int beginIndex = globalString.indexOf(beginString);
+        return blockFetch(globalString, beginIndex);
+    }
+
+    private String blockFetch(String globalString, int beginIndex) {
+        String substring = globalString.substring(beginIndex);
+        int localElevation = 0;
+        boolean firstOpening = true;
+        for (int i = 0; i < substring.length(); i++) {
+            if (substring.charAt(i) == '{') {
+                if (firstOpening) {
+                    firstOpening = false;
+                }
+                localElevation++;
+            } else if (substring.charAt(i) == '}') {
+                elevation--;
+            }
+
+            if (!firstOpening) {
+                if (elevation == 0) {
+                    return globalString.substring(beginIndex, i + 1);
+                }
+            }
+        }
+        return globalString;
+    }
+
     private void trimString(int start) {
         this.toParse = toParse.substring(start);
     }
@@ -274,12 +328,14 @@ public class QLParser {
         private int endCarret;
 
         public QueryDelimiter() {
-            nextCommaIndex = toParse.indexOf(",");
-            nextBraceIndex = toParse.indexOf("(");
-            nextCloseBraceIndex = toParse.indexOf(")");
-            nextCurlyIndex = toParse.indexOf("{");
-            nextCloseCurlyIndex = toParse.indexOf("}");
+        }
 
+        public void analyze(String toAnalyze) {
+            nextCommaIndex = toAnalyze.indexOf(",");
+            nextBraceIndex = toAnalyze.indexOf("(");
+            nextCloseBraceIndex = toAnalyze.indexOf(")");
+            nextCurlyIndex = toAnalyze.indexOf("{");
+            nextCloseCurlyIndex = toAnalyze.indexOf("}");
 
             nextCommaIndex = ifNegativeMakeGreat(nextCommaIndex);
             nextBraceIndex = ifNegativeMakeGreat(nextBraceIndex);
