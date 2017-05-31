@@ -14,6 +14,7 @@ public class QLFragment {
     }
 
     public QLFragment(String name, String targetObject) {
+        super();
         this.name = name;
         this.targetObject = targetObject;
     }

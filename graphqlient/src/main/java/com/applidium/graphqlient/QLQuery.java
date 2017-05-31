@@ -2,6 +2,7 @@ package com.applidium.graphqlient;
 
 import android.support.annotation.Nullable;
 
+import com.applidium.graphqlient.tree.QLFragment;
 import com.applidium.graphqlient.tree.QLNode;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ public class QLQuery {
     private static final String QUERY_OPENING_CHARACTER = "{";
     private static final String QUERY_CLOSING_CHARACTER = "}";
 
+    private List<QLFragment> fragments;
     @Nullable String name;
     @Nullable List<QLVariablesElement> parameters;
     // TODO (kelianclerc) 18/5/17 add field parameters
@@ -20,12 +22,15 @@ public class QLQuery {
     private final List<QLNode> queryFields = new ArrayList<>();
 
     public QLQuery() {
+        fragments = new ArrayList<>();
     }
 
     public QLQuery(String name) {
+        super();
         this.name = name;
     }
     public QLQuery(String name, List<QLVariablesElement> parameters) {
+        super();
         this.name = name;
         this.parameters = parameters;
     }
@@ -95,5 +100,13 @@ public class QLQuery {
 
     public void setName(@Nullable String name) {
         this.name = name;
+    }
+
+    public List<QLFragment> getFragments() {
+        return fragments;
+    }
+
+    public void setFragments(List<QLFragment> fragments) {
+        this.fragments = fragments;
     }
 }
