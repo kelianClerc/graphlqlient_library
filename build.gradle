@@ -6,7 +6,7 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" } // for gradle-config
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:2.3.2'
         classpath "gradle.plugin.com.tmiyamon:gradle-config:$pluginsVersion.gradleConfig"
         classpath "com.neenbedankt.gradle.plugins:android-apt:$pluginsVersion.androidApt"
         classpath "com.github.Archinamon:GradleAspectJ-Android:$pluginsVersion.androidAspectJ"
