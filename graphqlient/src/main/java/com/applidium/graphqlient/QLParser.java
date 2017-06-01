@@ -37,7 +37,10 @@ public class QLParser {
     }
 
     public QLParser(String toParse) {
-        super();
+        delimiter = new QueryDelimiter();
+        fragments = new ArrayList<>();
+        toUpdate = new ArrayList<>();
+        parentOfToUpdate = new ArrayList<>();
         toParse = toParse.replaceAll("[\n\r]", "");
         this.toParse = initialString = toParse;
     }
@@ -47,7 +50,7 @@ public class QLParser {
         this.toParse = initialString = toParse;
     }
 
-    public QLQuery begin() {
+    public QLQuery buildQuery() {
         currentPosition.clear();
         elevation = 0;
         if (toParse == null || toParse.isEmpty()) {
@@ -102,6 +105,7 @@ public class QLParser {
     private void getHeader() {
         int endIndex = toParse.indexOf("{");
         if (endIndex < 0) {
+            this.query = new QLQuery();
             return; // TODO (kelianclerc) 23/5/17 create exception
         }
 

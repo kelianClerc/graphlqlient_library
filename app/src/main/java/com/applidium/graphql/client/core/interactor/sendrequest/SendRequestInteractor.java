@@ -13,6 +13,7 @@ public class SendRequestInteractor {
     private final GraphQLRepository repository;
     private SendRequestListener listener;
     private String request;
+    private String variables;
 
     @Inject
     SendRequestInteractor(GraphQLRepository repository) {
@@ -21,8 +22,9 @@ public class SendRequestInteractor {
 
     @Trace
     @RunOnExecutionThread
-    public void execute(String request, SendRequestListener listener) {
+    public void execute(String request, String variables, SendRequestListener listener) {
         this.request = request;
+        this.variables = variables;
         this.listener = listener;
         tryToSendRequest();
     }
@@ -36,16 +38,20 @@ public class SendRequestInteractor {
     }
 
     private void sendRequest() throws IOException {
-        Response response = repository.getResponseWithQueryParams(1);
-        //Response response = repository.getResponse(request);
+        Response response;
+        if (!request.isEmpty()) {
+            response = repository.createResponseFromString(request, variables);
+        } else {
+            response = repository.getResponseWithQueryParams(1);
+        }
         //response = repository.createResponseFromString(response.getRequest());
-        handleSuccess(response.getResponse(), response.getRequest());
+        handleSuccess(response.getResponse(), response.getRequest(), response.getVariables());
     }
 
     @RunOnPostExecutionThread
-    private void handleSuccess(String response, String request) {
+    private void handleSuccess(String response, String request, String variables) {
         if (listener != null) {
-            listener.onSendRequestResponse(response, request);
+            listener.onSendRequestResponse(response, request, variables);
         }
     }
 
