@@ -31,6 +31,10 @@ public class QLNode extends QLElement {
         children.add(child);
     }
     public void setAllChild(List<QLElement> allChild) {
+        children.clear();
+        children.addAll(allChild);
+    }
+    public void addAllChild(List<QLElement> allChild) {
         children.addAll(allChild);
     }
 
