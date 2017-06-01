@@ -38,7 +38,7 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
 
         String printQuery = qlQuery.printQuery();
         Timber.i(printQuery);
-        return new Response(graphQL.sendRequest(printQuery), printQuery, "");
+        return new Response(graphQL.send(printQuery), printQuery, "");
     }
 
     @Override
@@ -48,9 +48,7 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
 
     @Override
     public Response createResponseFromString(String request, String variables) throws IOException {
-        QLQuery qlQuery1 = graphQL.createQueryFromString(request);
-        Timber.i(qlQuery1.printQuery());
-        return new Response(graphQL.sendRequest(qlQuery1.printQuery(), variables), qlQuery1.printQuery(), variables);
+        return new Response(graphQL.send(request, variables), request, variables);
     }
 
     @Override
@@ -68,7 +66,7 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
 
         String printQuery = qlQuery.printQuery();
         Timber.i(printQuery);
-        return new Response(graphQL.sendRequest(printQuery, variables.print()), qlQuery.printQuery(), variables.print());
+        return new Response(graphQL.send(qlQuery, variables), printQuery, variables.print());
 
     }
 

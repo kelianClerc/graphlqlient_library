@@ -50,7 +50,7 @@ public class QLParser {
         this.toParse = initialString = toParse;
     }
 
-    public QLQuery begin() {
+    public QLQuery buildQuery() {
         currentPosition.clear();
         elevation = 0;
         if (toParse == null || toParse.isEmpty()) {
