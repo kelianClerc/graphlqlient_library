@@ -28,7 +28,7 @@ public class GraphQL {
         HttpUrl.Builder builder = HttpUrl.parse(BASE_URL).newBuilder();
 
         builder.addQueryParameter(QUERY_PARAMETER, query);
-        if (variables != null) {
+        if (variables != null && !variables.isEmpty()) {
             builder.addQueryParameter(VARIABLE_PARAMETER, variables);
         }
         HttpUrl toCallUrl = builder.build();

@@ -32,14 +32,15 @@ public class MainPresenter extends Presenter<MainViewContract> implements SendRe
 
     }
 
-    public void onLaunchRequest(String request) {
-        interactor.execute(request, this);
+    public void onLaunchRequest(String request, String variables) {
+        interactor.execute(request, variables, this);
     }
 
     @Override @Trace @Deprecated
-    public void onSendRequestResponse(String response, String request) {
+    public void onSendRequestResponse(String response, String request, String variables) {
         view.showResponse(response);
         view.showRequest(request);
+        view.showVariables(variables);
     }
 
     @Override @Trace @Deprecated

@@ -25,6 +25,7 @@ public class MainActivity extends BaseActivity implements MainViewContract, Tool
     ImageButton reset;
     @BindView(R.id.request) TextView request;
     @BindView(R.id.response) TextView response;
+    @BindView(R.id.variable) TextView variable;
     @BindView(R.id.toolbar) Toolbar toolbar;
 
     @Inject MainPresenter presenter;
@@ -68,6 +69,11 @@ public class MainActivity extends BaseActivity implements MainViewContract, Tool
     }
 
     @Override
+    public void showVariables(String variableText) {
+        variable.setText(variableText);
+    }
+
+    @Override
     public void showResponse(String responseText) {
         response.setText(formatJson(responseText));
     }
@@ -106,10 +112,10 @@ public class MainActivity extends BaseActivity implements MainViewContract, Tool
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.auto_request:
-                presenter.onLaunchRequest("");
+                presenter.onLaunchRequest("", "");
                 return true;
             case R.id.text_request:
-                presenter.onLaunchRequest(request.getText().toString());
+                presenter.onLaunchRequest(request.getText().toString(), variable.getText().toString());
                 return true;
         }
         return false;
