@@ -36,8 +36,12 @@ public class SendRequestInteractor {
     }
 
     private void sendRequest() throws IOException {
-        Response response = repository.getResponseWithQueryParams(1);
-        //Response response = repository.getResponse(request);
+        Response response;
+        if (!request.isEmpty()) {
+            response = repository.createResponseFromString(request);
+        } else {
+            response = repository.getResponseWithQueryParams(1);
+        }
         //response = repository.createResponseFromString(response.getRequest());
         handleSuccess(response.getResponse(), response.getRequest());
     }

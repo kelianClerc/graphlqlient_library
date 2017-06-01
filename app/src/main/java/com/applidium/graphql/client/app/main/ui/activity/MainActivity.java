@@ -1,8 +1,10 @@
 package com.applidium.graphql.client.app.main.ui.activity;
 
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.applidium.graphql.client.R;
@@ -16,11 +18,14 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements MainViewContract {
+public class MainActivity extends BaseActivity implements MainViewContract, Toolbar
+    .OnMenuItemClickListener {
 
-    @BindView(R.id.launch) Button launch;
+    @BindView(R.id.reset_request)
+    ImageButton reset;
     @BindView(R.id.request) TextView request;
     @BindView(R.id.response) TextView response;
+    @BindView(R.id.toolbar) Toolbar toolbar;
 
     @Inject MainPresenter presenter;
 
@@ -31,6 +36,20 @@ public class MainActivity extends BaseActivity implements MainViewContract {
         setupListeners();
     }
 
+    private void setupListeners() {
+        reset.setOnClickListener(getOnResetClickedListener());
+    }
+
+    private View.OnClickListener getOnResetClickedListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                request.setText("");
+                response.setText("");
+            }
+        };
+    }
+
     @Override
     protected void injectDependencies() {
         ComponentManager.getMainComponent(this, this).inject(this);
@@ -39,19 +58,8 @@ public class MainActivity extends BaseActivity implements MainViewContract {
     private void setupView() {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-    }
-
-    private void setupListeners() {
-        launch.setOnClickListener(getOnLaunchClickListener());
-    }
-
-    private View.OnClickListener getOnLaunchClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.onLaunchRequest(request.getText().toString());
-            }
-        };
+        toolbar.inflateMenu(R.menu.navig);
+        toolbar.setOnMenuItemClickListener(this);
     }
 
     @Override
@@ -67,7 +75,6 @@ public class MainActivity extends BaseActivity implements MainViewContract {
     private String formatJson(String raw) {
         StringBuilder json = new StringBuilder();
         String indentString = "";
-
         for (int i = 0; i < raw.length(); i++) {
             char letter = raw.charAt(i);
             switch (letter) {
@@ -93,5 +100,18 @@ public class MainActivity extends BaseActivity implements MainViewContract {
         }
 
         return json.toString();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.auto_request:
+                presenter.onLaunchRequest("");
+                return true;
+            case R.id.text_request:
+                presenter.onLaunchRequest(request.getText().toString());
+                return true;
+        }
+        return false;
     }
 }
