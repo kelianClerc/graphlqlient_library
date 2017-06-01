@@ -6,6 +6,7 @@ import com.applidium.graphqlient.tree.QLLeaf;
 import com.applidium.graphqlient.tree.QLNode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,14 +21,19 @@ public class QLParser {
     private String toParse;
     private QLQuery query;
     private List<QLFragment> fragments;
+    private List<QLElement> toUpdate;
+    private List<QLElement> parentOfToUpdate;
     private final Map<Integer, QLNode> currentPosition = new HashMap<>();
     private int elevation = 0;
     private QueryDelimiter delimiter;
     boolean isFragmentField;
+    private boolean shouldPopulateFragment;
 
     public QLParser() {
         delimiter = new QueryDelimiter();
         fragments = new ArrayList<>();
+        toUpdate = new ArrayList<>();
+        parentOfToUpdate = new ArrayList<>();
     }
 
     public QLParser(String toParse) {
@@ -48,8 +54,20 @@ public class QLParser {
             return null; // TODO (kelianclerc) 23/5/17 create exception
         }
         parseFragments(initialString);
+        if (shouldPopulateFragment) {
+            populateFragment();
+        }
         parseQuery();
         return query;
+    }
+
+    private void populateFragment() {
+        for (int i = 0; i < toUpdate.size(); i++) {
+            QLElement element = toUpdate.get(i);
+            QLNode parent = (QLNode) parentOfToUpdate.get(i);
+            parent.removeChild(element);
+            parent.addAllChild(findFragmentByName(element.getName()));
+        }
     }
 
     private void parseFragments(String searchString) {
@@ -63,7 +81,7 @@ public class QLParser {
             fragments.get(fragments.size() - 1).setChildren(currentPosition.get(0).getChildren());
             String endString = initialString.substring(beginIndex + fragmentString.length());
             initialString = initialString.substring(0, beginIndex) + endString;
-            parseFragments(searchString.substring(beginIndex + fragmentString.length()));
+            parseFragments(initialString);
         }
     }
 
@@ -181,6 +199,36 @@ public class QLParser {
         else if (delimiter.isNextLastField()) {
             handleLastField(delimiter.endCarret);
         }
+        else if (delimiter.isNextFragmentImport()) {
+            handleFragmentImport();
+        }
+    }
+
+    private void handleFragmentImport() {
+        int begin = toParse.indexOf("...");
+        String fragmentName = toParse.substring(begin + 3, delimiter.endCarret);
+        if (!isFragmentField) {
+            currentPosition.get(elevation - 1).addAllChild(findFragmentByName(fragmentName));
+        } else {
+            shouldPopulateFragment = true;
+            QLElement child = new QLElement("..." + fragmentName);
+            toUpdate.add(child);
+            parentOfToUpdate.add(currentPosition.get(elevation - 1));
+            currentPosition.get(elevation - 1).addChild(child);
+        }
+
+        trimString(delimiter.endCarret + 1);
+        processNextField();
+    }
+
+    private List<QLElement> findFragmentByName(String fragmentName) {
+        fragmentName = fragmentName.replace("...", "");
+        for (QLFragment frag: fragments) {
+            if (frag.getName().equals(fragmentName)) {
+                return frag.getChildren();
+            }
+        }
+        return Collections.emptyList();
     }
 
     private void handleClosingCurly() {
@@ -373,6 +421,7 @@ public class QLParser {
         private int nextBraceIndex;
         private int nextCommaIndex;
         private int endCarret;
+        private int nextFragmentImportIndex;
 
         public QueryDelimiter() {
         }
@@ -383,12 +432,14 @@ public class QLParser {
             nextCloseBraceIndex = toAnalyze.indexOf(")");
             nextCurlyIndex = toAnalyze.indexOf("{");
             nextCloseCurlyIndex = toAnalyze.indexOf("}");
+            nextFragmentImportIndex = toAnalyze.indexOf("...");
 
             nextCommaIndex = ifNegativeMakeGreat(nextCommaIndex);
             nextBraceIndex = ifNegativeMakeGreat(nextBraceIndex);
             nextCurlyIndex = ifNegativeMakeGreat(nextCurlyIndex);
             nextCloseBraceIndex = ifNegativeMakeGreat(nextCloseBraceIndex);
             nextCloseCurlyIndex = ifNegativeMakeGreat(nextCloseCurlyIndex);
+            nextFragmentImportIndex = ifNegativeMakeGreat(nextFragmentImportIndex);
         }
 
 
@@ -408,7 +459,7 @@ public class QLParser {
         }
 
         public boolean isNextSimpleField() {
-            boolean b = nextCommaIndex < nextBraceIndex && nextCommaIndex < nextCurlyIndex;
+            boolean b = isTheNextOccurance(nextCommaIndex);
             if (b) {
                 endCarret = nextCommaIndex;
             }
@@ -416,7 +467,7 @@ public class QLParser {
         }
 
         public boolean isNextFieldWithParameters() {
-            boolean b = nextBraceIndex < nextCommaIndex && nextBraceIndex < nextCurlyIndex;
+            boolean b = isTheNextOccurance(nextBraceIndex);
             if (b) {
                 endCarret = nextCloseBraceIndex;
             }
@@ -424,7 +475,7 @@ public class QLParser {
         }
 
         public boolean isNextNodeWithoutParams() {
-            boolean b = nextCurlyIndex < nextCommaIndex && nextCurlyIndex < nextBraceIndex;
+            boolean b = isTheNextOccurance(nextCurlyIndex);
             if (b) {
                 endCarret = nextCurlyIndex;
             }
@@ -432,11 +483,34 @@ public class QLParser {
         }
 
         public boolean isNextLastField() {
-            boolean b = nextCloseCurlyIndex < nextCommaIndex && nextCloseCurlyIndex < nextCurlyIndex;
+            boolean b = isTheNextOccurance(nextCloseCurlyIndex);
             if (b) {
                 endCarret = nextCloseCurlyIndex;
             }
             return b;
+        }
+
+        public boolean isNextFragmentImport() {
+            boolean b = isTheNextOccurance(nextFragmentImportIndex);
+            if (b) {
+                endCarret = Math.min(nextCloseCurlyIndex, nextCommaIndex);
+            }
+            return b;
+        }
+
+        private boolean isTheNextOccurance(int target) {
+            return Math.min(
+                target,
+                Math.min(nextCommaIndex,
+                    Math.min(nextBraceIndex,
+                        Math.min(nextCloseBraceIndex,
+                            Math.min(nextCurlyIndex,
+                                Math.min(nextCloseCurlyIndex, nextFragmentImportIndex)
+                            )
+                        )
+                    )
+                )
+            ) == target;
         }
     }
 }

@@ -281,13 +281,15 @@ public class QLParserTest {
         assertEquals(fragment.getName(), "test1");
         assertEquals(fragment.getTargetObject(), "User");
         assertEquals(fragment.getChildren().size(), 3);
-        assertEquals(fragment.getChildren().get(0).getName(), "name1");
-        assertEquals(fragment.getChildren().get(0).getAlias(), "alias");
-        assertThat(fragment.getChildren().get(0), instanceOf(QLLeaf.class));
-        assertEquals(fragment.getChildren().get(1).getName(), "email1");
-        assertEquals(fragment.getChildren().get(1).getParameters().size(), 1);
-        assertEquals(fragment.getChildren().get(1).getParameters().get("size"), 2);
-        assertThat(fragment.getChildren().get(1), instanceOf(QLLeaf.class));
+        QLElement element = fragment.getChildren().get(0);
+        assertEquals(element.getName(), "name1");
+        assertEquals(element.getAlias(), "alias");
+        assertThat(element, instanceOf(QLLeaf.class));
+        QLElement element1 = fragment.getChildren().get(1);
+        assertEquals(element1.getName(), "email1");
+        assertEquals(element1.getParameters().size(), 1);
+        assertEquals(element1.getParameters().get("size"), 2);
+        assertThat(element1, instanceOf(QLLeaf.class));
         assertEquals(fragment.getChildren().get(2).getName(), "posts1");
         assertThat(fragment.getChildren().get(2), instanceOf(QLNode.class));
         QLNode node = (QLNode) fragment.getChildren().get(2);
@@ -308,5 +310,56 @@ public class QLParserTest {
         assertEquals(node1.getChildren().size(), 1);
         assertThat(node1.getChildren().get(0), instanceOf(QLLeaf.class));
         assertEquals(node1.getChildren().get(0).getName(), "id");
+    }
+
+    @Test
+    public void testFragmentImport() throws Exception {
+        QLParser parser = new QLParser();
+
+        parser.setToParse("fragment test1 on User{alias : name1, email1(size: 2), posts1{id1}}query hello {user {...test}}fragment test on User{...test1}");
+        // TODO (kelianclerc) 31/5/17 test this
+        QLQuery query = parser.begin();
+
+        assertEquals(query.getFragments().size(), 2);
+        QLFragment fragment = query.getFragments().get(0);
+        assertEquals(fragment.getName(), "test1");
+        assertEquals(fragment.getTargetObject(), "User");
+        assertEquals(fragment.getChildren().size(), 3);
+        QLFragment fragment1 = query.getFragments().get(1);
+        assertEquals(fragment1.getName(), "test");
+        assertEquals(fragment1.getChildren().size(), fragment.getChildren().size());
+    }
+
+    @Test
+    public void testMultipleFragmentImport() throws Exception {
+        QLParser parser = new QLParser();
+
+        parser.setToParse("query hello {user {...test, ...test1}}fragment test on User{name}fragment test1 on User{alias : name1, email1(size: 2), posts1{id1}}");
+        // TODO (kelianclerc) 31/5/17 test this
+        QLQuery query = parser.begin();
+
+        assertEquals(query.getFragments().size(), 2);
+        QLFragment fragment = query.getFragments().get(1);
+        assertEquals(fragment.getName(), "test1");
+        assertEquals(fragment.getTargetObject(), "User");
+        assertEquals(fragment.getChildren().size(), 3);
+        QLFragment fragment1 = query.getFragments().get(0);
+        assertEquals(fragment1.getName(), "test");
+        assertEquals(fragment1.getChildren().size(), 1);
+        assertEquals(query.getQueryFields().size(), 1);
+        assertEquals(query.name, "hello");
+        QLNode node = query.getQueryFields().get(0);
+        assertEquals(node.getName(), "user");
+        assertEquals(node.getParameters().size(), 0);
+        assertEquals(node.getChildren().size(), 4);
+        assertEquals(node.getChildren().get(0).getName(), "name");
+        assertEquals(node.getChildren().get(1).getName(), "name1");
+        assertEquals(node.getChildren().get(1).getAlias(), "alias");
+        assertEquals(node.getChildren().get(2).getName(), "email1");
+        assertEquals(node.getChildren().get(2).getParameters().size(), 1);
+        assertEquals(node.getChildren().get(3).getName(), "posts1");
+        assertThat(node.getChildren().get(3), instanceOf(QLNode.class));
+        QLNode node1 = (QLNode) node.getChildren().get(3);
+        assertEquals(node1.getChildren().size(), 1);
     }
 }
