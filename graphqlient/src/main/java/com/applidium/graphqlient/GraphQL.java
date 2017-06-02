@@ -2,22 +2,25 @@ package com.applidium.graphqlient;
 
 import android.support.annotation.Nullable;
 
+import com.applidium.graphqlient.call.QLCall;
+import com.applidium.graphqlient.call.QLResponse;
+
 import java.io.IOException;
 
-import okhttp3.Call;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 
 public class GraphQL {
     private final OkHttpClient client;
-    private static String BASE_URL = "http://localhost:3000/graphql/test";
-    private static String QUERY_PARAMETER = "query";
-    private static String VARIABLE_PARAMETER = "variables";
+    private String baseUrl = "http://localhost:3000/graphql/test";
+    private final static String QUERY_PARAMETER = "query";
+    private final static String VARIABLE_PARAMETER = "variables";
 
-    public GraphQL() {
+    public GraphQL(String baseUrl) {
+        this.baseUrl = baseUrl;
         client = new OkHttpClient();
+
     }
 
     public String send(String query) throws IOException {
@@ -36,9 +39,9 @@ public class GraphQL {
         return send(call(query, variables));
     }
 
-    public String send(Call call) throws IOException {
-        Response response = call.execute();
-        return response.body().string();
+    public String send(QLCall call) throws IOException {
+        QLResponse response = call.execute();
+        return response.toString();
     }
 
     public QLQuery buildQuery(String query) {
@@ -46,32 +49,33 @@ public class GraphQL {
         return qlParser.buildQuery();
     }
 
-    public Call call(String query) {
+    public QLCall call(String query) {
         return call(query, "");
     }
 
-    public Call call(String query, String variables) {
+    public QLCall call(String query, String variables) {
         return call(buildQuery(query), variables);
     }
 
-    public Call call(String query, QLVariables variables) {
+    public QLCall call(String query, QLVariables variables) {
         return call(buildQuery(query), variables);
     }
 
-    public Call call(QLQuery query) {
+    public QLCall call(QLQuery query) {
         return call(query, "");
     }
 
-    public Call call(QLQuery query, QLVariables variables) {
-        return call(query, variables.toString());
+    public QLCall call(QLQuery query, String variables) {
+        return call(query, QLParser.parseVariables(variables));
     }
 
-    public Call call(QLQuery query, String variables) {
-        HttpUrl.Builder builder = HttpUrl.parse(BASE_URL).newBuilder();
+    public QLCall call(QLQuery query, QLVariables variables) {
+        HttpUrl.Builder builder = HttpUrl.parse(baseUrl).newBuilder();
 
         builder.addQueryParameter(QUERY_PARAMETER, query.printQuery());
-        if (variables != null && !variables.isEmpty()) {
-            builder.addQueryParameter(VARIABLE_PARAMETER, variables);
+        String variablesString = variables.print();
+        if (variablesString != null && !variablesString.isEmpty()) {
+            builder.addQueryParameter(VARIABLE_PARAMETER, variablesString);
         }
         HttpUrl toCallUrl = builder.build();
 
@@ -79,7 +83,7 @@ public class GraphQL {
             .url(toCallUrl)
             .build();
 
-        return client.newCall(request);
+        return new QLCall(query, client.newCall(request));
     }
 
 
