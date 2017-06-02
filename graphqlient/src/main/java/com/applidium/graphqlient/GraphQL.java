@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.applidium.graphqlient.call.QLCall;
 import com.applidium.graphqlient.call.QLResponse;
+import com.applidium.graphqlient.exceptions.QLException;
 
 import java.io.IOException;
 
@@ -23,11 +24,11 @@ public class GraphQL {
 
     }
 
-    public String send(String query) throws IOException {
+    public String send(String query) throws IOException, QLException {
         return send(query, "");
     }
 
-    public String send(String query, @Nullable String variables) throws IOException {
+    public String send(String query, @Nullable String variables) throws IOException, QLException {
         return send(call(query, variables));
     }
 
@@ -49,11 +50,11 @@ public class GraphQL {
         return qlParser.buildQuery();
     }
 
-    public QLCall call(String query) {
+    public QLCall call(String query) throws QLException {
         return call(query, "");
     }
 
-    public QLCall call(String query, String variables) {
+    public QLCall call(String query, String variables) throws QLException {
         QLQuery qlQuery = buildQuery(query);
         QLVariables qlVariables = QLParser.parseVariables(variables);
         qlQuery.setVariables(qlVariables);
@@ -85,7 +86,7 @@ public class GraphQL {
         return new QLCall(query, client.newCall(request));
     }
 
-    public QLCall call(QLQuery query) {
+    public QLCall call(QLQuery query) throws QLException {
         HttpUrl.Builder builder = HttpUrl.parse(baseUrl).newBuilder();
 
         builder.addQueryParameter(QUERY_PARAMETER, query.printQuery());
@@ -94,8 +95,9 @@ public class GraphQL {
                 builder.addQueryParameter(VARIABLE_PARAMETER, query.getVariables().print());
             }
         } else {
-            // TODO (kelianclerc) 2/6/17 throw exception : not all mendatory variables provided
-            return null;
+            String message = "Not all mandatory parameters of query " + query.getName() + " are " +
+                "provided as QLVariable";
+            throw new QLException(message);
         }
         HttpUrl toCallUrl = builder.build();
 
