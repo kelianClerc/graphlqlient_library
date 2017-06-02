@@ -2,6 +2,7 @@ package com.applidium.graphqlient;
 
 import android.support.annotation.Nullable;
 
+import com.applidium.graphqlient.exceptions.QLException;
 import com.applidium.graphqlient.tree.QLNode;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class QLQuery {
     private static final String QUERY_OPENING_CHARACTER = "{";
     private static final String QUERY_CLOSING_CHARACTER = "}";
 
-    private List<QLFragment> fragments;
+    private final List<QLFragment> fragments = new ArrayList<>();
     @Nullable private String name;
     private final QLParameters parameters = new QLParameters();
     private final QLVariables variables = new QLVariables();
@@ -22,7 +23,6 @@ public class QLQuery {
     private final List<QLNode> queryFields = new ArrayList<>();
 
     public QLQuery() {
-        fragments = new ArrayList<>();
     }
 
     public QLQuery(String name) {
@@ -41,11 +41,12 @@ public class QLQuery {
         }
     }
 
-    public void addVariable(String variableName, Object value) {
+    public void addVariable(String variableName, Object value) throws QLException {
         QLType varType = parameters.getType(variableName);
         if (varType == null) {
-            // TODO (kelianclerc) 2/6/17 exception variable not declared
-            return;
+            String message = "The variable being added : \"" + variableName + "\" is not present in the " +
+                "query parameter list : [" + parameters.printParameters() + "]";
+            throw new QLException(message);
         }
         variables.addVariable(variableName, value);
     }
@@ -127,7 +128,7 @@ public class QLQuery {
         return variables;
     }
 
-    public void setVariables(QLVariables variables) {
+    public void setVariables(QLVariables variables) throws QLException {
         Map<String, Object> vars = variables.getVariables();
         for (String key: vars.keySet()) {
             addVariable(key, vars.get(key));
@@ -143,6 +144,7 @@ public class QLQuery {
     }
 
     public void setFragments(List<QLFragment> fragments) {
-        this.fragments = fragments;
+        this.fragments.clear();
+        this.fragments.addAll(fragments);
     }
 }

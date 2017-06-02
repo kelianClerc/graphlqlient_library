@@ -3,6 +3,7 @@ package com.applidium.graphqlient;
 import com.applidium.graphqlient.annotations.Alias;
 import com.applidium.graphqlient.annotations.Argument;
 import com.applidium.graphqlient.annotations.Parameters;
+import com.applidium.graphqlient.exceptions.QLException;
 import com.applidium.graphqlient.model.QLModel;
 import com.applidium.graphqlient.tree.QLElement;
 import com.applidium.graphqlient.tree.QLLeaf;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
@@ -141,7 +143,13 @@ public class QLQueryTest {
         assertTrue(qlQuery.isVariableEmpty());
 
         int numberOfVariables = qlQuery.getVariables().getVariables().size();
-        qlQuery.addVariable("randomString", 2);
+        try {
+            qlQuery.addVariable("randomString", 2);
+            fail("QLException should have been thrown");
+        } catch (QLException e) {
+            assertTrue(e.getMessage().startsWith("The variable being added : \"randomString\" is " +
+                "not present in the query parameter list : ["));
+        }
         assertEquals(qlQuery.getVariables().getVariables().size(), numberOfVariables);
         qlQuery.addVariable("try3", 2);
         assertEquals(qlQuery.getVariables().getVariables().size(), numberOfVariables + 1);
