@@ -2,7 +2,6 @@ package com.applidium.graphqlient;
 
 import android.support.annotation.Nullable;
 
-import com.applidium.graphqlient.tree.QLFragment;
 import com.applidium.graphqlient.tree.QLNode;
 
 import java.util.ArrayList;
@@ -66,6 +65,9 @@ public class QLQuery {
             stringBuilder.append(node.print());
         }
         appendEnd(stringBuilder);
+        for (QLFragment fragment : fragments) {
+            stringBuilder.append(fragment.printFragment());
+        }
         return stringBuilder.toString();
     }
 

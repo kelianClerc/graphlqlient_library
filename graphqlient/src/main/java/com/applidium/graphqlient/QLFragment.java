@@ -1,4 +1,6 @@
-package com.applidium.graphqlient.tree;
+package com.applidium.graphqlient;
+
+import com.applidium.graphqlient.tree.QLElement;
 
 import java.util.ArrayList;
 import java.util.List;
