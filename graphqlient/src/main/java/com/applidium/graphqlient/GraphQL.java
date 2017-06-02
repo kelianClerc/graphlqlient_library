@@ -96,7 +96,7 @@ public class GraphQL {
                 builder.addQueryParameter(VARIABLE_PARAMETER, query.getVariables().print());
             }
         } else {
-            String message = "Not all mandatory parameters of query " + query.getName() + " are " +
+            String message = "Not all mandatory parameters of query \"" + query.getName() + "\" are " +
                 "provided as QLVariable";
             throw new QLException(message);
         }

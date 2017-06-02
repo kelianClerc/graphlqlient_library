@@ -1,5 +1,6 @@
 package com.applidium.graphqlient;
 
+import com.applidium.graphqlient.exceptions.QLParserException;
 import com.applidium.graphqlient.tree.QLElement;
 import com.applidium.graphqlient.tree.QLFragmentNode;
 import com.applidium.graphqlient.tree.QLLeaf;
@@ -12,6 +13,7 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
 
@@ -20,10 +22,21 @@ public class QLParserTest {
     @Test
     public void initClass() throws Exception {
         QLParser parser = new QLParser();
-        assertEquals(parser.buildQuery(), null);
+        try {
+            assertEquals(parser.buildQuery(), null);
+            fail("QLParserException should have been thrown");
+        } catch (QLParserException e) {
+            assertEquals(e.getMessage(), "No string provided to be parsed");
+        }
 
         QLParser parser2 = new QLParser("string");
-        assertEquals(parser2.buildQuery().getQueryFields().size(), 0);
+        try {
+            assertEquals(parser2.buildQuery().getQueryFields().size(), 0);
+            fail("QLParserException should have been thrown");
+        } catch (QLParserException e) {
+            assertEquals(e.getMessage(), "No block found in the string provided : \"string\", " +
+                "cannot create QLQuery");
+        }
     }
 
     @Test

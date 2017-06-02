@@ -15,7 +15,7 @@ public class QLQuery {
     private static final String QUERY_OPENING_CHARACTER = "{";
     private static final String QUERY_CLOSING_CHARACTER = "}";
 
-    private List<QLFragment> fragments;
+    private final List<QLFragment> fragments = new ArrayList<>();
     @Nullable private String name;
     private final QLParameters parameters = new QLParameters();
     private final QLVariables variables = new QLVariables();
@@ -23,7 +23,6 @@ public class QLQuery {
     private final List<QLNode> queryFields = new ArrayList<>();
 
     public QLQuery() {
-        fragments = new ArrayList<>();
     }
 
     public QLQuery(String name) {
@@ -45,7 +44,7 @@ public class QLQuery {
     public void addVariable(String variableName, Object value) throws QLException {
         QLType varType = parameters.getType(variableName);
         if (varType == null) {
-            String message = "The variable being added : " + variableName + " is not present in the " +
+            String message = "The variable being added : \"" + variableName + "\" is not present in the " +
                 "query parameter list : [" + parameters.printParameters() + "]";
             throw new QLException(message);
         }
@@ -145,6 +144,7 @@ public class QLQuery {
     }
 
     public void setFragments(List<QLFragment> fragments) {
-        this.fragments = fragments;
+        this.fragments.clear();
+        this.fragments.addAll(fragments);
     }
 }
