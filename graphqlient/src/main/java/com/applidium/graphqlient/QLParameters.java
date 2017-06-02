@@ -30,7 +30,7 @@ public class QLParameters {
     public boolean allParametersGiven (QLVariables variables) {
         for (QLVariablesElement element : params) {
             if (element.isMandatory()) {
-                if (variables.isNotPresent(element.getName())) {
+                if (!variables.isPresent(element.getName())) {
                     return false;
                 }
             }

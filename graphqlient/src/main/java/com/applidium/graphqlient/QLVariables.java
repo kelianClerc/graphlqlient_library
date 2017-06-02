@@ -3,8 +3,6 @@ package com.applidium.graphqlient;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.R.attr.key;
-
 public class QLVariables {
     public static final String SEPARATOR = ",";
     private static final String OPENING_CHARACTER = "{";
@@ -30,8 +28,8 @@ public class QLVariables {
         variables.put(variableName, value);
     }
 
-    public boolean isNotPresent(String name) {
-        return !variables.containsKey(key);
+    public boolean isPresent(String name) {
+        return variables.containsKey(name) || variables.containsKey("$"+name);
     }
 
     public boolean isEmpty() {
