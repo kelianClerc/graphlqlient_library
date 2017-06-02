@@ -2,6 +2,7 @@ package com.applidium.graphqlient;
 
 import android.support.annotation.Nullable;
 
+import com.applidium.graphqlient.exceptions.QLException;
 import com.applidium.graphqlient.tree.QLNode;
 
 import java.util.ArrayList;
@@ -41,11 +42,12 @@ public class QLQuery {
         }
     }
 
-    public void addVariable(String variableName, Object value) {
+    public void addVariable(String variableName, Object value) throws QLException {
         QLType varType = parameters.getType(variableName);
         if (varType == null) {
-            // TODO (kelianclerc) 2/6/17 exception variable not declared
-            return;
+            String message = "The variable being added : " + variableName + " is not present in the " +
+                "query parameter list : [" + parameters.printParameters() + "]";
+            throw new QLException(message);
         }
         variables.addVariable(variableName, value);
     }
@@ -127,7 +129,7 @@ public class QLQuery {
         return variables;
     }
 
-    public void setVariables(QLVariables variables) {
+    public void setVariables(QLVariables variables) throws QLException {
         Map<String, Object> vars = variables.getVariables();
         for (String key: vars.keySet()) {
             addVariable(key, vars.get(key));
