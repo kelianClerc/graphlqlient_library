@@ -32,12 +32,12 @@ public class QLParserTest {
 
         parser.setToParse("query hello {}");
         QLQuery query = parser.buildQuery();
-        assertEquals(query.name, "hello");
+        assertEquals(query.getName(), "hello");
 
         QLParser parser2 = new QLParser();
         parser2.setToParse("{}");
         QLQuery response2 = parser2.buildQuery();
-        assertEquals(response2.name, null);
+        assertEquals(response2.getName(), null);
     }
 
     @Test
@@ -46,21 +46,21 @@ public class QLParserTest {
 
         parser.setToParse("query hello {}");
         QLQuery query = parser.buildQuery();
-        assertEquals(query.name, "hello");
+        assertEquals(query.getName(), "hello");
 
         QLParser parser2 = new QLParser();
         parser2.setToParse("{}");
         QLQuery response2 = parser2.buildQuery();
-        assertEquals(response2.name, null);
+        assertEquals(response2.getName(), null);
 
 
         QLParser parser3 = new QLParser();
         parser3.setToParse("query test($try: Boolean!){}");
         QLQuery response3 = parser3.buildQuery();
-        assertEquals(response3.name, "test");
-        assertEquals(response3.getParameters().size(), 1);
-        assertEquals(response3.getParameters().get(0).getName(), "try");
-        assertEquals(response3.getParameters().get(0).getType(), QLType.BOOLEAN);
+        assertEquals(response3.getName(), "test");
+        assertEquals(response3.getParameters().getParams().size(), 1);
+        assertEquals(response3.getParameters().getParams().get(0).getName(), "try");
+        assertEquals(response3.getParameters().getParams().get(0).getType(), QLType.BOOLEAN);
     }
 
     @Test
@@ -69,21 +69,21 @@ public class QLParserTest {
 
         parser.setToParse("query hello {user {}}");
         QLQuery query = parser.buildQuery();
-        assertEquals(query.name, "hello");
+        assertEquals(query.getName(), "hello");
         assertEquals(query.getQueryFields().size(), 1);
         assertEquals(query.getQueryFields().get(0).getName(), "user");
 
 
         parser.setToParse("query hello {test : user {}}");
         QLQuery query2 = parser.buildQuery();
-        assertEquals(query2.name, "hello");
+        assertEquals(query2.getName(), "hello");
         assertEquals(query2.getQueryFields().size(), 1);
         assertEquals(query2.getQueryFields().get(0).getName(), "user");
         assertEquals(query2.getQueryFields().get(0).getAlias(), "test");
 
         parser.setToParse("query hello {test : user(id:\"12f\") {}");
         QLQuery query3 = parser.buildQuery();
-        assertEquals(query3.name, "hello");
+        assertEquals(query3.getName(), "hello");
         assertEquals(query3.getQueryFields().size(), 1);
         assertEquals(query3.getQueryFields().get(0).getName(), "user");
         assertEquals(query3.getQueryFields().get(0).getAlias(), "test");
@@ -93,11 +93,11 @@ public class QLParserTest {
 
         parser.setToParse("query hello($try: Boolean!) {test : user(id:$try) {}");
         QLQuery query4 = parser.buildQuery();
-        assertEquals(query4.name, "hello");
+        assertEquals(query4.getName(), "hello");
 
-        assertEquals(query4.getParameters().size(), 1);
-        assertEquals(query4.getParameters().get(0).getName(), "try");
-        assertEquals(query4.getParameters().get(0).getType(), QLType.BOOLEAN);
+        assertEquals(query4.getParameters().getParams().size(), 1);
+        assertEquals(query4.getParameters().getParams().get(0).getName(), "try");
+        assertEquals(query4.getParameters().getParams().get(0).getType(), QLType.BOOLEAN);
         assertEquals(query4.getQueryFields().size(), 1);
         assertEquals(query4.getQueryFields().get(0).getName(), "user");
         assertEquals(query4.getQueryFields().get(0).getAlias(), "test");
@@ -116,7 +116,7 @@ public class QLParserTest {
     }
 
     private void assertQueryIsComplete(QLQuery query) {
-        assertEquals(query.name, "hello");
+        assertEquals(query.getName(), "hello");
         assertEquals(query.getQueryFields().size(), 2);
         assertThat(query.getQueryFields().get(0), instanceOf(QLNode.class));
         List<QLElement> children = query.getQueryFields().get(0).getChildren();
@@ -160,7 +160,7 @@ public class QLParserTest {
 
         parser.setToParse("query hello {user {aa, bb{cc,dd(id:\"v\", vf:\"d\"){ee}}}}");
         QLQuery query = parser.buildQuery();
-        assertEquals(query.name, "hello");
+        assertEquals(query.getName(), "hello");
         assertEquals(query.getQueryFields().size(), 1);
         List<QLElement> children = query.getQueryFields().get(0).getChildren();
         assertEquals(children.size(), 2);
@@ -187,7 +187,7 @@ public class QLParserTest {
         QLParser parser = new QLParser();
         parser.setToParse("{user {aa, bb{cc,dd(id:\"v\", vf:\"d\"){ee}}}}");
         QLQuery query = parser.buildQuery();
-        assertEquals(query.name, null);
+        assertEquals(query.getName(), null);
         assertEquals(query.getQueryFields().size(), 1);
         List<QLElement> children = query.getQueryFields().get(0).getChildren();
         assertEquals(children.size(), 2);
@@ -216,23 +216,23 @@ public class QLParserTest {
         QLParser parser = new QLParser();
         parser.setToParse("query hello($try: Boolean!, $try2:String, $try3:Int, $try4:Float, $try5:ID!) {user(id:$try) {}");
         QLQuery query = parser.buildQuery();
-        assertEquals(query.name, "hello");
-        assertEquals(query.getParameters().size(), 5);
-        assertEquals(query.getParameters().get(0).getName(), "try2");
-        assertEquals(query.getParameters().get(0).getType(), QLType.STRING);
-        assertFalse(query.getParameters().get(0).isMandatory());
-        assertEquals(query.getParameters().get(1).getName(), "try4");
-        assertEquals(query.getParameters().get(1).getType(), QLType.FLOAT);
-        assertFalse(query.getParameters().get(1).isMandatory());
-        assertEquals(query.getParameters().get(2).getName(), "try");
-        assertEquals(query.getParameters().get(2).getType(), QLType.BOOLEAN);
-        assertTrue(query.getParameters().get(2).isMandatory());
-        assertEquals(query.getParameters().get(3).getName(), "try3");
-        assertEquals(query.getParameters().get(3).getType(), QLType.INT);
-        assertFalse(query.getParameters().get(3).isMandatory());
-        assertEquals(query.getParameters().get(4).getName(), "try5");
-        assertEquals(query.getParameters().get(4).getType(), QLType.ID);
-        assertTrue(query.getParameters().get(4).isMandatory());
+        assertEquals(query.getName(), "hello");
+        assertEquals(query.getParameters().getParams().size(), 5);
+        assertEquals(query.getParameters().getParams().get(0).getName(), "try2");
+        assertEquals(query.getParameters().getParams().get(0).getType(), QLType.STRING);
+        assertFalse(query.getParameters().getParams().get(0).isMandatory());
+        assertEquals(query.getParameters().getParams().get(1).getName(), "try4");
+        assertEquals(query.getParameters().getParams().get(1).getType(), QLType.FLOAT);
+        assertFalse(query.getParameters().getParams().get(1).isMandatory());
+        assertEquals(query.getParameters().getParams().get(2).getName(), "try");
+        assertEquals(query.getParameters().getParams().get(2).getType(), QLType.BOOLEAN);
+        assertTrue(query.getParameters().getParams().get(2).isMandatory());
+        assertEquals(query.getParameters().getParams().get(3).getName(), "try3");
+        assertEquals(query.getParameters().getParams().get(3).getType(), QLType.INT);
+        assertFalse(query.getParameters().getParams().get(3).isMandatory());
+        assertEquals(query.getParameters().getParams().get(4).getName(), "try5");
+        assertEquals(query.getParameters().getParams().get(4).getType(), QLType.ID);
+        assertTrue(query.getParameters().getParams().get(4).isMandatory());
         assertEquals(query.getQueryFields().size(), 1);
 
         QLNode node = query.getQueryFields().get(0);
@@ -347,7 +347,7 @@ public class QLParserTest {
         assertEquals(fragment1.getName(), "test");
         assertEquals(fragment1.getChildren().size(), 1);
         assertEquals(query.getQueryFields().size(), 1);
-        assertEquals(query.name, "hello");
+        assertEquals(query.getName(), "hello");
         QLNode node = query.getQueryFields().get(0);
         assertEquals(node.getName(), "user");
         assertEquals(node.getParameters().size(), 0);

@@ -7,6 +7,7 @@ import com.applidium.graphqlient.tree.QLNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class QLQuery {
 
@@ -16,15 +17,13 @@ public class QLQuery {
 
     private List<QLFragment> fragments;
     @Nullable private String name;
-    private QLParameters parameters;
-    private QLVariables variables;
+    private final QLParameters parameters = new QLParameters();
+    private final QLVariables variables = new QLVariables();
     // A request must not be anonymous if it has variables.
     private final List<QLNode> queryFields = new ArrayList<>();
 
     public QLQuery() {
         fragments = new ArrayList<>();
-        parameters = new QLParameters();
-        variables = new QLVariables();
     }
 
     public QLQuery(String name) {
@@ -50,6 +49,10 @@ public class QLQuery {
             return;
         }
         variables.addVariable(variableName, value);
+    }
+
+    public boolean isVariableEmpty() {
+        return variables.isEmpty();
     }
 
     public boolean areAllParametersGiven() {
@@ -122,8 +125,11 @@ public class QLQuery {
         return variables;
     }
 
-    public void setVariables(@Nullable QLVariables variables) {
-        this.variables = variables;
+    public void setVariables(QLVariables variables) {
+        Map<String, Object> vars = variables.getVariables();
+        for (String key: vars.keySet()) {
+            addVariable(key, vars.get(key));
+        }
     }
 
     public void setName(@Nullable String name) {

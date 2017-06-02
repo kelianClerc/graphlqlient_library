@@ -42,7 +42,12 @@ public class QLParameters {
         return params;
     }
 
+    public void addParams(List<QLVariablesElement> params) {
+        this.params.addAll(params);
+    }
+
     public void setParams(List<QLVariablesElement> params) {
+        this.params.clear();
         this.params = params;
     }
 

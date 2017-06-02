@@ -34,6 +34,10 @@ public class QLVariables {
         return !variables.containsKey(key);
     }
 
+    public boolean isEmpty() {
+        return variables.isEmpty();
+    }
+
     public String print() {
         String res = "";
         if (variables.size() <= 0) {

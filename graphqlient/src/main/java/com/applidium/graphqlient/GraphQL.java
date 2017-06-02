@@ -54,15 +54,14 @@ public class GraphQL {
     }
 
     public QLCall call(String query, String variables) {
-        return call(buildQuery(query), variables);
+        QLQuery qlQuery = buildQuery(query);
+        QLVariables qlVariables = QLParser.parseVariables(variables);
+        qlQuery.setVariables(qlVariables);
+        return call(qlQuery);
     }
 
     public QLCall call(String query, QLVariables variables) {
         return call(buildQuery(query), variables);
-    }
-
-    public QLCall call(QLQuery query) {
-        return call(query, "");
     }
 
     public QLCall call(QLQuery query, String variables) {
@@ -76,6 +75,27 @@ public class GraphQL {
         String variablesString = variables.print();
         if (variablesString != null && !variablesString.isEmpty()) {
             builder.addQueryParameter(VARIABLE_PARAMETER, variablesString);
+        }
+        HttpUrl toCallUrl = builder.build();
+
+        Request request = new Request.Builder()
+            .url(toCallUrl)
+            .build();
+
+        return new QLCall(query, client.newCall(request));
+    }
+
+    public QLCall call(QLQuery query) {
+        HttpUrl.Builder builder = HttpUrl.parse(baseUrl).newBuilder();
+
+        builder.addQueryParameter(QUERY_PARAMETER, query.printQuery());
+        if (query.areAllParametersGiven()) {
+            if (!query.isVariableEmpty()) {
+                builder.addQueryParameter(VARIABLE_PARAMETER, query.getVariables().print());
+            }
+        } else {
+            // TODO (kelianclerc) 2/6/17 throw exception : not all mendatory variables provided
+            return null;
         }
         HttpUrl toCallUrl = builder.build();
 
