@@ -1,0 +1,16 @@
+{
+    users {
+        ...userInfo,
+        email
+    }
+}
+
+fragment userInfo on User {
+    id,
+    ...postInfo
+}
+
+fragment postInfo on Post {
+    id,
+    body
+}
