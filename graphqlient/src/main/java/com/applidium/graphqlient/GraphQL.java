@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.applidium.graphqlient.call.QLCall;
 import com.applidium.graphqlient.call.QLResponse;
 import com.applidium.graphqlient.exceptions.QLException;
+import com.applidium.graphqlient.exceptions.QLParserException;
 
 import java.io.IOException;
 
@@ -32,7 +33,7 @@ public class GraphQL {
         return send(call(query, variables));
     }
 
-    public String send(String query, QLVariables variables) throws IOException {
+    public String send(String query, QLVariables variables) throws IOException, QLParserException {
         return send(call(query, variables));
     }
 
@@ -45,7 +46,7 @@ public class GraphQL {
         return response.toString();
     }
 
-    public QLQuery buildQuery(String query) {
+    public QLQuery buildQuery(String query) throws QLParserException {
         QLParser qlParser = new QLParser(query);
         return qlParser.buildQuery();
     }
@@ -61,7 +62,7 @@ public class GraphQL {
         return call(qlQuery);
     }
 
-    public QLCall call(String query, QLVariables variables) {
+    public QLCall call(String query, QLVariables variables) throws QLParserException {
         return call(buildQuery(query), variables);
     }
 
