@@ -1,7 +1,6 @@
 package com.applidium.graphql.client.di.selection;
 
-import com.applidium.graphql.client.app.selection.ui.activity.SelectionActivity;
-import com.applidium.graphql.client.app.selection.ui.fragment.ConfigFragment;
+import com.applidium.graphql.client.app.selection.ui.fragment.CreateQueryFragment;
 import com.applidium.graphql.client.di.PerActivity;
 import com.applidium.graphql.client.di.common.ApplicationComponent;
 import com.applidium.graphql.client.di.common.ContextModule;
@@ -15,5 +14,5 @@ import dagger.Component;
     dependencies = ApplicationComponent.class
 )
 public interface ConfigQueryComponent {
-    void inject(ConfigFragment fragment);
+    void inject(CreateQueryFragment fragment);
 }

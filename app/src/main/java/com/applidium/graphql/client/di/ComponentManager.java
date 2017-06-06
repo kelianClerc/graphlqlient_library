@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentManager;
 
 import com.applidium.graphql.client.app.main.ui.MainViewContract;
 import com.applidium.graphql.client.app.selection.ui.SelectionViewContract;
-import com.applidium.graphql.client.app.selection.ui.fragment.ConfigViewContract;
+import com.applidium.graphql.client.app.selection.ui.fragment.CreateQueryViewContract;
 import com.applidium.graphql.client.di.common.ApplicationComponent;
 import com.applidium.graphql.client.di.common.ContextModule;
 import com.applidium.graphql.client.di.common.DaggerApplicationComponent;
@@ -140,7 +140,7 @@ public class ComponentManager {
     }
 
     public static ConfigQueryComponent getConfigQueryComponent(
-        ConfigViewContract viewContract, Context context, FragmentManager manager
+        CreateQueryViewContract viewContract, Context context, FragmentManager manager
     ) {
         return DaggerConfigQueryComponent
             .builder()

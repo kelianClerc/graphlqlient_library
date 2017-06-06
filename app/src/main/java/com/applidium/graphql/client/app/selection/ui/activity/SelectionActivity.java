@@ -15,7 +15,7 @@ import com.applidium.graphql.client.R;
 import com.applidium.graphql.client.app.common.BaseActivity;
 import com.applidium.graphql.client.app.selection.presenter.SelectionPresenter;
 import com.applidium.graphql.client.app.selection.ui.SelectionViewContract;
-import com.applidium.graphql.client.app.selection.ui.fragment.ConfigFragment;
+import com.applidium.graphql.client.app.selection.ui.fragment.CreateQueryFragment;
 import com.applidium.graphql.client.app.selection.ui.fragment.DetailsFragment;
 import com.applidium.graphql.client.di.ComponentManager;
 
@@ -33,7 +33,7 @@ public class SelectionActivity extends BaseActivity implements
 
     private FragmentManager manager;
     private DetailsFragment fragment;
-    private ConfigFragment configFragment;
+    private CreateQueryFragment createQueryFragment;
 
     public static Intent makeIntent(Context context) {
         return new Intent(context, SelectionActivity.class);
@@ -77,9 +77,9 @@ public class SelectionActivity extends BaseActivity implements
     private void setupFragments() {
         FragmentTransaction ft = manager.beginTransaction();
         fragment = new DetailsFragment();
-        configFragment = new ConfigFragment();
+        createQueryFragment = new CreateQueryFragment();
         ft.add(R.id.details, fragment);
-        ft.add(R.id.config, configFragment);
+        ft.add(R.id.config, createQueryFragment);
         ft.commit();
     }
 
@@ -94,8 +94,8 @@ public class SelectionActivity extends BaseActivity implements
         return false;
     }
 
-    public void onConfigClicked() {
-        fragment.showQuery("Test");
+    public void updateQuery(String query) {
+        fragment.showQuery(query);
     }
 }
 

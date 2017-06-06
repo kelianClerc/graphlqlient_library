@@ -1,20 +1,20 @@
 package com.applidium.graphql.client.di.selection;
 
-import com.applidium.graphql.client.app.selection.ui.fragment.ConfigViewContract;
+import com.applidium.graphql.client.app.selection.ui.fragment.CreateQueryViewContract;
 
 import dagger.Module;
 import dagger.Provides;
 
 @Module
 public class ConfigQueryModule {
-    private final ConfigViewContract viewContract;
+    private final CreateQueryViewContract viewContract;
 
-    public ConfigQueryModule(ConfigViewContract viewContract) {
+    public ConfigQueryModule(CreateQueryViewContract viewContract) {
         this.viewContract = viewContract;
     }
 
     @Provides
-    ConfigViewContract viewContract() {
+    CreateQueryViewContract viewContract() {
         return viewContract;
     }
 }
