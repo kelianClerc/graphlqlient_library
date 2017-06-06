@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +15,8 @@ import com.applidium.graphql.client.R;
 import com.applidium.graphql.client.app.common.BaseActivity;
 import com.applidium.graphql.client.app.selection.presenter.SelectionPresenter;
 import com.applidium.graphql.client.app.selection.ui.SelectionViewContract;
+import com.applidium.graphql.client.app.selection.ui.fragment.ConfigFragment;
+import com.applidium.graphql.client.app.selection.ui.fragment.DetailsFragment;
 import com.applidium.graphql.client.di.ComponentManager;
 
 import javax.inject.Inject;
@@ -27,13 +31,18 @@ public class SelectionActivity extends BaseActivity implements
 
     @Inject SelectionPresenter presenter;
 
+    private FragmentManager manager;
+    private DetailsFragment fragment;
+    private ConfigFragment configFragment;
+
     public static Intent makeIntent(Context context) {
         return new Intent(context, SelectionActivity.class);
     }
 
     @Override
     protected void injectDependencies() {
-        ComponentManager.getSelectionComponent(this, this).inject(this);
+        manager = getSupportFragmentManager();
+        ComponentManager.getSelectionComponent(this, this, manager).inject(this);
     }
 
     @Override
@@ -41,6 +50,7 @@ public class SelectionActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setupView();
         setupMenu();
+        setupFragments();
     }
 
     private void setupMenu() {
@@ -64,6 +74,15 @@ public class SelectionActivity extends BaseActivity implements
 
     }
 
+    private void setupFragments() {
+        FragmentTransaction ft = manager.beginTransaction();
+        fragment = new DetailsFragment();
+        configFragment = new ConfigFragment();
+        ft.add(R.id.details, fragment);
+        ft.add(R.id.config, configFragment);
+        ft.commit();
+    }
+
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
@@ -73,6 +92,10 @@ public class SelectionActivity extends BaseActivity implements
                 return true;
         }
         return false;
+    }
+
+    public void onConfigClicked() {
+        fragment.showQuery("Test");
     }
 }
 
