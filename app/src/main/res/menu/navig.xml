@@ -14,4 +14,10 @@
         android:title="@string/silos_menu_map_title"
         app:showAsAction="always"
         />
+    <item
+        android:id="@+id/setting_request"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/silos_menu_map_title"
+        app:showAsAction="always"
+        />
 </menu>

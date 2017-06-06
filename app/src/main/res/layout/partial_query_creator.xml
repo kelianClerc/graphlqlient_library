@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/unit_3">
+    <TextView
+        android:id="@+id/query_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name of the query :"
+        />
+    <EditText
+        android:id="@+id/query_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        />
+
+    <TextView
+        android:id="@+id/params_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/parameters_label"
+        android:layout_marginTop="@dimen/unit_2"
+        />
+    <EditText
+        android:id="@+id/param_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <Spinner
+        android:id="@+id/param_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/param_type"
+        />
+    <CheckBox
+        android:id="@+id/param_mandatory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/param_is_mandatory_label"
+        />
+
+    <Button
+        android:id="@+id/validate"
+        android:layout_width="228dp"
+        android:layout_height="wrap_content"
+        android:text="@string/create_query_label"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/unit_4"
+        />
+
+</LinearLayout>
