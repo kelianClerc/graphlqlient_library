@@ -8,6 +8,7 @@ import com.applidium.graphqlient.model.QLModel;
 import com.applidium.graphqlient.tree.QLElement;
 import com.applidium.graphqlient.tree.QLLeaf;
 import com.applidium.graphqlient.tree.QLNode;
+import com.applidium.graphqlient.tree.QLTreeBuilder;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -113,19 +114,20 @@ public class QLQueryTest {
         assertEquals(qlQuery.printQuery(), "query name{user(id:\"1\"){id,name,essai:email,posts{id,title}}}");
     }
 
-    private class QueryTest extends QLModel {
+    private class QueryTest implements QLModel {
         @Parameters(table={
             @Argument(argumentName = "id", argumentValue = "1")
         })
         private UserTest user;
         private List<UserTest> users;
+        private QLTreeBuilder treeBuilder = new QLTreeBuilder();
 
         public QueryTest() {
         }
 
         public QLNode getUser() {
             try {
-                return createNodeFromField(getClass().getDeclaredField("user"));
+                return treeBuilder.createNodeFromField(getClass().getDeclaredField("user"));
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();
             }
@@ -163,14 +165,14 @@ public class QLQueryTest {
 
     }
 
-    private class UserTest extends QLModel {
+    private class UserTest implements QLModel {
         private String id;
         private String name;
         @Alias(name = "essai") private String email;
         private PostTest posts;
     }
 
-    private class PostTest extends QLModel {
+    private class PostTest implements QLModel {
         private String id;
         private String title;
     }

@@ -7,6 +7,7 @@ import com.applidium.graphqlient.annotations.Parameters;
 import com.applidium.graphqlient.tree.QLElement;
 import com.applidium.graphqlient.tree.QLLeaf;
 import com.applidium.graphqlient.tree.QLNode;
+import com.applidium.graphqlient.tree.QLTreeBuilder;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -53,11 +54,11 @@ public class QLModelTest {
         List<StandardTypeSample> cc;
     }
 
-    private QLModel qlModel;
+    private QLTreeBuilder treeBuilder;
 
     @Before
     public void setUp() throws Exception {
-        qlModel = new QLModel();
+        treeBuilder = new QLTreeBuilder();
     }
 
     @Test
@@ -81,7 +82,7 @@ public class QLModelTest {
 
     private void assertEqualsType(String field, Class<?> shouldBe) throws NoSuchFieldException {
         List<QLElement> elements = new ArrayList<>();
-        qlModel.appendQLElement(elements, StandardTypeSample.class.getDeclaredField(field));
+        treeBuilder.appendQLElement(elements, StandardTypeSample.class.getDeclaredField(field));
         if (shouldBe != null) {
             assertThat(elements.get(0), instanceOf(shouldBe));
         } else {
@@ -97,7 +98,7 @@ public class QLModelTest {
     public void createElementTest() throws Exception {
         Field field = StandardTypeSample.class.getDeclaredField("a");
         List<QLElement> elements = new ArrayList<>();
-        qlModel.appendQLElement(elements, field);
+        treeBuilder.appendQLElement(elements, field);
         QLElement element = elements.get(0);
         assertTrue(element.getName().equals("a"));
         assertTrue(element.getAlias() == null);
@@ -106,7 +107,7 @@ public class QLModelTest {
 
         Field field2 = StandardTypeSample.class.getDeclaredField("b");
         elements.clear();
-        qlModel.appendQLElement(elements, field2);
+        treeBuilder.appendQLElement(elements, field2);
         QLElement element1 = elements.get(0);
         assertTrue(element1.getName().equals("b"));
         assertTrue(element1.getAlias().equals("A string"));
@@ -114,7 +115,7 @@ public class QLModelTest {
 
         Field field3 = StandardTypeSample.class.getDeclaredField("b2");
         elements.clear();
-        qlModel.appendQLElement(elements, field3);
+        treeBuilder.appendQLElement(elements, field3);
         QLElement element3 = elements.get(0);
         assertTrue(element3.getName().equals("b2"));
         assertTrue(element3.getAlias() == null);
@@ -128,7 +129,7 @@ public class QLModelTest {
     public void createLeafElement() throws Exception {
         Field field = StandardTypeSample.class.getDeclaredField("a");
         List<QLElement> elements = new ArrayList<>();
-        qlModel.appendQLElement(elements, field);
+        treeBuilder.appendQLElement(elements, field);
         QLElement element = elements.get(0);
         assertTrue(element instanceof QLLeaf);
     }
@@ -136,13 +137,13 @@ public class QLModelTest {
     @Test
     public void createNodeElementTest() throws Exception {
         Field field = Sample2.class.getDeclaredField("bb");
-        QLElement element = qlModel.createNodeFromField(field);
+        QLElement element = treeBuilder.createNodeFromField(field);
         assertTrue(element instanceof QLNode);
         assertTrue(element.getName().equals("bb"));
         assertTrue(((QLNode) element).getChildren().size() == 12);
 
         Field field2 = Sample2.class.getDeclaredField("cc");
-        QLElement element2 = qlModel.createNodeFromField(field2);
+        QLElement element2 = treeBuilder.createNodeFromField(field2);
         assertTrue(element2 instanceof QLNode);
         assertTrue(element2.getName().equals("cc"));
         assertTrue(((QLNode) element2).getChildren().size() == 12);
