@@ -46,11 +46,13 @@ public class CreateQueryPresenter extends Presenter<CreateQueryViewContract> imp
     @Override
     public void onCreateQuerySuccess(QLQuery query) {
         view.showQuery(query.printQuery());
+        view.showContinueButton(query);
         // TODO (kelianclerc) 6/6/17 go to next step
     }
 
     @Override
     public void onCreateQueryError(String message) {
         view.showQuery(message);
+        view.hideContinueButton();
     }
 }

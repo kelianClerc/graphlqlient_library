@@ -18,21 +18,27 @@ import com.applidium.graphql.client.app.common.BaseFragment;
 import com.applidium.graphql.client.app.selection.presenter.CreateQueryPresenter;
 import com.applidium.graphql.client.app.selection.ui.activity.SelectionActivity;
 import com.applidium.graphql.client.di.ComponentManager;
+import com.applidium.graphqlient.QLQuery;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.view.View.GONE;
+
 public class CreateQueryFragment extends BaseFragment implements
     CreateQueryViewContract, AdapterView.OnItemSelectedListener
 {
 
     @BindView(R.id.config_content) FrameLayout content;
+    @BindView(R.id.continue_query) Button continueButton;
     @Inject CreateQueryPresenter presenter;
 
     private LayoutInflater inflater;
     private String selected;
+    private SelectionActivity activity;
+    private QLQuery query;
 
     @Override
     protected void injectDependencies() {
@@ -50,8 +56,19 @@ public class CreateQueryFragment extends BaseFragment implements
         this.inflater = inflater;
         View view = inflater.inflate(R.layout.fragment_config_query, container, false);
         ButterKnife.bind(this, view);
+        activity = (SelectionActivity) getActivity();
+        continueButton.setOnClickListener(getOnContinueListener());
         presenter.start();
         return view;
+    }
+
+    private View.OnClickListener getOnContinueListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.addElementsToQuery(query);
+            }
+        };
     }
 
     @Override
@@ -61,8 +78,19 @@ public class CreateQueryFragment extends BaseFragment implements
 
     @Override
     public void showQuery(String query) {
-        SelectionActivity activity = (SelectionActivity) getActivity();
         activity.updateQuery(query);
+    }
+
+    @Override
+    public void showContinueButton(QLQuery query) {
+        this.query = query;
+        continueButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideContinueButton() {
+        this.query = null;
+        continueButton.setVisibility(GONE);
     }
 
     private void populateQueryScreen() {

@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 
 import com.applidium.graphql.client.app.main.ui.MainViewContract;
 import com.applidium.graphql.client.app.selection.ui.SelectionViewContract;
+import com.applidium.graphql.client.app.selection.ui.fragment.AddElementViewContract;
 import com.applidium.graphql.client.app.selection.ui.fragment.CreateQueryViewContract;
 import com.applidium.graphql.client.di.common.ApplicationComponent;
 import com.applidium.graphql.client.di.common.ContextModule;
@@ -28,6 +29,9 @@ import com.applidium.graphql.client.di.selection.DaggerConfigQueryComponent;
 import com.applidium.graphql.client.di.selection.DaggerSelectionComponent;
 import com.applidium.graphql.client.di.selection.SelectionComponent;
 import com.applidium.graphql.client.di.selection.SelectionModule;
+import com.applidium.graphql.client.di.selection.addelement.AddElementComponent;
+import com.applidium.graphql.client.di.selection.addelement.AddElementModule;
+import com.applidium.graphql.client.di.selection.addelement.DaggerAddElementComponent;
 import com.applidium.graphql.client.di.threading.ThreadingComponent;
 import com.applidium.graphql.client.di.threading.ThreadingModule;
 import com.applidium.graphql.client.di.trace.TracerModule;
@@ -147,6 +151,20 @@ public class ComponentManager {
             .applicationComponent(getApplicationComponent())
             .configQueryModule(new ConfigQueryModule(viewContract))
             .fragmentManagerModule(new FragmentManagerModule(manager))
+            .contextModule(new ContextModule(context))
+            .build();
+    }
+
+    public static AddElementComponent getAddElementComponent
+        (AddElementViewContract viewContract,
+         Context context,
+         FragmentManager fm
+        ) {
+        return DaggerAddElementComponent
+            .builder()
+            .applicationComponent(getApplicationComponent())
+            .addElementModule(new AddElementModule(viewContract))
+            .fragmentManagerModule(new FragmentManagerModule(fm))
             .contextModule(new ContextModule(context))
             .build();
     }

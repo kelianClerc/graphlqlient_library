@@ -6,6 +6,14 @@
     <FrameLayout
         android:id="@+id/config_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <Button
+        android:id="@+id/continue_query"
+        android:layout_width="228dp"
+        android:layout_height="wrap_content"
+        android:text="Add elements to query"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
         />
 </LinearLayout>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
@@ -15,9 +16,11 @@ import com.applidium.graphql.client.R;
 import com.applidium.graphql.client.app.common.BaseActivity;
 import com.applidium.graphql.client.app.selection.presenter.SelectionPresenter;
 import com.applidium.graphql.client.app.selection.ui.SelectionViewContract;
+import com.applidium.graphql.client.app.selection.ui.fragment.AddElementFragment;
 import com.applidium.graphql.client.app.selection.ui.fragment.CreateQueryFragment;
 import com.applidium.graphql.client.app.selection.ui.fragment.DetailsFragment;
 import com.applidium.graphql.client.di.ComponentManager;
+import com.applidium.graphqlient.QLQuery;
 
 import javax.inject.Inject;
 
@@ -33,7 +36,7 @@ public class SelectionActivity extends BaseActivity implements
 
     private FragmentManager manager;
     private DetailsFragment fragment;
-    private CreateQueryFragment createQueryFragment;
+    private Fragment createQueryFragment;
 
     public static Intent makeIntent(Context context) {
         return new Intent(context, SelectionActivity.class);
@@ -96,6 +99,13 @@ public class SelectionActivity extends BaseActivity implements
 
     public void updateQuery(String query) {
         fragment.showQuery(query);
+    }
+
+    public void addElementsToQuery(QLQuery query) {
+        FragmentTransaction ft = manager.beginTransaction();
+        createQueryFragment = new AddElementFragment();
+        ft.replace(R.id.config, createQueryFragment);
+        ft.commit();
     }
 }
 
