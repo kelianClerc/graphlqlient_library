@@ -117,6 +117,8 @@ public class MainActivity extends BaseActivity implements MainViewContract, Tool
             case R.id.text_request:
                 presenter.onLaunchRequest(request.getText().toString(), variable.getText().toString());
                 return true;
+            case R.id.setting_request:
+                presenter.onSettings();
         }
         return false;
     }

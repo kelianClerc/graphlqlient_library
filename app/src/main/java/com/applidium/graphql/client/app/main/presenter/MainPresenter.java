@@ -48,11 +48,7 @@ public class MainPresenter extends Presenter<MainViewContract> implements SendRe
         // TODO (kelianclerc) 1/6/17
     }
 
-    public void onAutoRequest() {
-        mainNavigator.navigateToAutoRequest();
-    }
-
-    public void onTextRequest() {
-        mainNavigator.navigateToTextRequest();
+    public void onSettings() {
+        mainNavigator.navigateToSettings();
     }
 }

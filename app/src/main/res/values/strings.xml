@@ -5,4 +5,5 @@
     <string name="error_unavailable_service_message">"Serveur indisponible. Réessayer dans un instant."</string>
     <string name="menu_text_request">Text request</string>
     <string name="silos_menu_map_title">Self building request</string>
+    <string name="menu_validate_request">Validate selection</string>
 </resources>
