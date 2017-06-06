@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.applidium.graphql.client.app.main.ui.MainViewContract;
+import com.applidium.graphql.client.app.selection.ui.SelectionViewContract;
 import com.applidium.graphql.client.di.common.ApplicationComponent;
 import com.applidium.graphql.client.di.common.ContextModule;
 import com.applidium.graphql.client.di.common.DaggerApplicationComponent;
@@ -18,6 +19,9 @@ import com.applidium.graphql.client.di.logging.LoggingModule;
 import com.applidium.graphql.client.di.main.DaggerMainComponent;
 import com.applidium.graphql.client.di.main.MainComponent;
 import com.applidium.graphql.client.di.main.MainModule;
+import com.applidium.graphql.client.di.selection.DaggerSelectionComponent;
+import com.applidium.graphql.client.di.selection.SelectionComponent;
+import com.applidium.graphql.client.di.selection.SelectionModule;
 import com.applidium.graphql.client.di.threading.ThreadingComponent;
 import com.applidium.graphql.client.di.threading.ThreadingModule;
 import com.applidium.graphql.client.di.trace.TracerModule;
@@ -114,6 +118,15 @@ public class ComponentManager {
             .builder()
             .applicationComponent(getApplicationComponent())
             .mainModule(new MainModule(viewContract))
+            .contextModule(new ContextModule(context))
+            .build();
+    }
+
+    public static SelectionComponent getSelectionComponent(SelectionViewContract viewContract, Context context) {
+        return DaggerSelectionComponent
+            .builder()
+            .applicationComponent(getApplicationComponent())
+            .selectionModule(new SelectionModule(viewContract))
             .contextModule(new ContextModule(context))
             .build();
     }

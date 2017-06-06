@@ -11,8 +11,11 @@ import android.widget.Toast;
 
 import com.applidium.graphql.client.R;
 import com.applidium.graphql.client.app.common.BaseActivity;
+import com.applidium.graphql.client.app.selection.presenter.SelectionPresenter;
 import com.applidium.graphql.client.app.selection.ui.SelectionViewContract;
 import com.applidium.graphql.client.di.ComponentManager;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,13 +25,15 @@ public class SelectionActivity extends BaseActivity implements
 
     @BindView(R.id.toolbar) Toolbar toolbar;
 
+    @Inject SelectionPresenter presenter;
+
     public static Intent makeIntent(Context context) {
         return new Intent(context, SelectionActivity.class);
     }
 
     @Override
     protected void injectDependencies() {
-        ComponentManager.getLoggingComponent().inject(this);
+        ComponentManager.getSelectionComponent(this, this).inject(this);
     }
 
     @Override
@@ -48,8 +53,7 @@ public class SelectionActivity extends BaseActivity implements
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO (kelianclerc) 2/6/17
-                Toast.makeText(SelectionActivity.this, "Back pressed", Toast.LENGTH_SHORT).show();
+                onBackPressed();
             }
         };
     }
@@ -64,7 +68,7 @@ public class SelectionActivity extends BaseActivity implements
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.validate_request:
-                // TODO (kelianclerc) 2/6/17
+                presenter.onValidate();
                 Toast.makeText(this, "Validate", Toast.LENGTH_SHORT).show();
                 return true;
         }
