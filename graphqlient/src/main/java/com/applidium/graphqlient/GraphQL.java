@@ -55,6 +55,19 @@ public class GraphQL {
         return qlParser.buildQuery();
     }
 
+    public QLQuery buildQueryWithTarget(String query, List<Class<?>> rootObjects) throws QLParserException {
+        QLParser qlParser = new QLParser(query);
+        QLTreeBuilder treeBuilder = new QLTreeBuilder();
+        QLQuery qlQuery = qlParser.buildQuery();
+
+        for (int i = 0; i < rootObjects.size(); i++) {
+            Class<?> type = rootObjects.get(i);
+            qlQuery.getQueryFields().get(i).setAssociatedObject(type);
+            treeBuilder.propagateType(qlQuery.getQueryFields().get(i));
+        }
+        return qlQuery;
+    }
+
     public QLCall call(String query) throws QLException {
         return call(query, "");
     }
