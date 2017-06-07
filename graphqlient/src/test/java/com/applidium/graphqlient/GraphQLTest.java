@@ -2,7 +2,7 @@ package com.applidium.graphqlient;
 
 import android.support.annotation.Nullable;
 
-import com.applidium.graphqlient.annotations.Alias;
+import com.applidium.graphqlient.annotations.AliasFor;
 import com.applidium.graphqlient.call.QLCall;
 import com.applidium.graphqlient.call.QLResponse;
 import com.applidium.graphqlient.exceptions.QLException;
@@ -116,7 +116,7 @@ public class GraphQLTest {
     public class User implements QLModel {
         @Nullable private String id;
         @Nullable private String name;
-        @Nullable private @Alias(name = "essai") String email;
+        @Nullable private @AliasFor(name = "essai") String email;
 
         public User() {
         }

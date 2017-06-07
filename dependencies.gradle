@@ -26,6 +26,7 @@ ext.versions = [
     jodaAndroid : '2.9.4.1',
     hockeyApp : '4.1.1',
     multidex : '1.0.1',
+    guava : '20.0',
 
     // Permissions
     let : '0.1.11',
