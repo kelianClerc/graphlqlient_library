@@ -51,8 +51,8 @@ public class GraphQLTest {
         QLCall toCall = graphQL.call(qlQuery);
         QLResponse response = graphQL.send(toCall);
         assertEquals(response.getResponses().size(), 1);
-        assertThat(response.getResponses().get(0), instanceOf(User.class));
-        User user = (User) response.getResponses().get(0);
+        assertThat(response.getResponses().get("user"), instanceOf(User.class));
+        User user = (User) response.getResponses().get("user");
         assertEquals(user.getName(), "Elise Farrell");
         assertEquals(user.getId(), null);
         assertEquals(user.getEmail(), null);
@@ -73,14 +73,14 @@ public class GraphQLTest {
         QLCall toCall = graphQL.call(qlQuery);
         QLResponse response = graphQL.send(toCall);
         assertEquals(response.getResponses().size(), 2);
-        assertThat(response.getResponses().get(0), instanceOf(User.class));
-        User user = (User) response.getResponses().get(0);
+        assertThat(response.getResponses().get("user"), instanceOf(User.class));
+        User user = (User) response.getResponses().get("user");
         assertEquals(user.getName(), "Elise Farrell");
         assertEquals(user.getId(), null);
         assertEquals(user.getEmail(), null);
 
-        assertThat(response.getResponses().get(1), instanceOf(List.class));
-        List<User> users = (List<User>) response.getResponses().get(1);
+        assertThat(response.getResponses().get("users"), instanceOf(List.class));
+        List<User> users = (List<User>) response.getResponses().get("users");
         assertEquals(users.get(0).getName(), "Adolph Konopelski");
         assertEquals(users.get(0).getId(), "0");
         assertEquals(users.get(0).getEmail(), "test0@example.com");
@@ -101,8 +101,8 @@ public class GraphQLTest {
         QLResponse response = graphQL.send(toCall);
         assertEquals(response.getResponses().size(), 1);
 
-        assertThat(response.getResponses().get(0), instanceOf(List.class));
-        List<Post> posts = (List<Post>) response.getResponses().get(0);
+        assertThat(response.getResponses().get("posts"), instanceOf(List.class));
+        List<Post> posts = (List<Post>) response.getResponses().get("posts");
         assertEquals(posts.size(), 10);
         Post post = posts.get(0);
         assertEquals(post.getId(), null);
