@@ -1,12 +1,24 @@
 package com.applidium.graphqlient;
 
+import android.support.annotation.Nullable;
+
+import com.applidium.graphqlient.annotations.Alias;
+import com.applidium.graphqlient.call.QLCall;
+import com.applidium.graphqlient.call.QLResponse;
 import com.applidium.graphqlient.exceptions.QLException;
+import com.applidium.graphqlient.model.QLModel;
+import com.applidium.graphqlient.tree.QLNode;
 
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 
 public class GraphQLTest {
     @Test
@@ -25,4 +37,74 @@ public class GraphQLTest {
         assertFalse(graphQL.call(qlQuery) == null);
     }
 
+    @Test
+    public void parserWithObjectProvidedTest() throws Exception {
+
+        String query = "{user(id:2){name}}";
+        GraphQL graphQL = new GraphQL("http://localhost:3000/");
+        List<Class<?>> typeList = new ArrayList<>();
+        typeList.add(User.class);
+        QLQuery qlQuery = graphQL.buildQueryWithTarget(query, typeList);
+        assertEquals(qlQuery.getQueryFields().size(), 1);
+        QLNode node = qlQuery.getQueryFields().get(0);
+        assertEquals(node.getAssociatedObject(), User.class);
+
+        QLCall toCall = graphQL.call(qlQuery);
+        QLResponse response = graphQL.send(toCall);
+        assertEquals(response.getResponses().size(), 1);
+        assertThat(response.getResponses().get(0), instanceOf(User.class));
+        User user = (User) response.getResponses().get(0);
+        assertEquals(user.getName(), "Elise Farrell");
+        assertEquals(user.getId(), null);
+        assertEquals(user.getEmail(), null);
+
+    }
+
+    public class User implements QLModel {
+        @Nullable private String id;
+        @Nullable private String name;
+        @Nullable private @Alias(name = "essai") String email;
+
+        public User() {
+        }
+
+        public User(@Nullable String id,@Nullable String name,@Nullable String email) {
+            this.id = id;
+            this.name = name;
+            this.email = email;
+        }
+
+        @Nullable
+        public String getId() {
+            return id;
+        }
+
+        public void setId(@Nullable String id) {
+            this.id = id;
+        }
+
+        @Nullable
+        public String getName() {
+            return name;
+        }
+
+        public void setName(@Nullable String name) {
+            this.name = name;
+        }
+
+        @Nullable
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(@Nullable String email) {
+            this.email = email;
+        }
+    }
+
+    public class Post  implements QLModel {
+        @Nullable private String id;
+        @Nullable private String name;
+        @Nullable private @Alias(name = "essai") String email;
+    }
 }
