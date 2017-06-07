@@ -6,8 +6,12 @@ import com.applidium.graphqlient.call.QLCall;
 import com.applidium.graphqlient.call.QLResponse;
 import com.applidium.graphqlient.exceptions.QLException;
 import com.applidium.graphqlient.exceptions.QLParserException;
+import com.applidium.graphqlient.tree.QLTreeBuilder;
+
+import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -25,25 +29,25 @@ public class GraphQL {
 
     }
 
-    public String send(String query) throws IOException, QLException {
+    public QLResponse send(String query) throws IOException, QLException, JSONException {
         return send(query, "");
     }
 
-    public String send(String query, @Nullable String variables) throws IOException, QLException {
+    public QLResponse send(String query, @Nullable String variables) throws IOException, QLException, JSONException {
         return send(call(query, variables));
     }
 
-    public String send(String query, QLVariables variables) throws IOException, QLParserException {
+    public QLResponse send(String query, QLVariables variables) throws IOException, QLParserException, JSONException {
         return send(call(query, variables));
     }
 
-    public String send(QLQuery query, QLVariables variables) throws IOException {
+    public QLResponse send(QLQuery query, QLVariables variables) throws IOException, JSONException {
         return send(call(query, variables));
     }
 
-    public String send(QLCall call) throws IOException {
+    public QLResponse send(QLCall call) throws IOException, JSONException {
         QLResponse response = call.execute();
-        return response.toString();
+        return response;
     }
 
     public QLQuery buildQuery(String query) throws QLParserException {
@@ -108,6 +112,4 @@ public class GraphQL {
 
         return new QLCall(query, client.newCall(request));
     }
-
-
 }
