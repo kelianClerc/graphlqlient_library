@@ -138,6 +138,7 @@ dependencies {
     debugCompile "net.danlew:android.joda:$versions.jodaAndroid"
     distribCompile "net.danlew:android.joda:$versions.jodaAndroid"
     releaseCompile "net.danlew:android.joda:$versions.jodaAndroid"
+    compile "com.google.guava:guava:$versions.guava" // needed by auto-matter-gson
     compile "com.android.support:support-annotations:$versions.androidSupport"
     compile "net.hockeyapp.android:HockeySDK:$versions.hockeyApp"
     compile "com.android.support:multidex:$versions.multidex"

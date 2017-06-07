@@ -5,9 +5,14 @@ import android.support.annotation.Nullable;
 import com.applidium.graphqlient.annotations.Alias;
 import com.applidium.graphqlient.model.QLModel;
 
-public class User implements QLModel {
-    @Nullable private String id;
-    @Nullable private String name;
-    @Nullable @Alias(name = "essai") private String email;
-    @Nullable private Post posts;
+import java.util.List;
+
+import io.norberg.automatter.AutoMatter;
+
+@AutoMatter
+public interface User extends QLModel {
+    @Nullable String id();
+    @Nullable String name();
+    @Nullable @Alias(name = "essai") String email();
+    @Nullable List<Post> posts();
 }
