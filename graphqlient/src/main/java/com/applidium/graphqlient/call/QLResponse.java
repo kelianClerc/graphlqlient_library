@@ -1,12 +1,10 @@
 package com.applidium.graphqlient.call;
 
-import com.applidium.graphqlient.model.QLModel;
-
 import java.util.List;
 
 public class QLResponse {
     private String rawResponse;
-    private List<QLModel> responses;
+    private List<?> responses;
 
     public QLResponse() {
     }
@@ -15,20 +13,20 @@ public class QLResponse {
         this.rawResponse = rawResponse;
     }
 
-    public QLResponse(List<QLModel> responses) {
+    public QLResponse(List<?> responses) {
         this.responses = responses;
     }
 
-    public QLResponse(String rawResponse, List<QLModel> responses) {
+    public QLResponse(String rawResponse, List<?> responses) {
         this.rawResponse = rawResponse;
         this.responses = responses;
     }
 
-    public List<QLModel> getResponses() {
+    public List<?> getResponses() {
         return responses;
     }
 
-    public void setResponses(List<QLModel> responses) {
+    public void setResponses(List<?> responses) {
         this.responses = responses;
     }
 

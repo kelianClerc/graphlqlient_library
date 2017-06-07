@@ -39,7 +39,6 @@ public class GraphQLTest {
 
     @Test
     public void parserWithObjectProvidedTest() throws Exception {
-
         String query = "{user(id:2){name}}";
         GraphQL graphQL = new GraphQL("http://localhost:3000/");
         List<Class<?>> typeList = new ArrayList<>();
@@ -57,7 +56,34 @@ public class GraphQLTest {
         assertEquals(user.getName(), "Elise Farrell");
         assertEquals(user.getId(), null);
         assertEquals(user.getEmail(), null);
+    }
 
+    @Test
+    public void parserWithListObjectProvidedTest() throws Exception {
+        String query = "{user(id:2){name}users{email, id, name}";
+        GraphQL graphQL = new GraphQL("http://localhost:3000/");
+        List<Class<?>> typeList = new ArrayList<>();
+        typeList.add(User.class);
+        typeList.add(User.class);
+        QLQuery qlQuery = graphQL.buildQueryWithTarget(query, typeList);
+        assertEquals(qlQuery.getQueryFields().size(), 2);
+        QLNode node = qlQuery.getQueryFields().get(0);
+        assertEquals(node.getAssociatedObject(), User.class);
+
+        QLCall toCall = graphQL.call(qlQuery);
+        QLResponse response = graphQL.send(toCall);
+        assertEquals(response.getResponses().size(), 2);
+        assertThat(response.getResponses().get(0), instanceOf(User.class));
+        User user = (User) response.getResponses().get(0);
+        assertEquals(user.getName(), "Elise Farrell");
+        assertEquals(user.getId(), null);
+        assertEquals(user.getEmail(), null);
+
+        assertThat(response.getResponses().get(1), instanceOf(List.class));
+        List<User> users = (List<User>) response.getResponses().get(1);
+        assertEquals(users.get(0).getName(), "Adolph Konopelski");
+        assertEquals(users.get(0).getId(), "0");
+        assertEquals(users.get(0).getEmail(), "test0@example.com");
     }
 
     public class User implements QLModel {
