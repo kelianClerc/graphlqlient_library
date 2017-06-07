@@ -1,7 +1,7 @@
 package com.applidium.graphqlient.model;
 
 import com.applidium.graphqlient.QLVariablesElement;
-import com.applidium.graphqlient.annotations.Alias;
+import com.applidium.graphqlient.annotations.AliasFor;
 import com.applidium.graphqlient.annotations.Argument;
 import com.applidium.graphqlient.annotations.Parameters;
 import com.applidium.graphqlient.tree.QLElement;
@@ -26,7 +26,7 @@ public class QLModelTest {
 
     private class StandardTypeSample {
         String a = "dfs";
-        @Alias(name = "A string")
+        @AliasFor(name = "A string")
         int b = 1;
         @Parameters(table = {
             @Argument(argumentName = "id", argumentVariable = "try"),
@@ -109,8 +109,8 @@ public class QLModelTest {
         elements.clear();
         treeBuilder.appendQLElement(elements, field2);
         QLElement element1 = elements.get(0);
-        assertTrue(element1.getName().equals("b"));
-        assertTrue(element1.getAlias().equals("A string"));
+        assertTrue(element1.getAlias().equals("b"));
+        assertTrue(element1.getName().equals("A string"));
         assertTrue(element1.getParameters().size() == 0);
 
         Field field3 = StandardTypeSample.class.getDeclaredField("b2");

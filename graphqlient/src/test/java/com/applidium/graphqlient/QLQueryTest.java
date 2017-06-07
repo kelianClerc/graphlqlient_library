@@ -1,6 +1,6 @@
 package com.applidium.graphqlient;
 
-import com.applidium.graphqlient.annotations.Alias;
+import com.applidium.graphqlient.annotations.AliasFor;
 import com.applidium.graphqlient.annotations.Argument;
 import com.applidium.graphqlient.annotations.Parameters;
 import com.applidium.graphqlient.exceptions.QLException;
@@ -168,7 +168,7 @@ public class QLQueryTest {
     private class UserTest implements QLModel {
         private String id;
         private String name;
-        @Alias(name = "essai") private String email;
+        @AliasFor(name = "email") private String essai;
         private PostTest posts;
     }
 

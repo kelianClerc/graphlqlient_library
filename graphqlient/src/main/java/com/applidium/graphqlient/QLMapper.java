@@ -20,7 +20,9 @@ import okhttp3.ResponseBody;
 
 public class QLMapper {
 
-    private final Gson gson = new GsonBuilder().registerTypeAdapterFactory(new AutoMatterTypeAdapterFactory()).create();
+    private final Gson gson = new GsonBuilder()
+        .registerTypeAdapterFactory(new AutoMatterTypeAdapterFactory())
+        .create();
 
     public QLResponse convert(ResponseBody body, QLQuery query) throws IOException {
 
@@ -63,7 +65,9 @@ public class QLMapper {
         List resp = new ArrayList();
         JsonArray array = json.getAsJsonArray();
         for (int j = 0; j < array.size(); j++) {
-            resp.add(gson.fromJson(array.get(j), type));
+            JsonObject asJsonObject = array.get(j).getAsJsonObject();
+            System.out.println("Mapping " + asJsonObject.toString() + " in " + type.toString());
+            resp.add(gson.fromJson(asJsonObject, type));
         }
         return resp;
     }

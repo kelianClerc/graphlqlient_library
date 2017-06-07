@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.applidium.graphqlient.QLVariablesElement;
-import com.applidium.graphqlient.annotations.Alias;
+import com.applidium.graphqlient.annotations.AliasFor;
 import com.applidium.graphqlient.annotations.Argument;
 import com.applidium.graphqlient.annotations.Parameters;
 import com.applidium.graphqlient.model.QLModel;
@@ -51,8 +51,9 @@ public class QLTreeBuilder {
         Member target = getMemberCorrectClass(member);
 
         for (Annotation annotatedElement : getDeclaredAnnotations(target)) {
-            if (annotatedElement instanceof Alias) {
-                alias = ((Alias) annotatedElement).name();
+            if (annotatedElement instanceof AliasFor) {
+                alias = member.getName();
+                name = ((AliasFor) annotatedElement).name();
             } else if (annotatedElement instanceof Parameters) {
                 createParametersMap(parameters, (Parameters) annotatedElement);
             }
