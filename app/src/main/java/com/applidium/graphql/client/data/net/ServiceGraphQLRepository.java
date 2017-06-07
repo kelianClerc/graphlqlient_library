@@ -10,6 +10,8 @@ import com.applidium.graphqlient.QLVariables;
 import com.applidium.graphqlient.QLVariablesElement;
 import com.applidium.graphqlient.exceptions.QLException;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,11 +42,15 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
         String printQuery = qlQuery.printQuery();
         Timber.i(printQuery);
         try {
-            return new Response(graphQL.send(printQuery), printQuery, "");
+            return new Response(graphQL.send(printQuery).toString(), printQuery, "");
         } catch (QLException e) {
             e.printStackTrace();
             return new Response(e.getMessage(), printQuery, "");
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+            return new Response(e1.getMessage(), printQuery, "");
         }
+
     }
 
     @Override
@@ -55,10 +61,13 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
     @Override
     public Response createResponseFromString(String request, String variables) throws IOException {
         try {
-            return new Response(graphQL.send(request, variables), request, variables);
+            return new Response(graphQL.send(request, variables).toString(), request, variables);
         } catch (QLException e) {
             e.printStackTrace();
             return new Response(e.getMessage(), request, "");
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+            return new Response(e1.getMessage(), request, "");
         }
     }
 
@@ -77,7 +86,12 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
 
         String printQuery = qlQuery.printQuery();
         Timber.i(printQuery);
-        return new Response(graphQL.send(qlQuery, variables), printQuery, variables.print());
+        try {
+            return new Response(graphQL.send(qlQuery, variables).toString(), printQuery, variables.print());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return new Response(e.getMessage(), qlQuery.printQuery(), "");
+        }
 
     }
 

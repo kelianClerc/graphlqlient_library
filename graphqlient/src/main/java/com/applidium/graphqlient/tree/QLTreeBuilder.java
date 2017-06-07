@@ -92,4 +92,29 @@ public class QLTreeBuilder {
         QLElement resultat = createElement(field);
         return new QLLeaf(resultat);
     }
+
+    public void propagateType(QLNode node) {
+        Class<?> associatedObject = node.getAssociatedObject();
+        if (associatedObject == Object.class) {
+            return;
+        }
+
+        for (QLElement element : node.getChildren()) {
+            if (!(element instanceof QLNode)) {
+                break;
+            }
+            QLNode elementToUpdate = (QLNode) element;
+            elementToUpdate.setAssociatedObject(findFieldTypeByName(associatedObject, element.getName(), element.getAlias()));
+
+        }
+    }
+
+    private Class<?> findFieldTypeByName(Class<?> type, String name, String alias) {
+        for (Field field : type.getFields()) {
+            if (field.getName().equals(name) || field.getName().equals(alias)) {
+                return field.getType();
+            }
+        }
+        return Object.class;
+    }
 }
