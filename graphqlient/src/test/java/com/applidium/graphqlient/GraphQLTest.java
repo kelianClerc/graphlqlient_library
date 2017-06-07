@@ -86,6 +86,33 @@ public class GraphQLTest {
         assertEquals(users.get(0).getEmail(), "test0@example.com");
     }
 
+    @Test
+    public void parseWithSubObjectTest() throws Exception {
+        String query = "{posts{title, user{name}}";
+        GraphQL graphQL = new GraphQL("http://localhost:3000/");
+        List<Class<?>> typeList = new ArrayList<>();
+        typeList.add(Post.class);
+
+        QLQuery qlQuery = graphQL.buildQueryWithTarget(query, typeList);
+        assertEquals(qlQuery.getQueryFields().size(), 1);
+        QLNode node = qlQuery.getQueryFields().get(0);
+        assertEquals(node.getAssociatedObject(), Post.class);
+        QLCall toCall = graphQL.call(qlQuery);
+        QLResponse response = graphQL.send(toCall);
+        assertEquals(response.getResponses().size(), 1);
+
+        assertThat(response.getResponses().get(0), instanceOf(List.class));
+        List<Post> posts = (List<Post>) response.getResponses().get(0);
+        assertEquals(posts.size(), 10);
+        Post post = posts.get(0);
+        assertEquals(post.getId(), null);
+        assertEquals(post.getTitle(), "Perspiciatis optio vitae doloremque.");
+        User user = post.getUser();
+        assertEquals(user.getName(), "Olin Bogisich");
+        assertEquals(user.getId(), null);
+        assertEquals(user.getEmail(), null);
+    }
+
     public class User implements QLModel {
         @Nullable private String id;
         @Nullable private String name;
@@ -128,9 +155,45 @@ public class GraphQLTest {
         }
     }
 
-    public class Post  implements QLModel {
+    public class Post implements QLModel {
         @Nullable private String id;
-        @Nullable private String name;
-        @Nullable private @Alias(name = "essai") String email;
+        @Nullable private String title;
+        @Nullable private User user;
+
+        public Post() {
+        }
+
+        public Post(@Nullable String id,@Nullable String title, @Nullable User user) {
+            this.id = id;
+            this.title = title;
+            this.user = user;
+        }
+
+        @Nullable
+        public String getId() {
+            return id;
+        }
+
+        public void setId(@Nullable String id) {
+            this.id = id;
+        }
+
+        @Nullable
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(@Nullable String title) {
+            this.title = title;
+        }
+
+        @Nullable
+        public User getUser() {
+            return user;
+        }
+
+        public void setUser(@Nullable User user) {
+            this.user = user;
+        }
     }
 }
