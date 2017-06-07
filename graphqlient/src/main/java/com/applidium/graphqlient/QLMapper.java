@@ -38,7 +38,7 @@ public class QLMapper {
 
     private void parseJsonToObject(QLNode node, Map responseList, JsonObject data) {
         Class<? extends QLModel> type = node.getAssociatedObject();
-        if (!type.equals(Object.class)) {
+        if (type != null && !type.equals(Object.class)) {
             String memberName = getMemberName(node);
             JsonElement json = data.get(memberName);
             Object parsedObject;
