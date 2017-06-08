@@ -7,7 +7,7 @@ import com.applidium.graphqlient.model.QLModel;
 import io.norberg.automatter.AutoMatter;
 
 @AutoMatter
-public interface Post extends QLModel {
+public interface QLPost extends QLModel {
     @Nullable String id();
     @Nullable String title();
 }

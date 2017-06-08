@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.applidium.graphql.client.R;
 import com.applidium.graphql.client.app.common.BaseFragment;
+import com.applidium.graphql.client.app.selection.model.ModelViewModel;
 import com.applidium.graphql.client.app.selection.presenter.AddElementPresenter;
 import com.applidium.graphql.client.di.ComponentManager;
 import com.applidium.graphqlient.QLQuery;
@@ -46,5 +47,10 @@ public class AddElementFragment extends BaseFragment implements AddElementViewCo
     @Override
     public void hideContinueButton() {
 
+    }
+
+    @Override
+    public void displayModel(ModelViewModel model) {
+        // TODO (kelianclerc) 8/6/17
     }
 }
