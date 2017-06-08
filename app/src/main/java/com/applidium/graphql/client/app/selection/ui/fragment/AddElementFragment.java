@@ -9,17 +9,20 @@ import android.view.ViewGroup;
 
 import com.applidium.graphql.client.R;
 import com.applidium.graphql.client.app.common.BaseFragment;
+import com.applidium.graphql.client.app.selection.presenter.AddElementPresenter;
 import com.applidium.graphql.client.di.ComponentManager;
 import com.applidium.graphqlient.QLQuery;
 
+import javax.inject.Inject;
+
 public class AddElementFragment extends BaseFragment implements AddElementViewContract {
 
-    //@Inject AddElementPresenter presenter;
+    @Inject AddElementPresenter presenter;
 
     @Override
     protected void injectDependencies() {
         FragmentManager fm = getFragmentManager();
-        ComponentManager.getLoggingComponent().inject(this);
+        ComponentManager.getAddElementComponent(this, getContext(), fm).inject(this);
     }
 
     @Nullable
