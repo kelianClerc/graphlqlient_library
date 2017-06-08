@@ -23,7 +23,7 @@ import static org.hamcrest.core.IsInstanceOf.instanceOf;
 public class GraphQLTest {
     @Test
     public void callGlobalTest() throws Exception {
-        GraphQL graphQL = new GraphQL("http://localhost:8080/");
+        GraphQL graphQL = new GraphQL("http://localhost:8080/", Endpoint.class);
         QLQuery qlQuery = graphQL.buildQuery("query hello($try: Boolean!, $try2:String, $try3:Int, $try4:Float, $try5:ID!) {user{id}}");
         try {
             graphQL.call(qlQuery);
@@ -40,7 +40,7 @@ public class GraphQLTest {
     @Test
     public void parserWithObjectProvidedTest() throws Exception {
         String query = "{user(id:2){name}}";
-        GraphQL graphQL = new GraphQL("http://localhost:3000/");
+        GraphQL graphQL = new GraphQL("http://localhost:3000/", Endpoint.class);
         List<Class<?>> typeList = new ArrayList<>();
         typeList.add(User.class);
         QLQuery qlQuery = graphQL.buildQueryWithTarget(query, typeList);
@@ -61,7 +61,7 @@ public class GraphQLTest {
     @Test
     public void parserWithListObjectProvidedTest() throws Exception {
         String query = "{user(id:2){name}users{email, id, name}";
-        GraphQL graphQL = new GraphQL("http://localhost:3000/");
+        GraphQL graphQL = new GraphQL("http://localhost:3000/", Endpoint.class);
         List<Class<?>> typeList = new ArrayList<>();
         typeList.add(User.class);
         typeList.add(User.class);
@@ -89,7 +89,7 @@ public class GraphQLTest {
     @Test
     public void parseWithSubObjectTest() throws Exception {
         String query = "{posts{title, user{name}}";
-        GraphQL graphQL = new GraphQL("http://localhost:3000/");
+        GraphQL graphQL = new GraphQL("http://localhost:3000/", Endpoint.class);
         List<Class<?>> typeList = new ArrayList<>();
         typeList.add(Post.class);
 
@@ -195,5 +195,9 @@ public class GraphQLTest {
         public void setUser(@Nullable User user) {
             this.user = user;
         }
+    }
+
+    public class Endpoint implements QLModel {
+        private User user;
     }
 }

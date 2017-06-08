@@ -28,7 +28,7 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
     private QLQuery qlQuery;
 
     @Inject ServiceGraphQLRepository() {
-        graphQL = new GraphQL("http://localhost:3000/graphql/test");
+        graphQL = new GraphQL("http://localhost:3000/graphql/test", Endpoint.class);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
         qlQuery = new QLQuery("test");
 
         Endpoint endpoints = new Endpoint();
-        qlQuery.append(endpoints.getUser());
+        qlQuery.append(graphQL.endpoints().get("users"));
 
         String printQuery = qlQuery.printQuery();
         Timber.i(printQuery);
@@ -78,7 +78,7 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
         appendQueryParams();
 
         Endpoint endpoint = new Endpoint();
-        qlQuery.append(endpoint.getUserParam());
+        qlQuery.append(graphQL.endpoints().get("user"));
 
         Map<String, Object> varMap = new HashMap<>();
         varMap.put("userId", 1);
