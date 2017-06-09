@@ -11,12 +11,16 @@ public class Endpoint implements QLModel {
         @Argument(argumentName = "id", argumentValue = "1")
     })
     //private User user;
-    private List<User> QLUsers;
+    private List<User> users;
 
     @Parameters(table={
         @Argument(argumentName = "id", argumentVariable = "userId")
     })
-    private User QLUser;
+    private User user;
+
+    private Post post;
+
+    private List<Post> posts;
 
     public Endpoint() {
     }

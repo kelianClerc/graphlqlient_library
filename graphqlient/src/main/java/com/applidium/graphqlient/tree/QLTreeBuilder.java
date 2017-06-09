@@ -110,7 +110,7 @@ public class QLTreeBuilder {
         if (target == null) return;
         if (isOfStandardType(target)) {
             result.add(createLeafFromField(target));
-        } else if (QLModel.class.isAssignableFrom(getType(target))){
+        } else if (QLModel.class.isAssignableFrom(getFieldType(target))){
             result.add(createNodeFromField(target, shouldBuildTreeRecursively));
         }
 

@@ -9,4 +9,5 @@ public interface AddElementViewContract extends ViewContract {
     void showContinueButton(QLQuery query);
     void hideContinueButton();
     void displayModel(ModelViewModel model);
+    void shouldDisplayBackButton(boolean shouldDisplay);
 }

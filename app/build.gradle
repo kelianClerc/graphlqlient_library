@@ -46,12 +46,6 @@ android {
         prod
     }
 
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xmaxerrs" << "1000"
-        }
-    }
-
     variantFilter { variant -> associateProdWithRelease(variant) }
 
     signingConfigs {
@@ -67,7 +61,7 @@ android {
 
     buildTypes {
         debug {
-            testCoverageEnabled true
+            //testCoverageEnabled true
             shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt')
