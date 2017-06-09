@@ -8,4 +8,5 @@ import io.norberg.automatter.AutoMatter;
 public interface FieldViewModel {
     Type type();
     String fieldName();
+    boolean isChecked();
 }

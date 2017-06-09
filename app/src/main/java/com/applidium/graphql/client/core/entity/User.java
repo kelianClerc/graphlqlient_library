@@ -1,4 +1,4 @@
-package com.applidium.graphql.client.data.net.graphql.model;
+package com.applidium.graphql.client.core.entity;
 
 import android.support.annotation.Nullable;
 

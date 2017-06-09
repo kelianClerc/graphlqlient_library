@@ -103,7 +103,7 @@ public class SelectionActivity extends BaseActivity implements
 
     public void addElementsToQuery(QLQuery query) {
         FragmentTransaction ft = manager.beginTransaction();
-        createQueryFragment = new AddElementFragment();
+        createQueryFragment = AddElementFragment.makeFragment(query);
         ft.replace(R.id.config, createQueryFragment);
         ft.commit();
     }
