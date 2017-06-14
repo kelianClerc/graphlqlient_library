@@ -1,23 +1,24 @@
 package com.applidium.graphqlient.call;
 
 import com.applidium.graphqlient.QLMapper;
-import com.applidium.graphqlient.QLQuery;
+import com.applidium.graphqlient.QLRequest;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 
-import okhttp3.*;
+import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Request;
 import okhttp3.Response;
 
 public class QLCall {
 
-    private QLQuery query;
+    private QLRequest query;
     private Call call;
     private QLMapper mapper;
 
-    public QLCall(QLQuery query, Call call) {
+    public QLCall(QLRequest query, Call call) {
         this.query = query;
         this.call = call;
         mapper = new QLMapper();
@@ -43,7 +44,7 @@ public class QLCall {
             return null;
         }
 
-        return mapper.convert(response.body(), getQuery());
+        return mapper.convert(response.body(), query);
 
     }
 
@@ -80,7 +81,7 @@ public class QLCall {
         return call.isCanceled();
     }
 
-    public QLQuery getQuery() {
+    public QLRequest getQuery() {
         return query;
     }
 

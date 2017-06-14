@@ -1,18 +1,12 @@
 package com.applidium.graphqlient;
 
-import android.support.annotation.Nullable;
-
 import com.applidium.graphqlient.call.QLCall;
 import com.applidium.graphqlient.call.QLResponse;
 import com.applidium.graphqlient.exceptions.QLException;
-import com.applidium.graphqlient.exceptions.QLParserException;
-import com.applidium.graphqlient.model.QLModel;
-import com.applidium.graphqlient.tree.QLTreeBuilder;
 
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -23,28 +17,14 @@ public class GraphQL {
     private String baseUrl = "http://localhost:3000/graphql/test";
     private final static String QUERY_PARAMETER = "query";
     private final static String VARIABLE_PARAMETER = "variables";
-    private final QLEndpoints endpoints;
 
-    public GraphQL(String baseUrl, Class<? extends QLModel> endpoints) {
+    public GraphQL(String baseUrl) {
         this.baseUrl = baseUrl;
-        this.endpoints = new QLEndpoints(endpoints);
         client = new OkHttpClient();
     }
 
-    public QLResponse send(String query) throws IOException, QLException, JSONException {
-        return send(query, "");
-    }
-
-    public QLResponse send(String query, @Nullable String variables) throws IOException, QLException, JSONException {
-        return send(call(query, variables));
-    }
-
-    public QLResponse send(String query, QLVariables variables) throws IOException, QLParserException, JSONException {
-        return send(call(query, variables));
-    }
-
-    public QLResponse send(QLQuery query, QLVariables variables) throws IOException, JSONException {
-        return send(call(query, variables));
+    public QLResponse send(QLRequest request) throws IOException, QLException, JSONException {
+        return send(call(request));
     }
 
     public QLResponse send(QLCall call) throws IOException, JSONException {
@@ -52,48 +32,11 @@ public class GraphQL {
         return response;
     }
 
-    public QLQuery buildQuery(String query) throws QLParserException {
-        QLParser qlParser = new QLParser(query);
-        return qlParser.buildQuery();
-    }
-
-    public QLQuery buildQueryWithTarget(String query, List<Class<?>> rootObjects) throws QLParserException {
-        QLParser qlParser = new QLParser(query);
-        QLTreeBuilder treeBuilder = new QLTreeBuilder();
-        QLQuery qlQuery = qlParser.buildQuery();
-
-        for (int i = 0; i < rootObjects.size(); i++) {
-            Class<?> type = rootObjects.get(i);
-            qlQuery.getQueryFields().get(i).setAssociatedObject(type);
-            treeBuilder.propagateType(qlQuery.getQueryFields().get(i));
-        }
-        return qlQuery;
-    }
-
-    public QLCall call(String query) throws QLException {
-        return call(query, "");
-    }
-
-    public QLCall call(String query, String variables) throws QLException {
-        QLQuery qlQuery = buildQuery(query);
-        QLVariables qlVariables = QLParser.parseVariables(variables);
-        qlQuery.setVariables(qlVariables);
-        return call(qlQuery);
-    }
-
-    public QLCall call(String query, QLVariables variables) throws QLParserException {
-        return call(buildQuery(query), variables);
-    }
-
-    public QLCall call(QLQuery query, String variables) {
-        return call(query, QLParser.parseVariables(variables));
-    }
-
-    public QLCall call(QLQuery query, QLVariables variables) {
+    public QLCall call(QLRequest query) {
         HttpUrl.Builder builder = HttpUrl.parse(baseUrl).newBuilder();
 
-        builder.addQueryParameter(QUERY_PARAMETER, query.printQuery());
-        String variablesString = variables.print();
+        builder.addQueryParameter(QUERY_PARAMETER, query.query());
+        String variablesString = query.variables();
         if (variablesString != null && !variablesString.isEmpty()) {
             builder.addQueryParameter(VARIABLE_PARAMETER, variablesString);
         }
@@ -104,31 +47,5 @@ public class GraphQL {
             .build();
 
         return new QLCall(query, client.newCall(request));
-    }
-
-    public QLCall call(QLQuery query) throws QLException {
-        HttpUrl.Builder builder = HttpUrl.parse(baseUrl).newBuilder();
-
-        builder.addQueryParameter(QUERY_PARAMETER, query.printQuery());
-        if (query.areAllParametersGiven()) {
-            if (!query.isVariableEmpty()) {
-                builder.addQueryParameter(VARIABLE_PARAMETER, query.getVariables().print());
-            }
-        } else {
-            String message = "Not all mandatory parameters of query \"" + query.getName() + "\" are " +
-                "provided as QLVariable";
-            throw new QLException(message);
-        }
-        HttpUrl toCallUrl = builder.build();
-
-        Request request = new Request.Builder()
-            .url(toCallUrl)
-            .build();
-
-        return new QLCall(query, client.newCall(request));
-    }
-
-    public QLEndpoints endpoints() {
-        return endpoints;
     }
 }
