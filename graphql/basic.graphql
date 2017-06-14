@@ -1,8 +1,8 @@
-
 {
     users {
-    #-type-ID;
+    #-type-ID
         id,
+        #ezfsfsfs
         name
     }
 }

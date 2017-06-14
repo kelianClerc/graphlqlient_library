@@ -19,14 +19,16 @@ public class QLMapper {
 
     public QLResponse convert(ResponseBody body, QLRequest query) throws IOException {
 
-        String responseBody = body.string();
-        JsonObject data = trimResponse(responseBody);
+        String responseBody = null;
+        responseBody = body.string();
+        JsonObject data = null;
+        data = trimResponse(responseBody);
         String result = gson.toJson(data);
         QLResponseModel response = gson.fromJson(data, query.target());
         return new QLResponse(result, response);
     }
 
-    private JsonObject trimResponse(String body) throws IOException {
+    private JsonObject trimResponse(String body) {
         JsonElement jsonElement = gson.fromJson(body, JsonElement.class);
         return jsonElement.getAsJsonObject().get("data").getAsJsonObject();
     }

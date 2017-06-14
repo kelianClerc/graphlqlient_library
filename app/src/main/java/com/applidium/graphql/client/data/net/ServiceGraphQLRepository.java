@@ -1,13 +1,12 @@
 package com.applidium.graphql.client.data.net;
 
 import com.applidium.graphql.client.TestQueryRequest;
+import com.applidium.graphql.client.TestQueryResponse;
 import com.applidium.graphql.client.core.boundary.GraphQLRepository;
 import com.applidium.graphql.client.core.interactor.sendrequest.Response;
 import com.applidium.graphqlient.GraphQL;
 import com.applidium.graphqlient.call.QLResponse;
 import com.applidium.graphqlient.exceptions.QLException;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 
@@ -43,10 +42,9 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
 
         try {
             QLResponse response = graphQL.send(request);
+            TestQueryResponse resp = (TestQueryResponse) response.getResponses();
             return new Response(response.getResponses().toString(), request.query(), request.variables());
         } catch (QLException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;

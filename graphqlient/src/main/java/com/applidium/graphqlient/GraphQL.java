@@ -4,8 +4,6 @@ import com.applidium.graphqlient.call.QLCall;
 import com.applidium.graphqlient.call.QLResponse;
 import com.applidium.graphqlient.exceptions.QLException;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 
 import okhttp3.HttpUrl;
@@ -23,12 +21,17 @@ public class GraphQL {
         client = new OkHttpClient();
     }
 
-    public QLResponse send(QLRequest request) throws IOException, QLException, JSONException {
+    public QLResponse send(QLRequest request) throws QLException {
         return send(call(request));
     }
 
-    public QLResponse send(QLCall call) throws IOException, JSONException {
-        QLResponse response = call.execute();
+    public QLResponse send(QLCall call) throws QLException {
+        QLResponse response = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            throw new QLException("Connection to server non available : " + e.getMessage());
+        }
         return response;
     }
 
