@@ -1,0 +1,6 @@
+query testQuery {
+    users {
+            id,
+            name
+    }
+}

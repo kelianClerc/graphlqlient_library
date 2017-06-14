@@ -1,0 +1,6 @@
+query testQuery ($number: ID!) {
+    user(id:$number) {
+            id,
+            name
+    }
+}
