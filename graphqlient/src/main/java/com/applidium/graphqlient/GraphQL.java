@@ -32,7 +32,7 @@ public class GraphQL {
         return response;
     }
 
-    public QLCall call(QLRequest query) {
+    public QLCall call(QLRequest query) throws QLException {
         HttpUrl.Builder builder = HttpUrl.parse(baseUrl).newBuilder();
 
         builder.addQueryParameter(QUERY_PARAMETER, query.query());
