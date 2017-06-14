@@ -8,20 +8,28 @@ import android.support.v7.widget.RecyclerView;
 import com.applidium.graphql.client.R;
 import com.applidium.graphql.client.app.common.BaseActivity;
 import com.applidium.graphql.client.app.users.model.UserViewModel;
+import com.applidium.graphql.client.app.users.presenter.UsersPresenter;
+import com.applidium.graphql.client.app.users.ui.UsersViewContract;
 import com.applidium.graphql.client.app.users.ui.adapter.UsersAdapter;
 import com.applidium.graphql.client.di.ComponentManager;
+
+import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class UsersActivity extends BaseActivity implements UsersAdapter.UserClickedListener {
+public class UsersActivity extends BaseActivity implements UsersViewContract, UsersAdapter.UserClickedListener {
 
 
     @BindView(R.id.user_list) RecyclerView recyclerView;
 
+    @Inject UsersPresenter presenter;
+
     @Override
     protected void injectDependencies() {
-        ComponentManager.getLoggingComponent().inject(this);
+        ComponentManager.getUsersComponent(this, this).inject(this);
     }
 
     @Override
@@ -41,6 +49,11 @@ public class UsersActivity extends BaseActivity implements UsersAdapter.UserClic
 
     @Override
     public void onUserClicked(UserViewModel user) {
-        // TODO (kelianclerc) 14/6/17  
+        // TODO (kelianclerc) 14/6/17
+    }
+
+    @Override
+    public void showUsers(List<UserViewModel> users) {
+        // TODO (kelianclerc) 14/6/17
     }
 }
