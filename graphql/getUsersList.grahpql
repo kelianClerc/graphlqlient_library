@@ -1,0 +1,11 @@
+query UserList{
+    users {
+        name,
+        email,
+        id,
+        created_at,
+        comments {
+            id
+        }
+}
+}
