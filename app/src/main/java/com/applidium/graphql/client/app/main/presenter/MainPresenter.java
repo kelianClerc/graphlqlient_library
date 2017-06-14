@@ -45,7 +45,7 @@ public class MainPresenter extends Presenter<MainViewContract> implements SendRe
 
     @Override @Trace @Deprecated
     public void onSendRequestError(String message) {
-        // TODO (kelianclerc) 1/6/17
+        view.showResponse(message);
     }
 
     public void onSettings() {

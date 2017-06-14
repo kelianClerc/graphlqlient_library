@@ -45,7 +45,11 @@ public class SendRequestInteractor {
             response = repository.getResponseWithQueryParams(1);
         }
         //response = repository.createResponseFromString(response.getRequest());
-        handleSuccess(response.getResponse(), response.getRequest(), response.getVariables());
+        if (response == null) {
+            handleError("Empty response");
+        } else {
+            handleSuccess(response.getResponse(), response.getRequest(), response.getVariables());
+        }
     }
 
     @RunOnPostExecutionThread
