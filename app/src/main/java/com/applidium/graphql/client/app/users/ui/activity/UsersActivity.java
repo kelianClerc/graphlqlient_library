@@ -1,0 +1,46 @@
+package com.applidium.graphql.client.app.users.ui.activity;
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+
+import com.applidium.graphql.client.R;
+import com.applidium.graphql.client.app.common.BaseActivity;
+import com.applidium.graphql.client.app.users.model.UserViewModel;
+import com.applidium.graphql.client.app.users.ui.adapter.UsersAdapter;
+import com.applidium.graphql.client.di.ComponentManager;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class UsersActivity extends BaseActivity implements UsersAdapter.UserClickedListener {
+
+
+    @BindView(R.id.user_list) RecyclerView recyclerView;
+
+    @Override
+    protected void injectDependencies() {
+        ComponentManager.getLoggingComponent().inject(this);
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_users);
+        ButterKnife.bind(this);
+        setupAdapter();
+    }
+
+    private void setupAdapter() {
+        UsersAdapter adapter = new UsersAdapter(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onUserClicked(UserViewModel user) {
+        // TODO (kelianclerc) 14/6/17  
+    }
+}
