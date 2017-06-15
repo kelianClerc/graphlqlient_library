@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface UserRepository {
     List<User> getListOfUsers() throws QLException;
+    User getUserPosts(String targetId) throws QLException;
 }
