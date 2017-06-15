@@ -10,9 +10,12 @@ import com.applidium.graphql.client.R;
 import com.applidium.graphql.client.app.common.BaseActivity;
 import com.applidium.graphql.client.app.common.DividerHorizontalItemDecoration;
 import com.applidium.graphql.client.app.user.model.PostViewModel;
+import com.applidium.graphql.client.app.user.presenter.UserPresenter;
 import com.applidium.graphql.client.app.user.ui.UserViewContract;
 import com.applidium.graphql.client.app.user.ui.adapter.PostAdapter;
 import com.applidium.graphql.client.di.ComponentManager;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,15 +30,17 @@ public class UserActivity extends BaseActivity implements UserViewContract, Post
     @BindView(R.id.recycler) RecyclerView recyclerView;
     private PostAdapter adapter;
 
+    @Inject UserPresenter presenter;
+
     @Override
     protected void injectDependencies() {
-        ComponentManager.getLoggingComponent().inject(this);
+        ComponentManager.userDetailComponent(this, this).inject(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        //presenter.start();
+        presenter.start();
     }
 
     @Override
