@@ -21,7 +21,6 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.title) TextView title;
     @BindView(R.id.comments) Button comments;
     @BindView(R.id.votes) Button votes;
-    @BindView(R.id.item) ViewGroup viewGroup;
 
     private PostViewModel postViewModel;
     private PostAdapter.PostClickedListener listener;
