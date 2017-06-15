@@ -64,7 +64,7 @@ public class UsersActivity extends BaseActivity implements UsersViewContract, Us
 
     @Override
     public void onUserClicked(UserViewModel user) {
-        // TODO (kelianclerc) 14/6/17
+        presenter.userClicked(user.id());
     }
 
     @Override

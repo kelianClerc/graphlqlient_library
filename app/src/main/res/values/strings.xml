@@ -9,7 +9,9 @@
     <string name="parameters_label">Parameters :</string>
     <string name="param_is_mandatory_label">Is mandatory ?</string>
     <string name="create_query_label">Create query</string>
-    <string name="number_comments">%1$s posts</string>
+    <string name="number_posts">%1$s posts</string>
+    <string name="number_comments">%1$s commentaires</string>
+    <string name="number_votes">%1$s up votes</string>
 
     <string-array name="param_type">
         <item>Boolean</item>
