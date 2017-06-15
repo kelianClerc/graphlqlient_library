@@ -7,6 +7,7 @@ import com.applidium.graphql.client.utils.threading.RunOnPostExecutionThread;
 import com.applidium.graphql.client.utils.trace.Trace;
 import com.applidium.graphqlient.exceptions.QLException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -36,16 +37,26 @@ public class GetListOfUsersInteractor {
 
     private void getListOfUsers() throws QLException {
         List<User> users = userRepository.getListOfUsers();
-        ListUsersResponse response = makeResponse(users);
+        List<ListUsersResponse> response = makeResponse(users);
         handleSuccess(response);
     }
 
-    private ListUsersResponse makeResponse(List<User> users) {
-        return null;
+    private List<ListUsersResponse> makeResponse(List<User> users) {
+        List<ListUsersResponse> result = new ArrayList<>();
+        for (User user : users) {
+            result.add(new ListUsersResponseBuilder()
+                .name(user.name())
+                .email(user.email())
+                .id(user.id())
+                .numberOfPosts(user.numberOfPosts())
+                .build());
+        }
+
+        return result;
     }
 
     @RunOnPostExecutionThread
-    private void handleSuccess(ListUsersResponse response) {
+    private void handleSuccess(List<ListUsersResponse> response) {
         if (listener != null) {
             listener.onGetListOfUsersSuccess(response);
         }

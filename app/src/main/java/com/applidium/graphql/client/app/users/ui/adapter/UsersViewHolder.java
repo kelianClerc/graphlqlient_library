@@ -42,7 +42,7 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
         email.setText(userViewModel.email());
         comments.setText(itemView
             .getContext()
-            .getString(R.string.number_comments, String.valueOf(userViewModel.numberOfComments()))
+            .getString(R.string.number_comments, String.valueOf(userViewModel.numberOfPosts()))
         );
         viewGroup.setOnClickListener(getClickListener(userViewModel));
     }

@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.applidium.graphql.client.R;
 import com.applidium.graphql.client.app.common.BaseActivity;
+import com.applidium.graphql.client.app.common.DividerHorizontalItemDecoration;
 import com.applidium.graphql.client.app.users.model.UserViewModel;
 import com.applidium.graphql.client.app.users.presenter.UsersPresenter;
 import com.applidium.graphql.client.app.users.ui.UsersViewContract;
@@ -20,16 +21,25 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
+
 public class UsersActivity extends BaseActivity implements UsersViewContract, UsersAdapter.UserClickedListener {
 
 
     @BindView(R.id.user_list) RecyclerView recyclerView;
 
     @Inject UsersPresenter presenter;
+    private UsersAdapter adapter;
 
     @Override
     protected void injectDependencies() {
         ComponentManager.getUsersComponent(this, this).inject(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        presenter.start();
     }
 
     @Override
@@ -41,10 +51,15 @@ public class UsersActivity extends BaseActivity implements UsersViewContract, Us
     }
 
     private void setupAdapter() {
-        UsersAdapter adapter = new UsersAdapter(this);
+        adapter = new UsersAdapter(this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+
+
+        DividerHorizontalItemDecoration decor =
+            new DividerHorizontalItemDecoration(getContext(), R.drawable.divider_line);
+        recyclerView.addItemDecoration(decor);
     }
 
     @Override
@@ -54,6 +69,6 @@ public class UsersActivity extends BaseActivity implements UsersViewContract, Us
 
     @Override
     public void showUsers(List<UserViewModel> users) {
-        // TODO (kelianclerc) 14/6/17
+        adapter.setContentViewModels(users);
     }
 }

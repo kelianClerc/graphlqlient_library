@@ -4,4 +4,8 @@ import io.norberg.automatter.AutoMatter;
 
 @AutoMatter
 public interface ListUsersResponse {
+    String name();
+    String email();
+    String id();
+    int numberOfPosts();
 }

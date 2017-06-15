@@ -1,5 +1,6 @@
 package com.applidium.graphql.client.app.users.ui.adapter;
 
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -34,5 +35,36 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersViewHolder> {
 
     public interface UserClickedListener {
         void onUserClicked(UserViewModel user);
+    }
+
+    public void setContentViewModels(List<UserViewModel> viewModels) {
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(getResultCallback(viewModels), false);
+        dataSet.clear();
+        dataSet.addAll(viewModels);
+        result.dispatchUpdatesTo(this);
+    }
+
+    private DiffUtil.Callback getResultCallback(final List<UserViewModel> viewModels) {
+        return new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return dataSet.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return viewModels.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                return dataSet.get(oldItemPosition).equals(viewModels.get(newItemPosition));
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                return dataSet.get(oldItemPosition).equals(viewModels.get(newItemPosition));
+            }
+        };
     }
 }

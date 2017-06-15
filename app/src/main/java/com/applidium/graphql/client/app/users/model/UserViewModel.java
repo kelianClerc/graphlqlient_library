@@ -9,5 +9,5 @@ public interface UserViewModel {
     @Nullable String name();
     @Nullable String id();
     @Nullable String email();
-    int numberOfComments();
+    int numberOfPosts();
 }

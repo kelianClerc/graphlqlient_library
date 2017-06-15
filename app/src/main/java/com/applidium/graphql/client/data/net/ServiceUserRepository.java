@@ -27,7 +27,7 @@ public class ServiceUserRepository implements UserRepository {
         UserListRequest request = new UserListRequest();
         UserListResponse response = (UserListResponse) graphql.send(request).getResponses(); //
         // TODO (kelianclerc) 14/6/17 to simplify
-        List<User> result = mapper.map(response);
-        return null;
+        List<User> result = mapper.mapList(response);
+        return result;
     }
 }
