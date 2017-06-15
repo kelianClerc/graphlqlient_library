@@ -10,10 +10,10 @@ import io.norberg.automatter.AutoMatter;
 
 @AutoMatter
 public interface User {
-    String name();
-    String email();
-    String id();
-    DateTime createdAt();
+    @Nullable String name();
+    @Nullable String email();
+    @Nullable String id();
+    @Nullable DateTime createdAt();
     int numberOfPosts();
-    @Nullable List<Comments> comments();
+    @Nullable List<Posts> posts();
 }
