@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/greeny_blue"
-        app:navigationIcon="@drawable/ic_back"
         app:title="Users"
         app:titleTextColor="@color/white"
         />

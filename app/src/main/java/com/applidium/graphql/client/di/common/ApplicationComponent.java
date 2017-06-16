@@ -1,6 +1,7 @@
 package com.applidium.graphql.client.di.common;
 
 import com.applidium.graphql.client.core.boundary.GraphQLRepository;
+import com.applidium.graphql.client.core.boundary.RestRepository;
 import com.applidium.graphql.client.core.boundary.UserRepository;
 import com.applidium.graphql.client.di.crashes.CrashesComponent;
 import com.applidium.graphql.client.di.crashes.CrashesModule;
@@ -27,6 +28,7 @@ public interface ApplicationComponent {
     Logger logger();
     GraphQLRepository graphqlRepository();
     UserRepository userRepository();
+    RestRepository restRepository();
 
     LoggingComponent.Builder loggingComponentBuilder();
     CrashesComponent plus(CrashesModule module);

@@ -18,6 +18,7 @@ public class UsersPresenter extends Presenter<UsersViewContract> implements GetL
     private final GetListOfUsersInteractor interactor;
     private final UserMapper mapper;
     private final UsersNavigator navigator;
+    private boolean isQLRequest = true;
 
     @Inject UsersPresenter(
         UsersViewContract view, GetListOfUsersInteractor interactor,
@@ -30,8 +31,7 @@ public class UsersPresenter extends Presenter<UsersViewContract> implements GetL
 
     @Override
     public void start() {
-        interactor.execute(this);
-
+        interactor.execute(this, isQLRequest);
     }
 
     @Override
@@ -52,5 +52,15 @@ public class UsersPresenter extends Presenter<UsersViewContract> implements GetL
 
     public void userClicked(String id) {
         navigator.navigateToUser(id);
+    }
+
+    public void onQL() {
+        isQLRequest = true;
+        start();
+    }
+
+    public void onRest() {
+        isQLRequest = false;
+        start();
     }
 }

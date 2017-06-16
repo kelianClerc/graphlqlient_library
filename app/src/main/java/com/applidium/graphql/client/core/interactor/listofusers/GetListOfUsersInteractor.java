@@ -1,5 +1,6 @@
 package com.applidium.graphql.client.core.interactor.listofusers;
 
+import com.applidium.graphql.client.core.boundary.RestRepository;
 import com.applidium.graphql.client.core.boundary.UserRepository;
 import com.applidium.graphql.client.core.entity.User;
 import com.applidium.graphql.client.utils.threading.RunOnExecutionThread;
@@ -7,6 +8,7 @@ import com.applidium.graphql.client.utils.threading.RunOnPostExecutionThread;
 import com.applidium.graphql.client.utils.trace.Trace;
 import com.applidium.graphqlient.exceptions.QLException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,16 +16,21 @@ import javax.inject.Inject;
 
 public class GetListOfUsersInteractor {
     private GetListUsersListener listener;
+    private boolean isQLRequest;
     private final UserRepository userRepository;
+    private final RestRepository restRepository;
 
-    @Inject GetListOfUsersInteractor(UserRepository userRepository) {
+    @Inject GetListOfUsersInteractor(UserRepository userRepository, RestRepository restRepository) {
         this.userRepository = userRepository;
+        this.restRepository = restRepository;
     }
 
 
     @Trace @RunOnExecutionThread
-    public void execute(GetListUsersListener listener) {
+    public void execute(GetListUsersListener listener, boolean isQLRequest) {
         this.listener = listener;
+        this.isQLRequest = isQLRequest;
+
         tryToGetListOfUsers();
     }
 
@@ -32,11 +39,19 @@ public class GetListOfUsersInteractor {
             getListOfUsers();
         } catch (QLException e) {
             handleError(e.getMessage());
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            handleError(e1.getMessage());
         }
     }
 
-    private void getListOfUsers() throws QLException {
-        List<User> users = userRepository.getListOfUsers();
+    private void getListOfUsers() throws QLException, IOException {
+        List<User> users;
+        if (isQLRequest) {
+            users = userRepository.getListOfUsers();
+        } else {
+            users = restRepository.getListOfUsers();
+        }
         List<ListUsersResponse> response = makeResponse(users);
         handleSuccess(response);
     }
