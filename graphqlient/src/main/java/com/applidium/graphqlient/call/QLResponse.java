@@ -1,10 +1,10 @@
 package com.applidium.graphqlient.call;
 
-import java.util.Map;
+import com.applidium.graphqlient.QLResponseModel;
 
 public class QLResponse {
     private String rawResponse;
-    private Map<String, Object> responses;
+    private QLResponseModel responses;
 
     public QLResponse() {
     }
@@ -13,20 +13,20 @@ public class QLResponse {
         this.rawResponse = rawResponse;
     }
 
-    public QLResponse(Map<String, Object> responses) {
+    public QLResponse(QLResponseModel responses) {
         this.responses = responses;
     }
 
-    public QLResponse(String rawResponse, Map<String, Object> responses) {
+    public QLResponse(String rawResponse, QLResponseModel responses) {
         this.rawResponse = rawResponse;
         this.responses = responses;
     }
 
-    public Map<String, Object> getResponses() {
+    public QLResponseModel getResponses() {
         return responses;
     }
 
-    public void setResponses(Map<String, Object> responses) {
+    public void setResponses(QLResponseModel responses) {
         this.responses = responses;
     }
 
@@ -38,16 +38,4 @@ public class QLResponse {
         this.rawResponse = rawResponse;
     }
 
-    @Override
-    public String toString() {
-        if (responses == null || responses.size() == 0) {
-            return rawResponse;
-        } else {
-            String resp = "";
-            for(String key : responses.keySet()) {
-                resp += responses.get(key).toString();
-            }
-            return resp;
-        }
-    }
 }

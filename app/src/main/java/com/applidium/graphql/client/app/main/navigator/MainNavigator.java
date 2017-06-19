@@ -1,9 +1,6 @@
 package com.applidium.graphql.client.app.main.navigator;
 
 import android.content.Context;
-import android.content.Intent;
-
-import com.applidium.graphql.client.app.selection.ui.activity.SelectionActivity;
 
 import javax.inject.Inject;
 
@@ -15,7 +12,5 @@ public class MainNavigator {
     }
 
     public void navigateToSettings() {
-        Intent intent = SelectionActivity.makeIntent(context);
-        context.startActivity(intent);
     }
 }

@@ -4,6 +4,7 @@ apply plugin: 'com.tmiyamon.config'
 apply plugin: 'com.archinamon.aspectj'
 apply from: '../quality/sonar.gradle'
 apply from: '../quality/jacoco.gradle'
+apply plugin: 'com.applidium.qlrequest'
 
 android {
     compileSdkVersion versions.compileSdk
