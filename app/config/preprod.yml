@@ -1,4 +1,4 @@
 network:
-    base_url: "http://preprod.httpbin.org/" # Keep the '/' at the end
+    base_url: "http://localhost:3000/" # Keep the '/' at the end
 crashes:
     app_id: "c510887cfff5452cb795ede15ab3db82" # HockeyApp preprod distrib AppID

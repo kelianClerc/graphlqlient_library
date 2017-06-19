@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.applidium.graphql.client.app.main.ui.MainViewContract;
+import com.applidium.graphql.client.app.user.ui.UserViewContract;
+import com.applidium.graphql.client.app.users.ui.UsersViewContract;
 import com.applidium.graphql.client.di.common.ApplicationComponent;
 import com.applidium.graphql.client.di.common.ContextModule;
 import com.applidium.graphql.client.di.common.DaggerApplicationComponent;
@@ -21,6 +23,12 @@ import com.applidium.graphql.client.di.main.MainModule;
 import com.applidium.graphql.client.di.threading.ThreadingComponent;
 import com.applidium.graphql.client.di.threading.ThreadingModule;
 import com.applidium.graphql.client.di.trace.TracerModule;
+import com.applidium.graphql.client.di.user.DaggerUserDetailComponent;
+import com.applidium.graphql.client.di.user.UserDetailComponent;
+import com.applidium.graphql.client.di.user.UserModule;
+import com.applidium.graphql.client.di.users.DaggerUsersComponent;
+import com.applidium.graphql.client.di.users.UsersComponent;
+import com.applidium.graphql.client.di.users.UsersModule;
 
 import java.io.File;
 
@@ -114,6 +122,24 @@ public class ComponentManager {
             .builder()
             .applicationComponent(getApplicationComponent())
             .mainModule(new MainModule(viewContract))
+            .contextModule(new ContextModule(context))
+            .build();
+    }
+
+    public static UsersComponent getUsersComponent(UsersViewContract viewContract, Context context) {
+        return DaggerUsersComponent
+            .builder()
+            .applicationComponent(getApplicationComponent())
+            .usersModule(new UsersModule(viewContract))
+            .contextModule(new ContextModule(context))
+            .build();
+    }
+
+    public static UserDetailComponent userDetailComponent(UserViewContract viewContract, Context context) {
+        return DaggerUserDetailComponent
+            .builder()
+            .applicationComponent(getApplicationComponent())
+            .userModule(new UserModule(viewContract))
             .contextModule(new ContextModule(context))
             .build();
     }

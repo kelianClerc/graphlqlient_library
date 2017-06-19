@@ -1,4 +1,4 @@
-query testQuery {
+query testQueryrer {
     users {
             id,
             name

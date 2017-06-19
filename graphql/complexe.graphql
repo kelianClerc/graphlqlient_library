@@ -1,5 +1,5 @@
 
-query TitlePost($postId: ID!, $number: Int) {
+query TitlePost($postId: ID!, $number: Int = 3) {
   result : posts(number: $number) {
     user {
       ...test

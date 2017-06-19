@@ -4,10 +4,14 @@ import android.support.annotation.Nullable;
 
 import com.applidium.graphqlient.model.QLModel;
 
+import java.util.List;
+
 import io.norberg.automatter.AutoMatter;
 
 @AutoMatter
-public interface Post extends QLModel {
+public interface UserQL extends QLModel {
     @Nullable String id();
-    @Nullable String title();
+    @Nullable String name();
+    @Nullable String essai();
+    @Nullable List<PostQL> posts();
 }
