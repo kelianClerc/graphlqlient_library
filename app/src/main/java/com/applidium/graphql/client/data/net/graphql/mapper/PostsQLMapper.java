@@ -23,6 +23,7 @@ public class PostsQLMapper implements Mapper<UserPostsResponse.User.Posts, Posts
     @Override
     public Posts map(UserPostsResponse.User.Posts toMap) {
         return new PostsBuilder()
+            .id(toMap.id())
             .title(toMap.title())
             .body(toMap.body())
             .createdAt(DateTime.parse(toMap.created_at().split(" ")[0]))
