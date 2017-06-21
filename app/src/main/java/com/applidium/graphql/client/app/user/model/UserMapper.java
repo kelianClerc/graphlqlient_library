@@ -27,6 +27,7 @@ public class UserMapper implements Mapper<User, UserViewModel> {
     @Override
     public UserViewModel map(User toMap) {
         return new UserViewModelBuilder()
+            .id(toMap.id())
             .email(toMap.email())
             .name(toMap.name())
             .memberSince(DateTimeFormat.mediumDate().print(toMap.createdAt()))

@@ -6,6 +6,7 @@ import io.norberg.automatter.AutoMatter;
 
 @AutoMatter
 public interface UserViewModel {
+    String id();
     String name();
     String email();
     String memberSince();
