@@ -6,6 +6,7 @@ import io.norberg.automatter.AutoMatter;
 
 @AutoMatter
 public interface PostViewModel {
+    String id();
     @Nullable String body();
     @Nullable String creationDate();
     int numberOfComments();

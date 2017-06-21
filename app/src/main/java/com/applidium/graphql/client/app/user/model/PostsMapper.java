@@ -25,6 +25,7 @@ public class PostsMapper implements Mapper<Posts, PostViewModel> {
     @Override
     public PostViewModel map(Posts toMap) {
         return new PostViewModelBuilder()
+            .id(toMap.id())
             .author(toMap.authorName())
             .title(toMap.title())
             .body(toMap.body())
