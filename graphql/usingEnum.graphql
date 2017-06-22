@@ -1,0 +1,6 @@
+query EnumTest($id: EnumQLEnum!){
+    AddVoteToPost(id:$id){
+        id,
+        votes_count
+    }
+}
