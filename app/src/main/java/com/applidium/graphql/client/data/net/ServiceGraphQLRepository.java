@@ -1,7 +1,7 @@
 package com.applidium.graphql.client.data.net;
 
-import com.applidium.graphql.client.TestQueryRequest;
-import com.applidium.graphql.client.TestQueryResponse;
+import com.applidium.graphql.client.DynamicParameterQueryRequest;
+import com.applidium.graphql.client.DynamicParameterQueryResponse;
 import com.applidium.graphql.client.core.boundary.GraphQLRepository;
 import com.applidium.graphql.client.core.interactor.sendrequest.Response;
 import com.applidium.graphqlient.GraphQL;
@@ -38,11 +38,11 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
 
     @Override
     public Response getResponseWithQueryParams(int id) throws IOException {
-        TestQueryRequest request = new TestQueryRequest(String.valueOf(id));
+        DynamicParameterQueryRequest request = new DynamicParameterQueryRequest(String.valueOf(id));
 
         try {
             QLResponse response = graphQL.send(request);
-            TestQueryResponse resp = (TestQueryResponse) response.getResponses();
+            DynamicParameterQueryResponse resp = (DynamicParameterQueryResponse) response.getResponses();
             return new Response(response.getResponses().toString(), request.query(), request.variables());
         } catch (QLException e) {
             e.printStackTrace();

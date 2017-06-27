@@ -1,5 +1,6 @@
 package com.applidium.graphql.client.data.net;
 
+import com.applidium.graphql.client.ComplexeParamRequest;
 import com.applidium.graphql.client.UserListRequest;
 import com.applidium.graphql.client.UserListResponse;
 import com.applidium.graphql.client.UserPostsRequest;
@@ -53,6 +54,9 @@ public class ServiceUserRepository implements UserRepository {
     public Posts updateVoteCounts(String targetId) throws QLException {
         VoteMutation mutation = new VoteMutation(targetId);
         VoteResponse response = (VoteResponse) graphql.send(mutation).getResponses();
+        ComplexeParamRequest request = new ComplexeParamRequest();
+        request.User().id("12");
         return postMapper.map(response.AddVoteToPost());
+
     }
 }
