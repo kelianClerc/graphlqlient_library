@@ -54,4 +54,37 @@ public class GraphQL {
 
         return new QLCall(query, client.newCall(request), converterFactory.responseBodyConverter(query.target()));
     }
+
+    public static final class Builder {
+        private String baseUrl;
+        private Converter.Factory converterFactory;
+
+        public Builder() {}
+
+        Builder(GraphQL graphQL) {
+            this.converterFactory = graphQL.converterFactory;
+            this.baseUrl = graphQL.baseUrl;
+        }
+
+        public Builder baseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+            return this;
+        }
+
+        public Builder converterFactory(Converter.Factory converterFactory) {
+            this.converterFactory = converterFactory;
+            return this;
+        }
+
+        public GraphQL build() {
+            if (baseUrl == null) {
+                throw new IllegalStateException("Base URL required");
+            }
+            if (converterFactory == null) {
+                throw new IllegalStateException("GraphQL library needs a converter factory");
+            }
+
+            return new GraphQL(this.baseUrl, this.converterFactory);
+        }
+    }
 }
