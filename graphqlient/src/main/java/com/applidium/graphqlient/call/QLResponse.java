@@ -6,7 +6,7 @@ import okhttp3.Response;
 
 public class QLResponse<T> {
     private Response rawResponse;
-    private T responses;
+    private T response;
 
     public QLResponse() {
     }
@@ -15,24 +15,24 @@ public class QLResponse<T> {
         this.rawResponse = rawResponse;
     }
 
-    public QLResponse(T responses) {
-        this.responses = responses;
+    public QLResponse(T response) {
+        this.response = response;
     }
 
-    public QLResponse(Response rawResponse, T responses) {
+    public QLResponse(Response rawResponse, T response) {
         this.rawResponse = rawResponse;
-        this.responses = responses;
+        this.response = response;
     }
 
     public QLResponse(Response response, QLResponseModel convert) {
     }
 
-    public T getResponses() {
-        return responses;
+    public T getResponse() {
+        return response;
     }
 
-    public void setResponses(T responses) {
-        this.responses = responses;
+    public void setResponse(T response) {
+        this.response = response;
     }
 
     public Response getRawResponse() {
@@ -43,4 +43,7 @@ public class QLResponse<T> {
         this.rawResponse = rawResponse;
     }
 
+    public static <T> QLResponse<T> create(Response response, T convert) {
+        return new QLResponse<>(response, convert);
+    }
 }
