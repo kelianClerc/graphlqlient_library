@@ -170,6 +170,7 @@ dependencies {
     testCompile "joda-time:joda-time:$versions.joda"
     testCompile "de.bechte.junit:junit-hierarchicalcontextrunner:$versions.hierarchicalRunner"
     compile project(path: ':graphqlient')
+    compile project(path: ':gson')
 }
 
 private decorateFlavors() {
