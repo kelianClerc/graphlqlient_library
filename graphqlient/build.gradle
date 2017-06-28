@@ -30,6 +30,4 @@ dependencies {
     testCompile 'org.json:json:20140107'
     testCompile 'junit:junit:4.12'
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
-    compile "io.norberg:auto-matter-gson:$versions.autoMatter"
-    compile "com.google.guava:guava:$versions.guava" // needed by auto-matter-gson
 }
