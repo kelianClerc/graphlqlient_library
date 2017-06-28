@@ -1,1 +1,1 @@
-include ':app', ':graphqlient'
+include ':app', ':graphqlient', ':gson'
