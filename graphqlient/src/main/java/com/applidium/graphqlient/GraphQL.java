@@ -2,6 +2,7 @@ package com.applidium.graphqlient;
 
 import com.applidium.graphqlient.call.QLCall;
 import com.applidium.graphqlient.call.QLResponse;
+import com.applidium.graphqlient.converters.Converter;
 import com.applidium.graphqlient.exceptions.QLException;
 
 import java.io.IOException;
@@ -15,9 +16,11 @@ public class GraphQL {
     private String baseUrl = "http://localhost:3000/graphql/test";
     private final static String QUERY_PARAMETER = "query";
     private final static String VARIABLE_PARAMETER = "variables";
+    private final Converter.Factory converterFactory;
 
-    public GraphQL(String baseUrl) {
+    public GraphQL(String baseUrl, Converter.Factory converterFactory) {
         this.baseUrl = baseUrl;
+        this.converterFactory = converterFactory;
         client = new OkHttpClient();
     }
 
@@ -49,6 +52,6 @@ public class GraphQL {
             .url(toCallUrl)
             .build();
 
-        return new QLCall(query, client.newCall(request));
+        return new QLCall(query, client.newCall(request), converterFactory.responseBodyConverter(query.target()));
     }
 }

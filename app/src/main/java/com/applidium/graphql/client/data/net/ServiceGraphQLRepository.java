@@ -6,11 +6,16 @@ import com.applidium.graphql.client.core.boundary.GraphQLRepository;
 import com.applidium.graphql.client.core.interactor.sendrequest.Response;
 import com.applidium.graphqlient.GraphQL;
 import com.applidium.graphqlient.call.QLResponse;
+import com.applidium.graphqlient.converter.gson.GsonConverterFactory;
 import com.applidium.graphqlient.exceptions.QLException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 
 import javax.inject.Inject;
+
+import io.norberg.automatter.gson.AutoMatterTypeAdapterFactory;
 
 public class ServiceGraphQLRepository implements GraphQLRepository {
 
@@ -18,7 +23,9 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
 
     @Inject
     ServiceGraphQLRepository() {
-        graphQL = new GraphQL("http://localhost:3000/graphql/test");
+        Gson gson = new GsonBuilder().registerTypeAdapterFactory(new AutoMatterTypeAdapterFactory()).create();
+        GsonConverterFactory converterFactory = GsonConverterFactory.create(gson);
+        this.graphQL = new GraphQL("http://localhost:3000/graphql/test", converterFactory);
     }
 
     @Override

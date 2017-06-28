@@ -14,11 +14,16 @@ import com.applidium.graphql.client.data.net.graphql.mapper.ListUserMapper;
 import com.applidium.graphql.client.data.net.graphql.mapper.UserPostMapper;
 import com.applidium.graphql.client.data.net.graphql.mapper.VoteQLMapper;
 import com.applidium.graphqlient.GraphQL;
+import com.applidium.graphqlient.converter.gson.GsonConverterFactory;
 import com.applidium.graphqlient.exceptions.QLException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.List;
 
 import javax.inject.Inject;
+
+import io.norberg.automatter.gson.AutoMatterTypeAdapterFactory;
 
 public class ServiceUserRepository implements UserRepository {
 
@@ -29,10 +34,14 @@ public class ServiceUserRepository implements UserRepository {
 
     @Inject ServiceUserRepository(ListUserMapper mapper, UserPostMapper userPostMapper,
                                   VoteQLMapper postMapper) {
+
+        Gson gson = new GsonBuilder().registerTypeAdapterFactory(new AutoMatterTypeAdapterFactory()).create();
+
         this.mapper = mapper;
         this.userPostMapper = userPostMapper;
         this.postMapper = postMapper;
-        graphql = new GraphQL("http://localhost:3000/graphql/test");
+        GsonConverterFactory converterFactory = GsonConverterFactory.create(gson);
+        graphql = new GraphQL("http://localhost:3000/graphql/test", converterFactory);
     }
 
     @Override

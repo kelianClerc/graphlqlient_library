@@ -2,39 +2,44 @@ package com.applidium.graphqlient.call;
 
 import com.applidium.graphqlient.QLResponseModel;
 
-public class QLResponse {
-    private String rawResponse;
-    private QLResponseModel responses;
+import okhttp3.Response;
+
+public class QLResponse<T> {
+    private Response rawResponse;
+    private T responses;
 
     public QLResponse() {
     }
 
-    public QLResponse(String rawResponse) {
+    public QLResponse(Response rawResponse) {
         this.rawResponse = rawResponse;
     }
 
-    public QLResponse(QLResponseModel responses) {
+    public QLResponse(T responses) {
         this.responses = responses;
     }
 
-    public QLResponse(String rawResponse, QLResponseModel responses) {
+    public QLResponse(Response rawResponse, T responses) {
         this.rawResponse = rawResponse;
         this.responses = responses;
     }
 
-    public QLResponseModel getResponses() {
+    public QLResponse(Response response, QLResponseModel convert) {
+    }
+
+    public T getResponses() {
         return responses;
     }
 
-    public void setResponses(QLResponseModel responses) {
+    public void setResponses(T responses) {
         this.responses = responses;
     }
 
-    public String getRawResponse() {
+    public Response getRawResponse() {
         return rawResponse;
     }
 
-    public void setRawResponse(String rawResponse) {
+    public void setRawResponse(Response rawResponse) {
         this.rawResponse = rawResponse;
     }
 
