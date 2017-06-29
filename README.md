@@ -66,10 +66,18 @@ Add `jitpack` repository in project's `build.gradle`
 ```
 buildscript {
     repositories {
+        ...
         maven { url 'https://jitpack.io' }
     }
     dependencies {
         classpath 'com.github.kelianClerc:graphqlient_gradle_plugin:develop-SNAPSHOT'
+    }
+}
+
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
     }
 }
 
