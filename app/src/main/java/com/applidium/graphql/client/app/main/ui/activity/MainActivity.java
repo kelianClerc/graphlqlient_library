@@ -7,8 +7,11 @@ import android.widget.TextView;
 
 import com.applidium.graphql.client.R;
 import com.applidium.graphql.client.app.common.BaseActivity;
+import com.applidium.graphql.client.app.main.presenter.MainPresenter;
 import com.applidium.graphql.client.app.main.ui.MainViewContract;
 import com.applidium.graphql.client.di.ComponentManager;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,6 +22,7 @@ public class MainActivity extends BaseActivity implements MainViewContract {
     @BindView(R.id.request) TextView request;
     @BindView(R.id.response) TextView response;
 
+    @Inject MainPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,17 +33,13 @@ public class MainActivity extends BaseActivity implements MainViewContract {
 
     @Override
     protected void injectDependencies() {
-        ComponentManager.getLoggingComponent().inject(this);
+        ComponentManager.getMainComponent(this, this).inject(this);
     }
 
     private void setupView() {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        showRequest("{\n" +
-            "\tusers {\n" +
-            "    \t\tname\n" +
-            "\t}\n" +
-            "}");
+        showRequest("{users{name,posts{title}}}");
     }
 
     private void setupListeners() {
@@ -50,7 +50,7 @@ public class MainActivity extends BaseActivity implements MainViewContract {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //presenter.onLaunchRequest();
+                presenter.onLaunchRequest(request.getText().toString());
             }
         };
     }
@@ -62,6 +62,37 @@ public class MainActivity extends BaseActivity implements MainViewContract {
 
     @Override
     public void showResponse(String responseText) {
+        response.setText(formatJson(responseText));
+    }
 
+    private String formatJson(String raw) {
+        StringBuilder json = new StringBuilder();
+        String indentString = "";
+
+        for (int i = 0; i < raw.length(); i++) {
+            char letter = raw.charAt(i);
+            switch (letter) {
+                case '{':
+                case '[':
+                    json.append("\n" + indentString + letter + "\n");
+                    indentString = indentString + "\t";
+                    json.append(indentString);
+                    break;
+                case '}':
+                case ']':
+                    indentString = indentString.replaceFirst("\t", "");
+                    json.append("\n" + indentString + letter);
+                    break;
+                case ',':
+                    json.append(letter + "\n" + indentString);
+                    break;
+
+                default:
+                    json.append(letter);
+                    break;
+            }
+        }
+
+        return json.toString();
     }
 }
