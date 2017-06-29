@@ -1,7 +1,8 @@
 package com.applidium.graphqlient;
 
+import com.applidium.graphqlient.exceptions.QLParserException;
 import com.applidium.graphqlient.tree.QLElement;
-import com.applidium.graphqlient.tree.QLFragment;
+import com.applidium.graphqlient.tree.QLFragmentNode;
 import com.applidium.graphqlient.tree.QLLeaf;
 import com.applidium.graphqlient.tree.QLNode;
 
@@ -79,30 +80,19 @@ public class QLParser {
         this.toParse = initialString = toParse;
     }
 
-    public QLQuery buildQuery() {
+    public QLQuery buildQuery() throws QLParserException {
         currentPosition.clear();
         elevation = 0;
         if (toParse == null || toParse.isEmpty()) {
-            return null; // TODO (kelianclerc) 23/5/17 create exception
+            throw new QLParserException("No string provided to be parsed");
         }
         parseFragments(initialString);
-        if (shouldPopulateFragment) {
-            populateFragment();
-        }
         parseQuery();
+
         return query;
     }
 
-    private void populateFragment() {
-        for (int i = 0; i < toUpdate.size(); i++) {
-            QLElement element = toUpdate.get(i);
-            QLNode parent = (QLNode) parentOfToUpdate.get(i);
-            parent.removeChild(element);
-            parent.addAllChild(findFragmentByName(element.getName()));
-        }
-    }
-
-    private void parseFragments(String searchString) {
+    private void parseFragments(String searchString) throws QLParserException {
         Pattern pattern = Pattern.compile(FRAGMENT_KEYWORD + "\\s[a-zA-Z0-9]*\\son\\s[a-zA-Z0-9]*[\\s]?\\{");
         Matcher matcher = pattern.matcher(searchString);
         if (matcher.find()) {
@@ -117,7 +107,7 @@ public class QLParser {
         }
     }
 
-    private void processFragment(String fragmentString) {
+    private void processFragment(String fragmentString) throws QLParserException {
         isFragmentField = true;
         initTreeBulding();
         toParse = fragmentString;
@@ -131,11 +121,13 @@ public class QLParser {
         currentPosition.clear();
     }
 
-    private void getHeader() {
+    private void getHeader() throws QLParserException {
         int endIndex = toParse.indexOf("{");
         if (endIndex < 0) {
             this.query = new QLQuery();
-            return; // TODO (kelianclerc) 23/5/17 create exception
+            String message = "No block found in the string provided : \"" + toParse + "\", cannot" +
+                " create QLQuery";
+            throw new QLParserException(message);
         }
 
         String substring = toParse.substring(0, endIndex);
@@ -170,7 +162,7 @@ public class QLParser {
         this.query.setParameters(params);
     }
 
-    private void parseQuery() {
+    private void parseQuery() throws QLParserException {
         toParse = initialString;
         isFragmentField = false;
         initTreeBulding();
@@ -178,11 +170,11 @@ public class QLParser {
         getRootElement();
     }
 
-    private void parseFragmentHeader(String substring) {
+    private void parseFragmentHeader(String substring) throws QLParserException {
         String[] fragmentHeader = substring.split(" ");
 
         if (fragmentHeader.length != 4)  {
-            return; //// TODO (kelianclerc) 31/5/17 exception
+            throw new QLParserException("Not a valid fragment header : should be : \"framgent [name] on [target]\", found : \"" + substring + "\"");
         }
         fragments.add(new QLFragment(fragmentHeader[1], fragmentHeader[3]));
     }
@@ -190,7 +182,7 @@ public class QLParser {
     private void getRootElement() {
         int endIndex = toParse.indexOf("{");
         if (endIndex < 0) {
-            return; // TODO (kelianclerc) 23/5/17 create exception
+            return;
         }
 
         String substring = toParse.substring(0, endIndex);
@@ -240,15 +232,8 @@ public class QLParser {
     private void handleFragmentImport() {
         int begin = toParse.indexOf("...");
         String fragmentName = toParse.substring(begin + 3, delimiter.endCarret);
-        if (!isFragmentField) {
-            currentPosition.get(elevation - 1).addAllChild(findFragmentByName(fragmentName));
-        } else {
-            shouldPopulateFragment = true;
-            QLElement child = new QLElement("..." + fragmentName);
-            toUpdate.add(child);
-            parentOfToUpdate.add(currentPosition.get(elevation - 1));
-            currentPosition.get(elevation - 1).addChild(child);
-        }
+        currentPosition.get(elevation - 1).addChild(new QLFragmentNode(fragmentName));
+
 
         trimString(delimiter.endCarret + 1);
         processNextField();

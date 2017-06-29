@@ -1,7 +1,8 @@
 package com.applidium.graphqlient;
 
+import com.applidium.graphqlient.exceptions.QLParserException;
 import com.applidium.graphqlient.tree.QLElement;
-import com.applidium.graphqlient.tree.QLFragment;
+import com.applidium.graphqlient.tree.QLFragmentNode;
 import com.applidium.graphqlient.tree.QLLeaf;
 import com.applidium.graphqlient.tree.QLNode;
 
@@ -12,6 +13,7 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
 
@@ -20,10 +22,21 @@ public class QLParserTest {
     @Test
     public void initClass() throws Exception {
         QLParser parser = new QLParser();
-        assertEquals(parser.buildQuery(), null);
+        try {
+            assertEquals(parser.buildQuery(), null);
+            fail("QLParserException should have been thrown");
+        } catch (QLParserException e) {
+            assertEquals(e.getMessage(), "No string provided to be parsed");
+        }
 
         QLParser parser2 = new QLParser("string");
-        assertEquals(parser2.buildQuery().getQueryFields().size(), 0);
+        try {
+            assertEquals(parser2.buildQuery().getQueryFields().size(), 0);
+            fail("QLParserException should have been thrown");
+        } catch (QLParserException e) {
+            assertEquals(e.getMessage(), "No block found in the string provided : \"string\", " +
+                "cannot create QLQuery");
+        }
     }
 
     @Test
@@ -327,7 +340,8 @@ public class QLParserTest {
         assertEquals(fragment.getChildren().size(), 3);
         QLFragment fragment1 = query.getFragments().get(1);
         assertEquals(fragment1.getName(), "test");
-        assertEquals(fragment1.getChildren().size(), fragment.getChildren().size());
+        assertEquals(fragment1.getChildren().size(), 1);
+        assertThat(fragment1.getChildren().get(0), instanceOf(QLFragmentNode.class));
     }
 
     @Test
@@ -351,15 +365,8 @@ public class QLParserTest {
         QLNode node = query.getQueryFields().get(0);
         assertEquals(node.getName(), "user");
         assertEquals(node.getParameters().size(), 0);
-        assertEquals(node.getChildren().size(), 4);
-        assertEquals(node.getChildren().get(0).getName(), "name");
-        assertEquals(node.getChildren().get(1).getName(), "name1");
-        assertEquals(node.getChildren().get(1).getAlias(), "alias");
-        assertEquals(node.getChildren().get(2).getName(), "email1");
-        assertEquals(node.getChildren().get(2).getParameters().size(), 1);
-        assertEquals(node.getChildren().get(3).getName(), "posts1");
-        assertThat(node.getChildren().get(3), instanceOf(QLNode.class));
-        QLNode node1 = (QLNode) node.getChildren().get(3);
-        assertEquals(node1.getChildren().size(), 1);
+        assertEquals(node.getChildren().size(), 2);
+        assertThat(node.getChildren().get(0), instanceOf(QLFragmentNode.class));
+        assertThat(node.getChildren().get(1), instanceOf(QLFragmentNode.class));
     }
 }
