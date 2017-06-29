@@ -23,6 +23,9 @@ public class QLVariables {
 
     public String print() {
         String res = "";
+        if (parameters.size() <= 0) {
+            return res;
+        }
         int i = 0;
         res += OPENING_CHARACTER;
         for (String key : parameters.keySet()) {

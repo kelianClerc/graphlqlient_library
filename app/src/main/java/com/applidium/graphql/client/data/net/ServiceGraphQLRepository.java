@@ -25,7 +25,7 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
     private QLQuery qlQuery;
 
     @Inject ServiceGraphQLRepository() {
-        graphQL = new GraphQL();
+        graphQL = new GraphQL("http://localhost:3000/graphql/test");
     }
 
     @Override
