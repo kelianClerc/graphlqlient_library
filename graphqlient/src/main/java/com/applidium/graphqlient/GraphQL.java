@@ -10,6 +10,7 @@ import java.io.IOException;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.ResponseBody;
 
 public class GraphQL {
     private final OkHttpClient client;
@@ -24,12 +25,13 @@ public class GraphQL {
         client = new OkHttpClient();
     }
 
-    public QLResponse send(QLRequest request) throws QLException {
-        return send(call(request));
+    public <T> QLResponse<T> send(QLRequest request) throws QLException {
+        QLCall<T> call = call(request);
+        return send(call);
     }
 
-    public QLResponse send(QLCall call) throws QLException {
-        QLResponse response = null;
+    public <T> QLResponse<T> send(QLCall<T> call) throws QLException {
+        QLResponse<T> response = null;
         try {
             response = call.execute();
         } catch (IOException e) {
@@ -38,7 +40,7 @@ public class GraphQL {
         return response;
     }
 
-    public QLCall call(QLRequest query) throws QLException {
+    public <T> QLCall<T> call(QLRequest query) throws QLException {
         HttpUrl.Builder builder = HttpUrl.parse(baseUrl).newBuilder();
 
         builder.addQueryParameter(QUERY_PARAMETER, query.query());
@@ -52,7 +54,11 @@ public class GraphQL {
             .url(toCallUrl)
             .build();
 
-        return new QLCall(query, client.newCall(request), converterFactory.responseBodyConverter(query.target()));
+        Converter<ResponseBody, T> responseBodyConverter = (Converter<ResponseBody, T>)(converterFactory.responseBodyConverter
+            (query.target()));
+        QLCall<T> call = new QLCall<>(query, client.newCall(request), responseBodyConverter);
+
+        return call;
     }
 
     public static final class Builder {

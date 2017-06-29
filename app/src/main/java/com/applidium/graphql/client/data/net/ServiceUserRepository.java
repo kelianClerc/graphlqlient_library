@@ -14,6 +14,8 @@ import com.applidium.graphql.client.data.net.graphql.mapper.ListUserMapper;
 import com.applidium.graphql.client.data.net.graphql.mapper.UserPostMapper;
 import com.applidium.graphql.client.data.net.graphql.mapper.VoteQLMapper;
 import com.applidium.graphqlient.GraphQL;
+import com.applidium.graphqlient.call.QLCall;
+import com.applidium.graphqlient.call.QLResponse;
 import com.applidium.graphqlient.converter.gson.GsonConverterFactory;
 import com.applidium.graphqlient.exceptions.QLException;
 import com.google.gson.Gson;
@@ -41,31 +43,35 @@ public class ServiceUserRepository implements UserRepository {
         this.userPostMapper = userPostMapper;
         this.postMapper = postMapper;
         GsonConverterFactory converterFactory = GsonConverterFactory.create(gson);
-        graphql = new GraphQL("http://localhost:3000/graphql/test", converterFactory);
+        String url = "http://localhost:3000/graphql/test";
+        graphql = new GraphQL.Builder().baseUrl(url).converterFactory(converterFactory).build();
     }
 
     @Override
     public List<User> getListOfUsers() throws QLException {
         UserListRequest request = new UserListRequest();
-        UserListResponse response = (UserListResponse) graphql.send(request).getResponses(); //
+        QLResponse<UserListResponse> response = graphql.send(request);
+
+        QLCall<UserListResponse> call = graphql.call(request);
+        
         // TODO (kelianclerc) 14/6/17 to simplify
-        return mapper.mapList(response);
+        return mapper.mapList(response.getResponse());
     }
 
     @Override
     public User getUserPosts(String targetId) throws QLException {
         UserPostsRequest request = new UserPostsRequest(targetId);
-        UserPostsResponse response = (UserPostsResponse) graphql.send(request).getResponses();
-        return userPostMapper.map(response.user());
+        QLResponse<UserPostsResponse> resp = graphql.send(request);
+        return userPostMapper.map(resp.getResponse().user());
     }
 
     @Override
     public Posts updateVoteCounts(String targetId) throws QLException {
         VoteMutation mutation = new VoteMutation(targetId);
-        VoteResponse response = (VoteResponse) graphql.send(mutation).getResponses();
+        QLResponse<VoteResponse> response = graphql.send(mutation);
         ComplexeParamRequest request = new ComplexeParamRequest();
         request.User().id("12");
-        return postMapper.map(response.AddVoteToPost());
+        return postMapper.map(response.getResponse().AddVoteToPost());
 
     }
 }

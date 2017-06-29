@@ -23,9 +23,15 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
 
     @Inject
     ServiceGraphQLRepository() {
-        Gson gson = new GsonBuilder().registerTypeAdapterFactory(new AutoMatterTypeAdapterFactory()).create();
+        String url = "http://localhost:3000/graphql/test";
+        Gson gson = new GsonBuilder()
+            .registerTypeAdapterFactory(new AutoMatterTypeAdapterFactory())
+            .create();
         GsonConverterFactory converterFactory = GsonConverterFactory.create(gson);
-        this.graphQL = new GraphQL("http://localhost:3000/graphql/test", converterFactory);
+        this.graphQL = new GraphQL.Builder()
+            .baseUrl(url)
+            .converterFactory(converterFactory)
+            .build();
     }
 
     @Override
@@ -49,8 +55,8 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
 
         try {
             QLResponse response = graphQL.send(request);
-            DynamicParameterQueryResponse resp = (DynamicParameterQueryResponse) response.getResponses();
-            return new Response(response.getResponses().toString(), request.query(), request.variables());
+            DynamicParameterQueryResponse resp = (DynamicParameterQueryResponse) response.getResponse();
+            return new Response(response.getResponse().toString(), request.query(), request.variables());
         } catch (QLException e) {
             e.printStackTrace();
         }

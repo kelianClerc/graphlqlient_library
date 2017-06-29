@@ -11,13 +11,13 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class QLCall {
+public class QLCall<T> {
 
     private QLRequest query;
     private Call call;
-    private Converter<ResponseBody, ?> converterFactory;
+    private Converter<ResponseBody, T> converterFactory;
 
-    public QLCall(QLRequest query, Call call, Converter<ResponseBody, ?> converterFactory) {
+    public QLCall(QLRequest query, Call call, Converter<ResponseBody, T> converterFactory) {
         this.query = query;
         this.call = call;
         this.converterFactory = converterFactory;
@@ -27,13 +27,13 @@ public class QLCall {
         return call.request();
     }
 
-    public QLResponse execute() throws IOException {
+    public QLResponse<T> execute() throws IOException {
         Response response = null;
         response = call.execute();
         return parseResponse(response);
     }
 
-    private QLResponse parseResponse(Response response) throws IOException {
+    private QLResponse<T> parseResponse(Response response) throws IOException {
         int responseCode = response.code();
         if (responseCode < 200 || responseCode >= 300) {
             // TODO (kelianclerc) 1/6/17 parse error
@@ -44,12 +44,13 @@ public class QLCall {
             return null;
         }
 
-        QLResponse result = new QLResponse(response, converterFactory.convert(response.body()));
+        T convert = converterFactory.convert(response.body());
+        QLResponse<T> result = QLResponse.create(response, convert);
         return result;
 
     }
 
-    public void enqueue(final QLCallback responseCallback) {
+    public void enqueue(final QLCallback<T> responseCallback) {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -59,7 +60,7 @@ public class QLCall {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 QLResponse qlResponse = null;
-                qlResponse =QLCall.this.parseResponse(response);
+                qlResponse = QLCall.this.parseResponse(response);
                 responseCallback.onResponse(QLCall.this, qlResponse);
             }
         });

@@ -1,6 +1,6 @@
 package com.applidium.graphqlient.call;
 
-public interface QLCallback {
-    void onResponse(QLCall call, QLResponse response);
-    void onFailure(QLCall call, Throwable t);
+public interface QLCallback<T> {
+    void onResponse(QLCall<T> call, QLResponse response);
+    void onFailure(QLCall<T> call, Throwable t);
 }
