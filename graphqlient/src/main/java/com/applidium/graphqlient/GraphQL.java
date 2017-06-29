@@ -6,6 +6,7 @@ import com.applidium.graphqlient.call.QLCall;
 import com.applidium.graphqlient.call.QLResponse;
 import com.applidium.graphqlient.exceptions.QLException;
 import com.applidium.graphqlient.exceptions.QLParserException;
+import com.applidium.graphqlient.model.QLModel;
 import com.applidium.graphqlient.tree.QLTreeBuilder;
 
 import org.json.JSONException;
@@ -22,11 +23,12 @@ public class GraphQL {
     private String baseUrl = "http://localhost:3000/graphql/test";
     private final static String QUERY_PARAMETER = "query";
     private final static String VARIABLE_PARAMETER = "variables";
+    private final QLEndpoints endpoints;
 
-    public GraphQL(String baseUrl) {
+    public GraphQL(String baseUrl, Class<? extends QLModel> endpoints) {
         this.baseUrl = baseUrl;
+        this.endpoints = new QLEndpoints(endpoints);
         client = new OkHttpClient();
-
     }
 
     public QLResponse send(String query) throws IOException, QLException, JSONException {
@@ -124,5 +126,9 @@ public class GraphQL {
             .build();
 
         return new QLCall(query, client.newCall(request));
+    }
+
+    public QLEndpoints endpoints() {
+        return endpoints;
     }
 }
