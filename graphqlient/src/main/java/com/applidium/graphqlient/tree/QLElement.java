@@ -11,6 +11,15 @@ public class QLElement {
     private final Map<String, Object> parameters = new HashMap<>();
     @Nullable private String alias;
 
+    public QLElement(QLElement element) {
+        if (element != null) {
+            this.name = element.getName();
+            this.alias = element.getAlias();
+            this.parameters.clear();
+            this.parameters.putAll(element.getParameters());
+        }
+    }
+
     public QLElement(String name) {
         this.name = name;
     }
@@ -74,5 +83,27 @@ public class QLElement {
             return "\"" + String.valueOf(o) + "\"";
         }
         return String.valueOf(o);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    @Nullable
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias12) {
+        this.alias = alias12;
+    }
+
+    public void setParameters(Map<String, Object> params) {
+        this.parameters.clear();
+        this.parameters.putAll(params);
     }
 }
