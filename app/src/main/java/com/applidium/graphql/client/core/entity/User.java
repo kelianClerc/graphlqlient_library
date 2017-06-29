@@ -2,7 +2,6 @@ package com.applidium.graphql.client.core.entity;
 
 import android.support.annotation.Nullable;
 
-import com.applidium.graphqlient.annotations.AliasFor;
 import com.applidium.graphqlient.model.QLModel;
 
 import java.util.List;
@@ -13,6 +12,6 @@ import io.norberg.automatter.AutoMatter;
 public interface User extends QLModel {
     @Nullable String id();
     @Nullable String name();
-    @Nullable @AliasFor(name = "email") String essai();
+    @Nullable String essai();
     @Nullable List<Post> posts();
 }

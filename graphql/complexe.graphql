@@ -1,0 +1,34 @@
+
+query TitlePost($postId: ID!, $number: Int) {
+  result : posts(number: $number) {
+    user {
+      ...test
+    }
+  }
+  comments {
+    user {
+      ...test
+    }
+  }
+  post(id: $postId) {
+    title
+  }
+  users {
+    name
+    id
+  }
+  user(id: 1) {
+    name
+    posts {
+      firstName : body
+    }
+  }
+}
+
+
+fragment test on User {
+  name(length:10),
+  posts{...test2}
+}
+
+fragment test2 on Post {created_at}

@@ -1,23 +1,22 @@
 package com.applidium.graphqlient.call;
 
 import com.applidium.graphqlient.QLMapper;
-import com.applidium.graphqlient.QLQuery;
-
-import org.json.JSONException;
+import com.applidium.graphqlient.QLRequest;
 
 import java.io.IOException;
 
-import okhttp3.*;
+import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Request;
 import okhttp3.Response;
 
 public class QLCall {
 
-    private QLQuery query;
+    private QLRequest query;
     private Call call;
     private QLMapper mapper;
 
-    public QLCall(QLQuery query, Call call) {
+    public QLCall(QLRequest query, Call call) {
         this.query = query;
         this.call = call;
         mapper = new QLMapper();
@@ -27,12 +26,13 @@ public class QLCall {
         return call.request();
     }
 
-    public QLResponse execute() throws IOException, JSONException {
-        Response response = call.execute();
+    public QLResponse execute() throws IOException {
+        Response response = null;
+        response = call.execute();
         return parseResponse(response);
     }
 
-    private QLResponse parseResponse(Response response) throws IOException, JSONException {
+    private QLResponse parseResponse(Response response) throws IOException {
         int responseCode = response.code();
         if (responseCode < 200 || responseCode >= 300) {
             // TODO (kelianclerc) 1/6/17 parse error
@@ -43,7 +43,7 @@ public class QLCall {
             return null;
         }
 
-        return mapper.convert(response.body(), getQuery());
+        return mapper.convert(response.body(), query);
 
     }
 
@@ -57,12 +57,7 @@ public class QLCall {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 QLResponse qlResponse = null;
-                try {
-                    qlResponse =QLCall.this.parseResponse(response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    throw new IOException("Not valid json received");
-                }
+                qlResponse =QLCall.this.parseResponse(response);
                 responseCallback.onResponse(QLCall.this, qlResponse);
             }
         });
@@ -80,7 +75,7 @@ public class QLCall {
         return call.isCanceled();
     }
 
-    public QLQuery getQuery() {
+    public QLRequest getQuery() {
         return query;
     }
 

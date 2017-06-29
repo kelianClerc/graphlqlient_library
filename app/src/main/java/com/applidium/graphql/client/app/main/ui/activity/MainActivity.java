@@ -75,7 +75,7 @@ public class MainActivity extends BaseActivity implements MainViewContract, Tool
 
     @Override
     public void showResponse(String responseText) {
-        response.setText(formatJson(responseText));
+        response.setText(responseText);
     }
 
     private String formatJson(String raw) {

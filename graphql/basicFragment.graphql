@@ -1,0 +1,10 @@
+{
+    users {
+        ...userInfo
+    }
+}
+
+fragment userInfo on User {
+    id,
+    name
+}
