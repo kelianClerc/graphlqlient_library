@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
@@ -128,6 +129,30 @@ public class QLQueryTest {
             }
             return null;
         }
+    }
+
+    @Test
+    public void addVariableTest() throws Exception {
+        QLParser parser = new QLParser();
+        parser.setToParse("query hello($try: Boolean!, $try2:String, $try3:Int, $try4:Float, $try5:ID!) {user{id}}");
+        QLQuery qlQuery = parser.buildQuery();
+        assertEquals(qlQuery.getParameters().getParams().size(), 5);
+
+        assertTrue(qlQuery.isVariableEmpty());
+
+        int numberOfVariables = qlQuery.getVariables().getVariables().size();
+        qlQuery.addVariable("randomString", 2);
+        assertEquals(qlQuery.getVariables().getVariables().size(), numberOfVariables);
+        qlQuery.addVariable("try3", 2);
+        assertEquals(qlQuery.getVariables().getVariables().size(), numberOfVariables + 1);
+        assertEquals(qlQuery.areAllParametersGiven(), false);
+        assertEquals(qlQuery.isVariableEmpty(), false);
+        qlQuery.addVariable("try", 2);
+        assertEquals(qlQuery.getVariables().getVariables().size(), numberOfVariables + 2);
+        qlQuery.addVariable("try5", 2);
+        assertEquals(qlQuery.getVariables().getVariables().size(), numberOfVariables + 3);
+        assertEquals(qlQuery.areAllParametersGiven(), true);
+
     }
 
     private class UserTest extends QLModel {

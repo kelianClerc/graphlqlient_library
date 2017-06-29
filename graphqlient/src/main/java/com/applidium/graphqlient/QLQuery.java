@@ -7,6 +7,7 @@ import com.applidium.graphqlient.tree.QLNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class QLQuery {
 
@@ -15,10 +16,10 @@ public class QLQuery {
     private static final String QUERY_CLOSING_CHARACTER = "}";
 
     private List<QLFragment> fragments;
-    @Nullable String name;
-    @Nullable List<QLVariablesElement> parameters;
-    // TODO (kelianclerc) 18/5/17 add field parameters
-    // A request must not be anonymous if it has parameters.
+    @Nullable private String name;
+    private final QLParameters parameters = new QLParameters();
+    private final QLVariables variables = new QLVariables();
+    // A request must not be anonymous if it has variables.
     private final List<QLNode> queryFields = new ArrayList<>();
 
     public QLQuery() {
@@ -32,7 +33,7 @@ public class QLQuery {
     public QLQuery(String name, List<QLVariablesElement> parameters) {
         super();
         this.name = name;
-        this.parameters = parameters;
+        this.parameters.setParams(parameters);
     }
 
     public void append(QLNode element) {
@@ -41,24 +42,21 @@ public class QLQuery {
         }
     }
 
-    public void setQueryFields(List<QLNode> queryFields){
-        this.queryFields.clear();
-        if (queryFields != null) {
-            this.queryFields.addAll(queryFields);
+    public void addVariable(String variableName, Object value) {
+        QLType varType = parameters.getType(variableName);
+        if (varType == null) {
+            // TODO (kelianclerc) 2/6/17 exception variable not declared
+            return;
         }
+        variables.addVariable(variableName, value);
     }
 
-    public List<QLNode> getQueryFields() {
-        return queryFields;
+    public boolean isVariableEmpty() {
+        return variables.isEmpty();
     }
 
-    @Nullable
-    public List<QLVariablesElement> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(@Nullable List<QLVariablesElement> parameters) {
-        this.parameters = parameters;
+    public boolean areAllParametersGiven() {
+        return parameters.allParametersGiven(variables);
     }
 
     public String printQuery() {
@@ -75,7 +73,7 @@ public class QLQuery {
         if (name != null) {
             stringBuilder.append(QUERY_KEYWORD + " " + name);
         }
-        if (parameters != null && parameters.size() > 0) {
+        if (parameters != null && !parameters.isEmpty()) {
             appendQueryParams(stringBuilder);
         }
         stringBuilder.append(QUERY_OPENING_CHARACTER);
@@ -83,19 +81,55 @@ public class QLQuery {
 
     private void appendQueryParams(StringBuilder stringBuilder) {
         stringBuilder.append("(");
-        int i = 0;
-        for (QLVariablesElement element: parameters) {
-            stringBuilder.append(element.print());
-            if (i < parameters.size() - 1) {
-                stringBuilder.append(",");
-            }
-            i++;
-        }
+        stringBuilder.append(parameters.printParameters());
         stringBuilder.append(")");
     }
 
+    public void setQueryFields(List<QLNode> queryFields){
+        this.queryFields.clear();
+        if (queryFields != null) {
+            this.queryFields.addAll(queryFields);
+        }
+    }
+
+    public List<QLNode> getQueryFields() {
+        return queryFields;
+    }
+
+    @Nullable
+    public QLParameters getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(QLParameters parameters) {
+        this.parameters.setParams(parameters.getParams());
+    }
+    public void setParameters(List<QLVariablesElement> parameters) {
+        this.parameters.setParams(parameters);
+    }
+
+
     private void appendEnd(StringBuilder stringBuilder) {
         stringBuilder.append(QUERY_CLOSING_CHARACTER);
+    }
+
+
+
+    @Nullable
+    public String getName() {
+        return name;
+    }
+
+    @Nullable
+    public QLVariables getVariables() {
+        return variables;
+    }
+
+    public void setVariables(QLVariables variables) {
+        Map<String, Object> vars = variables.getVariables();
+        for (String key: vars.keySet()) {
+            addVariable(key, vars.get(key));
+        }
     }
 
     public void setName(@Nullable String name) {

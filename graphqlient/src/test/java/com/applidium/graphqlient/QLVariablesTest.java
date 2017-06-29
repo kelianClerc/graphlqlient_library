@@ -5,9 +5,7 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
-import static android.view.View.Z;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
@@ -16,7 +14,7 @@ public class QLVariablesTest {
     @Test
     public void testInit() throws Exception {
         QLVariables variables = new QLVariables();
-        assertEquals(variables.getParameters(), Collections.emptyMap());
+        assertEquals(variables.getVariables(), Collections.emptyMap());
     }
 
     @Test
