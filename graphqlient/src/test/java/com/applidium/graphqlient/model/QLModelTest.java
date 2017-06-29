@@ -1,5 +1,6 @@
 package com.applidium.graphqlient.model;
 
+import com.applidium.graphqlient.QLVariablesElement;
 import com.applidium.graphqlient.annotations.Alias;
 import com.applidium.graphqlient.annotations.Argument;
 import com.applidium.graphqlient.annotations.Parameters;
@@ -27,7 +28,7 @@ public class QLModelTest {
         @Alias(name = "A string")
         int b = 1;
         @Parameters(table = {
-            @Argument(argumentName = "id", argumentValue = "1"),
+            @Argument(argumentName = "id", argumentVariable = "try"),
             @Argument(argumentName = "id2", argumentValue = "2"),
             @Argument(argumentName = "id3", argumentValue = "3"),
         })
@@ -118,7 +119,7 @@ public class QLModelTest {
         assertTrue(element3.getName().equals("b2"));
         assertTrue(element3.getAlias() == null);
         assertTrue(element3.getParameters().size() == 3);
-        assertTrue(element3.getParameters().get("id").equals("1"));
+        assertTrue(((QLVariablesElement) element3.getParameters().get("id")).printVariableName().equals("$try"));
         assertTrue(element3.getParameters().get("id2").equals("2"));
         assertTrue(element3.getParameters().get("id3").equals("3"));
     }

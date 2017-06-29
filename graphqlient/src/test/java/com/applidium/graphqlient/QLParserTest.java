@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
@@ -39,6 +40,29 @@ public class QLParserTest {
     }
 
     @Test
+    public void checkQueryHeaderTest() throws Exception {
+        QLParser parser = new QLParser();
+
+        parser.setToParse("query hello {}");
+        QLQuery query = parser.begin();
+        assertEquals(query.name, "hello");
+
+        QLParser parser2 = new QLParser();
+        parser2.setToParse("{}");
+        QLQuery response2 = parser2.begin();
+        assertEquals(response2.name, null);
+
+
+        QLParser parser3 = new QLParser();
+        parser3.setToParse("query test($try: Boolean!){}");
+        QLQuery response3 = parser3.begin();
+        assertEquals(response3.name, "test");
+        assertEquals(response3.getParameters().size(), 1);
+        assertEquals(response3.getParameters().get(0).getName(), "try");
+        assertEquals(response3.getParameters().get(0).getType(), QLType.BOOLEAN);
+    }
+
+    @Test
     public void checkEndpoint() throws Exception {
         QLParser parser = new QLParser();
 
@@ -65,6 +89,20 @@ public class QLParserTest {
         assertEquals(query3.getQueryFields().get(0).getParameters().size(), 1);
         assertTrue(query3.getQueryFields().get(0).getParameters().containsKey("id"));
         assertEquals(query3.getQueryFields().get(0).getParameters().get("id"), "12f");
+
+        parser.setToParse("query hello($try: Boolean!) {test : user(id:$try) {}");
+        QLQuery query4 = parser.begin();
+        assertEquals(query4.name, "hello");
+
+        assertEquals(query4.getParameters().size(), 1);
+        assertEquals(query4.getParameters().get(0).getName(), "try");
+        assertEquals(query4.getParameters().get(0).getType(), QLType.BOOLEAN);
+        assertEquals(query4.getQueryFields().size(), 1);
+        assertEquals(query4.getQueryFields().get(0).getName(), "user");
+        assertEquals(query4.getQueryFields().get(0).getAlias(), "test");
+        assertEquals(query4.getQueryFields().get(0).getParameters().size(), 1);
+        assertTrue(query4.getQueryFields().get(0).getParameters().containsKey("id"));
+        assertThat(query4.getQueryFields().get(0).getParameters().get("id"),instanceOf(QLVariablesElement.class));
     }
 
     @Test
@@ -104,7 +142,7 @@ public class QLParserTest {
         assertEquals(fourthChild.getParameters().get("zef"), "c");
         assertEquals(fourthChild.getParameters().get("azerr"), "b");
         assertThat(fourthChild, instanceOf(QLLeaf.class));
-        
+
         assertThat(query.getQueryFields().get(1), instanceOf(QLNode.class));
         assertEquals(query.getQueryFields().get(1).getName(), "bib");
         assertEquals(query.getQueryFields().get(1).getChildren().size(), 1);
@@ -165,5 +203,41 @@ public class QLParserTest {
         assertEquals(childNode.getChildren().size(), 1);
         assertEquals(childNode.getChildren().get(0).getName(), "ee");
 
+    }
+
+    @Test
+    public void queryParameterTest() throws Exception {
+
+        QLParser parser = new QLParser();
+        parser.setToParse("query hello($try: Boolean!, $try2:String, $try3:Int, $try4:Float, $try5:ID!) {user(id:$try) {}");
+        QLQuery query = parser.begin();
+        assertEquals(query.name, "hello");
+        assertEquals(query.getParameters().size(), 5);
+        assertEquals(query.getParameters().get(0).getName(), "try2");
+        assertEquals(query.getParameters().get(0).getType(), QLType.STRING);
+        assertFalse(query.getParameters().get(0).isMandatory());
+        assertEquals(query.getParameters().get(1).getName(), "try4");
+        assertEquals(query.getParameters().get(1).getType(), QLType.FLOAT);
+        assertFalse(query.getParameters().get(1).isMandatory());
+        assertEquals(query.getParameters().get(2).getName(), "try");
+        assertEquals(query.getParameters().get(2).getType(), QLType.BOOLEAN);
+        assertTrue(query.getParameters().get(2).isMandatory());
+        assertEquals(query.getParameters().get(3).getName(), "try3");
+        assertEquals(query.getParameters().get(3).getType(), QLType.INT);
+        assertFalse(query.getParameters().get(3).isMandatory());
+        assertEquals(query.getParameters().get(4).getName(), "try5");
+        assertEquals(query.getParameters().get(4).getType(), QLType.ID);
+        assertTrue(query.getParameters().get(4).isMandatory());
+        assertEquals(query.getQueryFields().size(), 1);
+
+        QLNode node = query.getQueryFields().get(0);
+        assertEquals(node.getName(), "user");
+        assertEquals(node.getParameters().size(), 1);
+        assertTrue(node.getParameters().containsKey("id"));
+        assertThat(node.getParameters().get("id"),instanceOf(QLVariablesElement.class));
+        QLVariablesElement id = (QLVariablesElement) node.getParameters().get("id");
+        assertEquals(id.getName(), "try");
+        assertEquals(id.getType(), null);
+        assertEquals(id.isMandatory(), false);
     }
 }

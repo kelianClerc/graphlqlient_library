@@ -2,6 +2,7 @@ package com.applidium.graphqlient.model;
 
 import android.support.annotation.NonNull;
 
+import com.applidium.graphqlient.QLVariablesElement;
 import com.applidium.graphqlient.annotations.Alias;
 import com.applidium.graphqlient.annotations.Argument;
 import com.applidium.graphqlient.annotations.Parameters;
@@ -49,7 +50,11 @@ public class QLModel {
 
     private void createParametersMap(Map<String, Object> parameters, Parameters annotatedElement) {
         for (Argument argument: annotatedElement.table()) {
-            parameters.put(argument.argumentName(), argument.argumentValue());
+            if (argument.argumentVariable().length() > 0) {
+                parameters.put(argument.argumentName(), new QLVariablesElement(argument.argumentVariable()));
+            } else{
+                parameters.put(argument.argumentName(), argument.argumentValue());
+            }
         }
     }
 
@@ -72,6 +77,7 @@ public class QLModel {
     }
 
     private boolean isOfStandardType(Field field) {
+        // TODO (kelianclerc) 23/5/17 How to allow user to add its how enums
         Class<?> fieldType = getFieldType(field);
         return fieldType == String.class
             || fieldType == Float.TYPE

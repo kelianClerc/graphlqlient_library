@@ -4,7 +4,9 @@ import com.applidium.graphqlient.tree.QLElement;
 import com.applidium.graphqlient.tree.QLLeaf;
 import com.applidium.graphqlient.tree.QLNode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class QLParser {
@@ -60,6 +62,14 @@ public class QLParser {
         this.query = new QLQuery(
             element.getName() != null && element.getName().length() > 0 ? element.getName() : null
         );
+        List<QLVariablesElement> params = new ArrayList<>();
+        for (String key: element.getParameters().keySet()) {
+            Object o = element.getParameters().get(key);
+            if (o instanceof QLVariablesElement) {
+                params.add((QLVariablesElement) o);
+            }
+        }
+        this.query.setParameters(params);
         trimString(endIndex + 1);
         this.toParse = toParse.replaceAll(" ", "");
     }
@@ -204,10 +214,49 @@ public class QLParser {
         for (String param : stringParametersSplit) {
             String[] unit = param.split("[:]");
             if (unit.length > 1) {
-                params.put(unit[0], unit[1].replaceAll("\"", ""));
+                if (unit[0].charAt(0) == '$') {
+                    params.put(unit[0], parseVariableType(unit));
+                } else if (unit[1].charAt(0) == '$') {
+                    params.put(unit[0], new QLVariablesElement(unit[1].replace("$", "")));
+                } else {
+                    unit[1]= unit[1].replaceAll("\"", "");
+                    params.put(unit[0], unit[1]);
+                }
             }
         }
         return params;
+    }
+
+    private QLVariablesElement parseVariableType(String[] unit) {
+        QLVariablesElement element = new QLVariablesElement();
+        if (unit[1].contains("!")) {
+            element.setMandatory(true);
+            unit[1] = unit[1].replace("!", "");
+        } else {
+            element.setMandatory(false);
+        }
+        element.setName(unit[0].replace("$",""));
+        switch (unit[1]) {
+            case "Boolean":
+                element.setType(QLType.BOOLEAN);
+                break;
+            case "String":
+                element.setType(QLType.STRING);
+                break;
+            case "Int":
+                element.setType(QLType.INT);
+                break;
+            case "ID":
+                element.setType(QLType.ID);
+                break;
+            case "Float":
+                element.setType(QLType.FLOAT);
+                break;
+            default:
+                // TODO (kelianclerc) 23/5/17 error or enum
+                break;
+        }
+        return element;
     }
 
     private void trimString(int start) {
