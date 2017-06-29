@@ -2,7 +2,7 @@ package com.applidium.graphql.client.data.net;
 
 import com.applidium.graphql.client.core.boundary.GraphQLRepository;
 import com.applidium.graphql.client.core.interactor.sendrequest.Response;
-import com.applidium.graphql.client.data.net.graphql.model.Endpoint;
+import com.applidium.graphql.client.data.net.graphql.model.QLEndpoint;
 import com.applidium.graphqlient.GraphQL;
 import com.applidium.graphqlient.QLQuery;
 import com.applidium.graphqlient.QLType;
@@ -28,7 +28,7 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
     private QLQuery qlQuery;
 
     @Inject ServiceGraphQLRepository() {
-        graphQL = new GraphQL("http://localhost:3000/graphql/test", Endpoint.class);
+        graphQL = new GraphQL("http://localhost:3000/graphql/test", QLEndpoint.class);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
 
         qlQuery = new QLQuery("test");
 
-        Endpoint endpoints = new Endpoint();
+        QLEndpoint endpoints = new QLEndpoint();
         qlQuery.append(graphQL.endpoints().get("users"));
 
         String printQuery = qlQuery.printQuery();
@@ -77,7 +77,7 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
 
         appendQueryParams();
 
-        Endpoint endpoint = new Endpoint();
+        QLEndpoint QLEndpoint = new QLEndpoint();
         qlQuery.append(graphQL.endpoints().get("user"));
 
         Map<String, Object> varMap = new HashMap<>();

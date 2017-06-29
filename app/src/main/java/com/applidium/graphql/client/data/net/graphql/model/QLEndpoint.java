@@ -6,18 +6,18 @@ import com.applidium.graphqlient.model.QLModel;
 
 import java.util.List;
 
-public class Endpoint implements QLModel {
+public class QLEndpoint implements QLModel {
     @Parameters(table={
         @Argument(argumentName = "id", argumentValue = "1")
     })
     //private User user;
-    private List<User> users;
+    private List<QLUser> QLUsers;
 
     @Parameters(table={
         @Argument(argumentName = "id", argumentVariable = "userId")
     })
-    private User user;
+    private QLUser QLUser;
 
-    public Endpoint() {
+    public QLEndpoint() {
     }
 }

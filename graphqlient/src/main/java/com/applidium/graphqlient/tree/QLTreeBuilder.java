@@ -24,22 +24,27 @@ import java.util.Map;
 public class QLTreeBuilder {
 
     public QLNode createNodeFromField(Member member) {
-        QLNode node = new QLNode(createElement(member));
-        List<QLElement> children = new ArrayList<>();
-        Class<?> fieldType = getFieldType(member);
-        Field[] declaredFields = fieldType.getDeclaredFields();
-        if (declaredFields.length > 0) {
-            for (Field field1: declaredFields) {
-                appendQLElement(children, field1);
-            }
-        } else {
-            for (Method method: fieldType.getDeclaredMethods()) {
-                appendQLElement(children, method);
-            }
-        }
+        return createNodeFromField(member, true);
+    }
 
-        node.addAllChild(children);
+    public QLNode createNodeFromField(Member member, boolean shouldBuildTreeRecursively) {
+        QLNode node = new QLNode(createElement(member));
+        Class<?> fieldType = getFieldType(member);
         node.setAssociatedObject(fieldType);
+        if (shouldBuildTreeRecursively) {
+            List<QLElement> children = new ArrayList<>();
+            Field[] declaredFields = fieldType.getDeclaredFields();
+            if (declaredFields.length > 0) {
+                for (Field field1: declaredFields) {
+                    appendQLElement(children, field1, shouldBuildTreeRecursively);
+                }
+            } else {
+                for (Method method: fieldType.getDeclaredMethods()) {
+                    appendQLElement(children, method, shouldBuildTreeRecursively);
+                }
+            }
+            node.addAllChild(children);
+        }
         return node;
     }
 
@@ -93,12 +98,20 @@ public class QLTreeBuilder {
     }
 
     public void appendQLElement(List<QLElement> result, Member member) {
+        appendQLElement(result, member, true);
+    }
+
+    public void appendQLElement(
+        List<QLElement> result,
+        Member member,
+        boolean shouldBuildTreeRecursively
+    ) {
         Member target = getMemberCorrectClass(member);
         if (target == null) return;
         if (isOfStandardType(target)) {
             result.add(createLeafFromField(target));
-        } else if (QLModel.class.isAssignableFrom(getType(target))){
-            result.add(createNodeFromField(target));
+        } else if (QLModel.class.isAssignableFrom(getFieldType(target))){
+            result.add(createNodeFromField(target, shouldBuildTreeRecursively));
         }
 
     }
