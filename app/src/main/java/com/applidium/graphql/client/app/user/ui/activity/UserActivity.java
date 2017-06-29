@@ -14,6 +14,7 @@ import com.applidium.graphql.client.R;
 import com.applidium.graphql.client.app.common.BaseActivity;
 import com.applidium.graphql.client.app.common.DividerHorizontalItemDecoration;
 import com.applidium.graphql.client.app.user.model.PostViewModel;
+import com.applidium.graphql.client.app.user.model.UserViewModel;
 import com.applidium.graphql.client.app.user.presenter.UserPresenter;
 import com.applidium.graphql.client.app.user.ui.UserViewContract;
 import com.applidium.graphql.client.app.user.ui.adapter.PostAdapter;
@@ -103,7 +104,7 @@ public class UserActivity extends BaseActivity implements UserViewContract, Post
 
     @Override
     public void onVotesClicked(PostViewModel postViewModel) {
-// TODO (kelianclerc) 15/6/17
+        presenter.onVote(postViewModel);
     }
 
     @Override

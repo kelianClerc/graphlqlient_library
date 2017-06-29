@@ -1,0 +1,6 @@
+mutation vote($id: ID!){
+    AddVoteToPost(id:$id){
+        id,
+        votes_count
+    }
+}
