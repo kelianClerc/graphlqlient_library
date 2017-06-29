@@ -2,6 +2,7 @@ package com.applidium.graphqlient;
 
 import com.applidium.graphqlient.call.QLCall;
 import com.applidium.graphqlient.call.QLResponse;
+import com.applidium.graphqlient.converters.Converter;
 import com.applidium.graphqlient.exceptions.QLException;
 
 import java.io.IOException;
@@ -15,9 +16,11 @@ public class GraphQL {
     private String baseUrl = "http://localhost:3000/graphql/test";
     private final static String QUERY_PARAMETER = "query";
     private final static String VARIABLE_PARAMETER = "variables";
+    private final Converter.Factory converterFactory;
 
-    public GraphQL(String baseUrl) {
+    public GraphQL(String baseUrl, Converter.Factory converterFactory) {
         this.baseUrl = baseUrl;
+        this.converterFactory = converterFactory;
         client = new OkHttpClient();
     }
 
@@ -49,6 +52,39 @@ public class GraphQL {
             .url(toCallUrl)
             .build();
 
-        return new QLCall(query, client.newCall(request));
+        return new QLCall(query, client.newCall(request), converterFactory.responseBodyConverter(query.target()));
+    }
+
+    public static final class Builder {
+        private String baseUrl;
+        private Converter.Factory converterFactory;
+
+        public Builder() {}
+
+        Builder(GraphQL graphQL) {
+            this.converterFactory = graphQL.converterFactory;
+            this.baseUrl = graphQL.baseUrl;
+        }
+
+        public Builder baseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+            return this;
+        }
+
+        public Builder converterFactory(Converter.Factory converterFactory) {
+            this.converterFactory = converterFactory;
+            return this;
+        }
+
+        public GraphQL build() {
+            if (baseUrl == null) {
+                throw new IllegalStateException("Base URL required");
+            }
+            if (converterFactory == null) {
+                throw new IllegalStateException("GraphQL library needs a converter factory");
+            }
+
+            return new GraphQL(this.baseUrl, this.converterFactory);
+        }
     }
 }

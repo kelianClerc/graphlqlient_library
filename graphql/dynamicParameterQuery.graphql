@@ -1,4 +1,4 @@
-query testQuery ($number: ID!) {
+query dynamicParameterQuery ($number: ID!) {
     user(id:$number) {
             id,
             name

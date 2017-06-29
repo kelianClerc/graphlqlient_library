@@ -1,5 +1,5 @@
 
-query TitlePost($postId: ID!, $number: Int = 3) {
+query complexe($postId: ID!, $number: Int = 3) {
   result : posts(number: $number) {
     user {
       ...test
@@ -14,11 +14,11 @@ query TitlePost($postId: ID!, $number: Int = 3) {
     title
   }
   users {
-    name
+    name,
     id
   }
   user(id: 1) {
-    name
+    name,
     posts {
       firstName : body
     }
@@ -27,7 +27,11 @@ query TitlePost($postId: ID!, $number: Int = 3) {
 
 
 fragment test on User {
-  name(length:10),
+  blabla{
+    blibli {
+        name(length:10),
+    }
+  }
   posts{...test2}
 }
 

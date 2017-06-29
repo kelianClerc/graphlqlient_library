@@ -1,7 +1,7 @@
 package com.applidium.graphqlient.call;
 
-import com.applidium.graphqlient.QLMapper;
 import com.applidium.graphqlient.QLRequest;
+import com.applidium.graphqlient.converters.Converter;
 
 import java.io.IOException;
 
@@ -9,17 +9,18 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class QLCall {
 
     private QLRequest query;
     private Call call;
-    private QLMapper mapper;
+    private Converter<ResponseBody, ?> converterFactory;
 
-    public QLCall(QLRequest query, Call call) {
+    public QLCall(QLRequest query, Call call, Converter<ResponseBody, ?> converterFactory) {
         this.query = query;
         this.call = call;
-        mapper = new QLMapper();
+        this.converterFactory = converterFactory;
     }
 
     public Request request() {
@@ -43,7 +44,8 @@ public class QLCall {
             return null;
         }
 
-        return mapper.convert(response.body(), query);
+        QLResponse result = new QLResponse(response, converterFactory.convert(response.body()));
+        return result;
 
     }
 

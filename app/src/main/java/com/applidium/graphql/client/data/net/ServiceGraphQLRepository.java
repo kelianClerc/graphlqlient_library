@@ -1,16 +1,21 @@
 package com.applidium.graphql.client.data.net;
 
-import com.applidium.graphql.client.TestQueryRequest;
-import com.applidium.graphql.client.TestQueryResponse;
+import com.applidium.graphql.client.DynamicParameterQueryRequest;
+import com.applidium.graphql.client.DynamicParameterQueryResponse;
 import com.applidium.graphql.client.core.boundary.GraphQLRepository;
 import com.applidium.graphql.client.core.interactor.sendrequest.Response;
 import com.applidium.graphqlient.GraphQL;
 import com.applidium.graphqlient.call.QLResponse;
+import com.applidium.graphqlient.converter.gson.GsonConverterFactory;
 import com.applidium.graphqlient.exceptions.QLException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 
 import javax.inject.Inject;
+
+import io.norberg.automatter.gson.AutoMatterTypeAdapterFactory;
 
 public class ServiceGraphQLRepository implements GraphQLRepository {
 
@@ -18,7 +23,9 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
 
     @Inject
     ServiceGraphQLRepository() {
-        graphQL = new GraphQL("http://localhost:3000/graphql/test");
+        Gson gson = new GsonBuilder().registerTypeAdapterFactory(new AutoMatterTypeAdapterFactory()).create();
+        GsonConverterFactory converterFactory = GsonConverterFactory.create(gson);
+        this.graphQL = new GraphQL("http://localhost:3000/graphql/test", converterFactory);
     }
 
     @Override
@@ -38,11 +45,11 @@ public class ServiceGraphQLRepository implements GraphQLRepository {
 
     @Override
     public Response getResponseWithQueryParams(int id) throws IOException {
-        TestQueryRequest request = new TestQueryRequest(String.valueOf(id));
+        DynamicParameterQueryRequest request = new DynamicParameterQueryRequest(String.valueOf(id));
 
         try {
             QLResponse response = graphQL.send(request);
-            TestQueryResponse resp = (TestQueryResponse) response.getResponses();
+            DynamicParameterQueryResponse resp = (DynamicParameterQueryResponse) response.getResponses();
             return new Response(response.getResponses().toString(), request.query(), request.variables());
         } catch (QLException e) {
             e.printStackTrace();
