@@ -4,6 +4,7 @@ import com.applidium.graphqlient.call.QLResponse;
 import com.applidium.graphqlient.model.QLModel;
 import com.applidium.graphqlient.tree.QLNode;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,11 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.norberg.automatter.gson.AutoMatterTypeAdapterFactory;
 import okhttp3.ResponseBody;
 
 public class QLMapper {
 
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder()
+        .registerTypeAdapterFactory(new AutoMatterTypeAdapterFactory())
+        .create();
 
     public QLResponse convert(ResponseBody body, QLQuery query) throws IOException {
 
@@ -61,7 +65,9 @@ public class QLMapper {
         List resp = new ArrayList();
         JsonArray array = json.getAsJsonArray();
         for (int j = 0; j < array.size(); j++) {
-            resp.add(gson.fromJson(array.get(j), type));
+            JsonObject asJsonObject = array.get(j).getAsJsonObject();
+            System.out.println("Mapping " + asJsonObject.toString() + " in " + type.toString());
+            resp.add(gson.fromJson(asJsonObject, type));
         }
         return resp;
     }

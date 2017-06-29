@@ -40,6 +40,14 @@ public class QLResponse {
 
     @Override
     public String toString() {
-        return rawResponse;
+        if (responses == null || responses.size() == 0) {
+            return rawResponse;
+        } else {
+            String resp = "";
+            for(String key : responses.keySet()) {
+                resp += responses.get(key).toString();
+            }
+            return resp;
+        }
     }
 }

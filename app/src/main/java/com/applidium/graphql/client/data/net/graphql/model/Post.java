@@ -4,7 +4,10 @@ import android.support.annotation.Nullable;
 
 import com.applidium.graphqlient.model.QLModel;
 
-class Post implements QLModel {
-    @Nullable private String id;
-    @Nullable private String title;
+import io.norberg.automatter.AutoMatter;
+
+@AutoMatter
+public interface Post extends QLModel {
+    @Nullable String id();
+    @Nullable String title();
 }
