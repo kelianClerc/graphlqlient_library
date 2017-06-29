@@ -1,7 +1,9 @@
 package com.applidium.graphql.client.app.main.navigator;
 
 import android.content.Context;
-import android.widget.Toast;
+import android.content.Intent;
+
+import com.applidium.graphql.client.app.selection.ui.activity.SelectionActivity;
 
 import javax.inject.Inject;
 
@@ -12,13 +14,8 @@ public class MainNavigator {
         this.context = context;
     }
 
-    public void navigateToAutoRequest() {
-        // TODO (kelianclerc) 1/6/17
-        Toast.makeText(context, "Navigate to auto", Toast.LENGTH_SHORT).show();
-    }
-
-    public void navigateToTextRequest() {
-        // TODO (kelianclerc) 1/6/17
-        Toast.makeText(context, "Navigate to text", Toast.LENGTH_SHORT).show();
+    public void navigateToSettings() {
+        Intent intent = SelectionActivity.makeIntent(context);
+        context.startActivity(intent);
     }
 }
