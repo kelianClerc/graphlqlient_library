@@ -94,7 +94,7 @@ public class QLQueryTest {
         map.put("id", new QLVariablesElement("test"));
         QLNode node = new QLNode(rootNode.getElement());
         node.setParameters(map);
-        node.setAllChild(rootNode.getChildren());
+        node.addAllChild(rootNode.getChildren());
         QLQuery query2 = new QLQuery(aRandomName, Arrays.asList(param, param2));
         query2.setQueryFields(Arrays.asList(node));
         query2.setName(aRandomName2);

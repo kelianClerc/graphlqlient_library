@@ -1,33 +1,50 @@
 package com.applidium.graphqlient;
 
 import com.applidium.graphqlient.tree.QLElement;
+import com.applidium.graphqlient.tree.QLFragment;
 import com.applidium.graphqlient.tree.QLLeaf;
 import com.applidium.graphqlient.tree.QLNode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class QLParser {
 
     public static final String QUERY_KEYWORD = "query";
+    public static final String FRAGMENT_KEYWORD = "fragment";
+    private String initialString;
     private String toParse;
     private QLQuery query;
+    private List<QLFragment> fragments;
+    private List<QLElement> toUpdate;
+    private List<QLElement> parentOfToUpdate;
     private final Map<Integer, QLNode> currentPosition = new HashMap<>();
     private int elevation = 0;
+    private QueryDelimiter delimiter;
+    boolean isFragmentField;
+    private boolean shouldPopulateFragment;
 
     public QLParser() {
+        delimiter = new QueryDelimiter();
+        fragments = new ArrayList<>();
+        toUpdate = new ArrayList<>();
+        parentOfToUpdate = new ArrayList<>();
     }
 
     public QLParser(String toParse) {
+        super();
         toParse = toParse.replaceAll("[\n\r]", "");
-        this.toParse = toParse;
+        this.toParse = initialString = toParse;
     }
 
     public void setToParse(String toParse) {
         toParse = toParse.replaceAll("[\n\r]", "");
-        this.toParse = toParse;
+        this.toParse = initialString = toParse;
     }
 
     public QLQuery begin() {
@@ -36,9 +53,50 @@ public class QLParser {
         if (toParse == null || toParse.isEmpty()) {
             return null; // TODO (kelianclerc) 23/5/17 create exception
         }
-        getHeader();
-        getRootElement();
+        parseFragments(initialString);
+        if (shouldPopulateFragment) {
+            populateFragment();
+        }
+        parseQuery();
         return query;
+    }
+
+    private void populateFragment() {
+        for (int i = 0; i < toUpdate.size(); i++) {
+            QLElement element = toUpdate.get(i);
+            QLNode parent = (QLNode) parentOfToUpdate.get(i);
+            parent.removeChild(element);
+            parent.addAllChild(findFragmentByName(element.getName()));
+        }
+    }
+
+    private void parseFragments(String searchString) {
+        Pattern pattern = Pattern.compile(FRAGMENT_KEYWORD + "\\s[a-zA-Z0-9]*\\son\\s[a-zA-Z0-9]*[\\s]?\\{");
+        Matcher matcher = pattern.matcher(searchString);
+        if (matcher.find()) {
+            int beginIndex = matcher.start();
+            String fragmentString = blockFetch(searchString, beginIndex);
+            processFragment(fragmentString);
+
+            fragments.get(fragments.size() - 1).setChildren(currentPosition.get(0).getChildren());
+            String endString = initialString.substring(beginIndex + fragmentString.length());
+            initialString = initialString.substring(0, beginIndex) + endString;
+            parseFragments(initialString);
+        }
+    }
+
+    private void processFragment(String fragmentString) {
+        isFragmentField = true;
+        initTreeBulding();
+        toParse = fragmentString;
+        getHeader();
+        QLNode childrePlaceHolder = new QLNode("tmp");
+        parseBody(-1, childrePlaceHolder);
+    }
+
+    private void initTreeBulding() {
+        elevation = 0;
+        currentPosition.clear();
     }
 
     private void getHeader() {
@@ -49,19 +107,26 @@ public class QLParser {
 
         String substring = toParse.substring(0, endIndex);
         if (substring.startsWith(QUERY_KEYWORD)) {
-            parseQuery(endIndex, substring);
-        } else if (substring.length() == 0) {
-            parseQuery(0, "");
+            parseQueryHeader(substring);
+        } else if (substring.startsWith(FRAGMENT_KEYWORD)) {
+            parseFragmentHeader(substring);
         }
+        else if (substring.length() == 0) {
+            parseQueryHeader("");
+        }
+
+        trimString(endIndex + 1);
+        this.toParse = toParse.replaceAll(" ", "");
     }
 
-    private void parseQuery(int endIndex, String substring) {
+    private void parseQueryHeader(String substring) {
         substring = substring.replace(QUERY_KEYWORD, "");
         substring = substring.replaceAll(" ", "");
         QLElement element = createElementFromString(substring);
         this.query = new QLQuery(
             element.getName() != null && element.getName().length() > 0 ? element.getName() : null
         );
+        query.setFragments(fragments);
         List<QLVariablesElement> params = new ArrayList<>();
         for (String key: element.getParameters().keySet()) {
             Object o = element.getParameters().get(key);
@@ -70,8 +135,23 @@ public class QLParser {
             }
         }
         this.query.setParameters(params);
-        trimString(endIndex + 1);
-        this.toParse = toParse.replaceAll(" ", "");
+    }
+
+    private void parseQuery() {
+        toParse = initialString;
+        isFragmentField = false;
+        initTreeBulding();
+        getHeader();
+        getRootElement();
+    }
+
+    private void parseFragmentHeader(String substring) {
+        String[] fragmentHeader = substring.split(" ");
+
+        if (fragmentHeader.length != 4)  {
+            return; //// TODO (kelianclerc) 31/5/17 exception
+        }
+        fragments.add(new QLFragment(fragmentHeader[1], fragmentHeader[3]));
     }
 
     private void getRootElement() {
@@ -85,6 +165,10 @@ public class QLParser {
 
         QLElement element = createElementFromString(substring);
         QLNode node = new QLNode(element);
+        parseBody(endIndex, node);
+    }
+
+    private void parseBody(int endIndex, QLNode node) {
         currentPosition.put(elevation,  node);
         elevation ++;
         trimString(endIndex + 1);
@@ -98,8 +182,7 @@ public class QLParser {
             return;
         }
 
-        QueryDelimiter delimiter = new QueryDelimiter();
-
+        delimiter.analyze(toParse);
 
         if (delimiter.isNextCloseCurly()) {
             handleClosingCurly();
@@ -116,6 +199,36 @@ public class QLParser {
         else if (delimiter.isNextLastField()) {
             handleLastField(delimiter.endCarret);
         }
+        else if (delimiter.isNextFragmentImport()) {
+            handleFragmentImport();
+        }
+    }
+
+    private void handleFragmentImport() {
+        int begin = toParse.indexOf("...");
+        String fragmentName = toParse.substring(begin + 3, delimiter.endCarret);
+        if (!isFragmentField) {
+            currentPosition.get(elevation - 1).addAllChild(findFragmentByName(fragmentName));
+        } else {
+            shouldPopulateFragment = true;
+            QLElement child = new QLElement("..." + fragmentName);
+            toUpdate.add(child);
+            parentOfToUpdate.add(currentPosition.get(elevation - 1));
+            currentPosition.get(elevation - 1).addChild(child);
+        }
+
+        trimString(delimiter.endCarret + 1);
+        processNextField();
+    }
+
+    private List<QLElement> findFragmentByName(String fragmentName) {
+        fragmentName = fragmentName.replace("...", "");
+        for (QLFragment frag: fragments) {
+            if (frag.getName().equals(fragmentName)) {
+                return frag.getChildren();
+            }
+        }
+        return Collections.emptyList();
     }
 
     private void handleClosingCurly() {
@@ -124,7 +237,11 @@ public class QLParser {
             return;
         }
         if (elevation == 0) {
-            query.append(currentPosition.get(elevation));
+            if (isFragmentField) {
+                fragments.get(fragments.size() - 1).setChildren(currentPosition.get(0).getChildren());
+            } else {
+                query.append(currentPosition.get(elevation));
+            }
         }
         trimString(1);
         processNextField();
@@ -164,11 +281,7 @@ public class QLParser {
         if (elevation > 0) {
             currentPosition.get(elevation - 1).addChild(childNode);
         }
-        currentPosition.put(elevation, childNode);
-        elevation++;
-        trimString(nextCurlyIndex + 1);
-
-        processNextField();
+        parseBody(nextCurlyIndex, childNode);
     }
 
     private void handleLastField(int endCarret) {
@@ -219,8 +332,16 @@ public class QLParser {
                 } else if (unit[1].charAt(0) == '$') {
                     params.put(unit[0], new QLVariablesElement(unit[1].replace("$", "")));
                 } else {
-                    unit[1]= unit[1].replaceAll("\"", "");
-                    params.put(unit[0], unit[1]);
+                    if (unit[1].indexOf("\"")  >= 0) {
+                        unit[1]= unit[1].replaceAll("\"", "");
+                        params.put(unit[0], unit[1]);
+                    } else if (unit[1].equals("true")||unit[1].equals("false")) {
+                        params.put(unit[0], Boolean.valueOf(unit[1]));
+                    } else if (unit[1].indexOf(".")>= 0) {
+                        params.put(unit[0], Float.valueOf(unit[1]));
+                    } else {
+                        params.put(unit[0], Integer.valueOf(unit[1]));
+                    }
                 }
             }
         }
@@ -259,6 +380,34 @@ public class QLParser {
         return element;
     }
 
+    private String blockFetch(String globalString, String beginString) {
+        int beginIndex = globalString.indexOf(beginString);
+        return blockFetch(globalString, beginIndex);
+    }
+
+    private String blockFetch(String globalString, int beginIndex) {
+        String substring = globalString.substring(beginIndex);
+        int localElevation = 0;
+        boolean firstOpening = true;
+        for (int i = 0; i < substring.length(); i++) {
+            if (substring.charAt(i) == '{') {
+                if (firstOpening) {
+                    firstOpening = false;
+                }
+                localElevation++;
+            } else if (substring.charAt(i) == '}') {
+                localElevation--;
+            }
+
+            if (!firstOpening) {
+                if (localElevation == 0) {
+                    return globalString.substring(beginIndex, beginIndex + i + 1);
+                }
+            }
+        }
+        return globalString;
+    }
+
     private void trimString(int start) {
         this.toParse = toParse.substring(start);
     }
@@ -272,20 +421,25 @@ public class QLParser {
         private int nextBraceIndex;
         private int nextCommaIndex;
         private int endCarret;
+        private int nextFragmentImportIndex;
 
         public QueryDelimiter() {
-            nextCommaIndex = toParse.indexOf(",");
-            nextBraceIndex = toParse.indexOf("(");
-            nextCloseBraceIndex = toParse.indexOf(")");
-            nextCurlyIndex = toParse.indexOf("{");
-            nextCloseCurlyIndex = toParse.indexOf("}");
+        }
 
+        public void analyze(String toAnalyze) {
+            nextCommaIndex = toAnalyze.indexOf(",");
+            nextBraceIndex = toAnalyze.indexOf("(");
+            nextCloseBraceIndex = toAnalyze.indexOf(")");
+            nextCurlyIndex = toAnalyze.indexOf("{");
+            nextCloseCurlyIndex = toAnalyze.indexOf("}");
+            nextFragmentImportIndex = toAnalyze.indexOf("...");
 
             nextCommaIndex = ifNegativeMakeGreat(nextCommaIndex);
             nextBraceIndex = ifNegativeMakeGreat(nextBraceIndex);
             nextCurlyIndex = ifNegativeMakeGreat(nextCurlyIndex);
             nextCloseBraceIndex = ifNegativeMakeGreat(nextCloseBraceIndex);
             nextCloseCurlyIndex = ifNegativeMakeGreat(nextCloseCurlyIndex);
+            nextFragmentImportIndex = ifNegativeMakeGreat(nextFragmentImportIndex);
         }
 
 
@@ -305,7 +459,7 @@ public class QLParser {
         }
 
         public boolean isNextSimpleField() {
-            boolean b = nextCommaIndex < nextBraceIndex && nextCommaIndex < nextCurlyIndex;
+            boolean b = isTheNextOccurance(nextCommaIndex);
             if (b) {
                 endCarret = nextCommaIndex;
             }
@@ -313,7 +467,7 @@ public class QLParser {
         }
 
         public boolean isNextFieldWithParameters() {
-            boolean b = nextBraceIndex < nextCommaIndex && nextBraceIndex < nextCurlyIndex;
+            boolean b = isTheNextOccurance(nextBraceIndex);
             if (b) {
                 endCarret = nextCloseBraceIndex;
             }
@@ -321,7 +475,7 @@ public class QLParser {
         }
 
         public boolean isNextNodeWithoutParams() {
-            boolean b = nextCurlyIndex < nextCommaIndex && nextCurlyIndex < nextBraceIndex;
+            boolean b = isTheNextOccurance(nextCurlyIndex);
             if (b) {
                 endCarret = nextCurlyIndex;
             }
@@ -329,11 +483,34 @@ public class QLParser {
         }
 
         public boolean isNextLastField() {
-            boolean b = nextCloseCurlyIndex < nextCommaIndex && nextCloseCurlyIndex < nextCurlyIndex;
+            boolean b = isTheNextOccurance(nextCloseCurlyIndex);
             if (b) {
                 endCarret = nextCloseCurlyIndex;
             }
             return b;
+        }
+
+        public boolean isNextFragmentImport() {
+            boolean b = isTheNextOccurance(nextFragmentImportIndex);
+            if (b) {
+                endCarret = Math.min(nextCloseCurlyIndex, nextCommaIndex);
+            }
+            return b;
+        }
+
+        private boolean isTheNextOccurance(int target) {
+            return Math.min(
+                target,
+                Math.min(nextCommaIndex,
+                    Math.min(nextBraceIndex,
+                        Math.min(nextCloseBraceIndex,
+                            Math.min(nextCurlyIndex,
+                                Math.min(nextCloseCurlyIndex, nextFragmentImportIndex)
+                            )
+                        )
+                    )
+                )
+            ) == target;
         }
     }
 }

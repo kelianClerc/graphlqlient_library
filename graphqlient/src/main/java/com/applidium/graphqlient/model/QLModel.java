@@ -28,7 +28,7 @@ public class QLModel {
         for (Field field1: fieldType.getDeclaredFields()) {
             appendQLElement(children, field1);
         }
-        node.setAllChild(children);
+        node.addAllChild(children);
         return node;
     }
 

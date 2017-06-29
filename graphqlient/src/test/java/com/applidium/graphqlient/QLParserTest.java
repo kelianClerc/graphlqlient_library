@@ -1,6 +1,7 @@
 package com.applidium.graphqlient;
 
 import com.applidium.graphqlient.tree.QLElement;
+import com.applidium.graphqlient.tree.QLFragment;
 import com.applidium.graphqlient.tree.QLLeaf;
 import com.applidium.graphqlient.tree.QLNode;
 
@@ -80,7 +81,7 @@ public class QLParserTest {
         assertEquals(query2.getQueryFields().get(0).getName(), "user");
         assertEquals(query2.getQueryFields().get(0).getAlias(), "test");
 
-        parser.setToParse("query hello {test : user(id:12f) {}");
+        parser.setToParse("query hello {test : user(id:\"12f\") {}");
         QLQuery query3 = parser.begin();
         assertEquals(query3.name, "hello");
         assertEquals(query3.getQueryFields().size(), 1);
@@ -109,8 +110,12 @@ public class QLParserTest {
     public void checkFields() throws Exception {
         QLParser parser = new QLParser();
 
-        parser.setToParse("query hello {user {aa, ab:bb, cc(aze: a), abc:dd(azerr:b, zef:c)} bib{dsf}}");
+        parser.setToParse("query hello {user {aa, ab:bb, cc(aze: \"a\"), abc:dd(azerr:\"b\", zef:\"c\")} bib{dsf}}");
         QLQuery query = parser.begin();
+        assertQueryIsComplete(query);
+    }
+
+    private void assertQueryIsComplete(QLQuery query) {
         assertEquals(query.name, "hello");
         assertEquals(query.getQueryFields().size(), 2);
         assertThat(query.getQueryFields().get(0), instanceOf(QLNode.class));
@@ -153,7 +158,7 @@ public class QLParserTest {
     public void checkObjectAsField() throws Exception {
         QLParser parser = new QLParser();
 
-        parser.setToParse("query hello {user {aa, bb{cc,dd(id:v, vf:d){ee}}}}");
+        parser.setToParse("query hello {user {aa, bb{cc,dd(id:\"v\", vf:\"d\"){ee}}}}");
         QLQuery query = parser.begin();
         assertEquals(query.name, "hello");
         assertEquals(query.getQueryFields().size(), 1);
@@ -180,7 +185,7 @@ public class QLParserTest {
     @Test
     public void checkFullAnonymousQuery() throws Exception {
         QLParser parser = new QLParser();
-        parser.setToParse("{user {aa, bb{cc,dd(id:v, vf:d){ee}}}}");
+        parser.setToParse("{user {aa, bb{cc,dd(id:\"v\", vf:\"d\"){ee}}}}");
         QLQuery query = parser.begin();
         assertEquals(query.name, null);
         assertEquals(query.getQueryFields().size(), 1);
@@ -239,5 +244,122 @@ public class QLParserTest {
         assertEquals(id.getName(), "try");
         assertEquals(id.getType(), null);
         assertEquals(id.isMandatory(), false);
+    }
+
+    @Test
+    public void fragmentDeclarationTest() throws Exception {
+        QLParser parser = new QLParser();
+
+        parser.setToParse("query hello {user {aa, ab:bb, cc(aze: \"a\"), abc:dd(azerr:\"b\", zef:\"c\")} bib{dsf}}fragment test on User{name, email, posts{id}}");
+        QLQuery query = parser.begin();
+        assertQueryIsComplete(query);
+        assertEquals(query.getFragments().size(), 1);
+        QLFragment fragment = query.getFragments().get(0);
+        assertEquals(fragment.getName(), "test");
+        assertEquals(fragment.getTargetObject(), "User");
+        assertEquals(fragment.getChildren().size(), 3);
+        assertEquals(fragment.getChildren().get(0).getName(), "name");
+        assertThat(fragment.getChildren().get(0), instanceOf(QLLeaf.class));
+        assertEquals(fragment.getChildren().get(1).getName(), "email");
+        assertThat(fragment.getChildren().get(1), instanceOf(QLLeaf.class));
+        assertEquals(fragment.getChildren().get(2).getName(), "posts");
+        assertThat(fragment.getChildren().get(2), instanceOf(QLNode.class));
+        QLNode node = (QLNode) fragment.getChildren().get(2);
+        assertEquals(node.getChildren().size(), 1);
+        assertThat(node.getChildren().get(0), instanceOf(QLLeaf.class));
+        assertEquals(node.getChildren().get(0).getName(), "id");
+    }
+
+    @Test
+    public void multipleFragmentDeclarationTest() throws Exception {
+        QLParser parser = new QLParser();
+
+        parser.setToParse("fragment test1 on User{alias : name1, email1(size: 2), posts1{id1}}query hello {user {aa, ab:bb, cc(aze: \"a\"), abc:dd(azerr:\"b\", zef:\"c\")} bib{dsf}}fragment test on User{name, email, posts{id}}");
+        QLQuery query = parser.begin();
+        assertEquals(query.getFragments().size(), 2);
+        QLFragment fragment = query.getFragments().get(0);
+        assertEquals(fragment.getName(), "test1");
+        assertEquals(fragment.getTargetObject(), "User");
+        assertEquals(fragment.getChildren().size(), 3);
+        QLElement element = fragment.getChildren().get(0);
+        assertEquals(element.getName(), "name1");
+        assertEquals(element.getAlias(), "alias");
+        assertThat(element, instanceOf(QLLeaf.class));
+        QLElement element1 = fragment.getChildren().get(1);
+        assertEquals(element1.getName(), "email1");
+        assertEquals(element1.getParameters().size(), 1);
+        assertEquals(element1.getParameters().get("size"), 2);
+        assertThat(element1, instanceOf(QLLeaf.class));
+        assertEquals(fragment.getChildren().get(2).getName(), "posts1");
+        assertThat(fragment.getChildren().get(2), instanceOf(QLNode.class));
+        QLNode node = (QLNode) fragment.getChildren().get(2);
+        assertEquals(node.getChildren().size(), 1);
+        assertThat(node.getChildren().get(0), instanceOf(QLLeaf.class));
+        assertEquals(node.getChildren().get(0).getName(), "id1");
+        QLFragment fragment1 = query.getFragments().get(1);
+        assertEquals(fragment1.getName(), "test");
+        assertEquals(fragment1.getTargetObject(), "User");
+        assertEquals(fragment1.getChildren().size(), 3);
+        assertEquals(fragment1.getChildren().get(0).getName(), "name");
+        assertThat(fragment1.getChildren().get(0), instanceOf(QLLeaf.class));
+        assertEquals(fragment1.getChildren().get(1).getName(), "email");
+        assertThat(fragment1.getChildren().get(1), instanceOf(QLLeaf.class));
+        assertEquals(fragment1.getChildren().get(2).getName(), "posts");
+        assertThat(fragment1.getChildren().get(2), instanceOf(QLNode.class));
+        QLNode node1 = (QLNode) fragment1.getChildren().get(2);
+        assertEquals(node1.getChildren().size(), 1);
+        assertThat(node1.getChildren().get(0), instanceOf(QLLeaf.class));
+        assertEquals(node1.getChildren().get(0).getName(), "id");
+    }
+
+    @Test
+    public void testFragmentImport() throws Exception {
+        QLParser parser = new QLParser();
+
+        parser.setToParse("fragment test1 on User{alias : name1, email1(size: 2), posts1{id1}}query hello {user {...test}}fragment test on User{...test1}");
+        // TODO (kelianclerc) 31/5/17 test this
+        QLQuery query = parser.begin();
+
+        assertEquals(query.getFragments().size(), 2);
+        QLFragment fragment = query.getFragments().get(0);
+        assertEquals(fragment.getName(), "test1");
+        assertEquals(fragment.getTargetObject(), "User");
+        assertEquals(fragment.getChildren().size(), 3);
+        QLFragment fragment1 = query.getFragments().get(1);
+        assertEquals(fragment1.getName(), "test");
+        assertEquals(fragment1.getChildren().size(), fragment.getChildren().size());
+    }
+
+    @Test
+    public void testMultipleFragmentImport() throws Exception {
+        QLParser parser = new QLParser();
+
+        parser.setToParse("query hello {user {...test, ...test1}}fragment test on User{name}fragment test1 on User{alias : name1, email1(size: 2), posts1{id1}}");
+        // TODO (kelianclerc) 31/5/17 test this
+        QLQuery query = parser.begin();
+
+        assertEquals(query.getFragments().size(), 2);
+        QLFragment fragment = query.getFragments().get(1);
+        assertEquals(fragment.getName(), "test1");
+        assertEquals(fragment.getTargetObject(), "User");
+        assertEquals(fragment.getChildren().size(), 3);
+        QLFragment fragment1 = query.getFragments().get(0);
+        assertEquals(fragment1.getName(), "test");
+        assertEquals(fragment1.getChildren().size(), 1);
+        assertEquals(query.getQueryFields().size(), 1);
+        assertEquals(query.name, "hello");
+        QLNode node = query.getQueryFields().get(0);
+        assertEquals(node.getName(), "user");
+        assertEquals(node.getParameters().size(), 0);
+        assertEquals(node.getChildren().size(), 4);
+        assertEquals(node.getChildren().get(0).getName(), "name");
+        assertEquals(node.getChildren().get(1).getName(), "name1");
+        assertEquals(node.getChildren().get(1).getAlias(), "alias");
+        assertEquals(node.getChildren().get(2).getName(), "email1");
+        assertEquals(node.getChildren().get(2).getParameters().size(), 1);
+        assertEquals(node.getChildren().get(3).getName(), "posts1");
+        assertThat(node.getChildren().get(3), instanceOf(QLNode.class));
+        QLNode node1 = (QLNode) node.getChildren().get(3);
+        assertEquals(node1.getChildren().size(), 1);
     }
 }
