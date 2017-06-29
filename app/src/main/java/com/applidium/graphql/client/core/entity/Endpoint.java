@@ -6,13 +6,13 @@ import java.util.List;
 
 public class Endpoint implements QLModel {
     //private User user;
-    private List<User> users;
+    private List<UserQL> users;
 
-    private User user;
+    private UserQL user;
 
-    private Post post;
+    private PostQL postQL;
 
-    private List<Post> posts;
+    private List<PostQL> postQLs;
 
     public Endpoint() {
     }
