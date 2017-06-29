@@ -3,6 +3,8 @@ package com.applidium.graphqlient.call;
 import com.applidium.graphqlient.QLMapper;
 import com.applidium.graphqlient.QLQuery;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 
 import okhttp3.*;
@@ -25,12 +27,12 @@ public class QLCall {
         return call.request();
     }
 
-    public QLResponse execute() throws IOException {
+    public QLResponse execute() throws IOException, JSONException {
         Response response = call.execute();
         return parseResponse(response);
     }
 
-    private QLResponse parseResponse(Response response) throws IOException {
+    private QLResponse parseResponse(Response response) throws IOException, JSONException {
         int responseCode = response.code();
         if (responseCode < 200 || responseCode >= 300) {
             // TODO (kelianclerc) 1/6/17 parse error
@@ -54,7 +56,13 @@ public class QLCall {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                QLResponse qlResponse = QLCall.this.parseResponse(response);
+                QLResponse qlResponse = null;
+                try {
+                    qlResponse =QLCall.this.parseResponse(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    throw new IOException("Not valid json received");
+                }
                 responseCallback.onResponse(QLCall.this, qlResponse);
             }
         });

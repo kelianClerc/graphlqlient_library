@@ -259,6 +259,7 @@ public class QLParser {
                 fragments.get(fragments.size() - 1).setChildren(currentPosition.get(0).getChildren());
             } else {
                 query.append(currentPosition.get(elevation));
+                currentPosition.clear();
             }
         }
         trimString(1);
@@ -305,7 +306,7 @@ public class QLParser {
     private void handleLastField(int endCarret) {
         QLElement field = createElementFromString(toParse.substring(0, endCarret));
         currentPosition.get(elevation - 1).addChild(new QLLeaf(field));
-        trimString(endCarret + 1);
+        trimString(endCarret);
         processNextField();
     }
 
