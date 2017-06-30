@@ -7,8 +7,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 
-import okhttp3.ResponseBody;
-
 public class GsonConverterFactory extends Converter.Factory {
     public static GsonConverterFactory create() {
         return create(new Gson());
@@ -24,7 +22,7 @@ public class GsonConverterFactory extends Converter.Factory {
     }
 
     @Override
-    public Converter<ResponseBody, ?> responseBodyConverter(Type type) {
+    public Converter<?> responseBodyConverter(Type type) {
         TypeAdapter<?> adapter = gson.getAdapter(TypeToken.get(type));
         return new GsonResponseBodyConverter<>(gson, adapter);
     }

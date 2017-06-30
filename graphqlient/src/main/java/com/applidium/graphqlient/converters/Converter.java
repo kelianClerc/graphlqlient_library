@@ -1,15 +1,16 @@
 package com.applidium.graphqlient.converters;
 
+import com.applidium.graphqlient.errorhandling.QLErrorsResponse;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 
-import okhttp3.ResponseBody;
-
-public interface Converter<F, T> {
-    T convert(F value) throws IOException;
+public interface Converter<T> {
+    T convert(String value) throws IOException;
+    QLErrorsResponse convertError(String response) throws IOException;
 
     abstract class Factory {
-        public Converter<ResponseBody, ?> responseBodyConverter(Type type) {
+        public Converter<?> responseBodyConverter(Type type) {
             return null;
         }
     }

@@ -2,6 +2,7 @@ package com.applidium.graphqlient.call;
 
 import com.applidium.graphqlient.QLRequest;
 import com.applidium.graphqlient.converters.Converter;
+import com.applidium.graphqlient.errorhandling.QLErrorsResponse;
 
 import java.io.IOException;
 
@@ -9,15 +10,15 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 public class QLCall<T> {
 
+    public static final String ERRORS = "\"errors\":";
     private QLRequest query;
     private Call call;
-    private Converter<ResponseBody, T> converterFactory;
+    private Converter<T> converterFactory;
 
-    public QLCall(QLRequest query, Call call, Converter<ResponseBody, T> converterFactory) {
+    public QLCall(QLRequest query, Call call, Converter<T> converterFactory) {
         this.query = query;
         this.call = call;
         this.converterFactory = converterFactory;
@@ -34,18 +35,26 @@ public class QLCall<T> {
     }
 
     private QLResponse<T> parseResponse(Response response) throws IOException {
+        QLResponse<T> result = new QLResponse<>(response);
+
         int responseCode = response.code();
         if (responseCode < 200 || responseCode >= 300) {
-            // TODO (kelianclerc) 1/6/17 parse error
-            return null;
+            return result;
         }
-        if (responseCode == 205) {
-            // TODO (kelianclerc) 1/6/17 empty response
-            return null;
+        if (responseCode == 204 || responseCode == 205) {
+            return result;
         }
 
-        T convert = converterFactory.convert(response.body());
-        QLResponse<T> result = QLResponse.create(response, convert);
+        String responseBody = response.body().string();
+
+        if (responseBody.replaceAll(" ", "").substring(1).startsWith(ERRORS)) {
+            QLErrorsResponse errorsResponse = converterFactory.convertError(responseBody);
+            result.setErrorResponse(true);
+            result.setErrorsResponse(errorsResponse);
+        } else {
+            T convert = converterFactory.convert(responseBody);
+            result.setResponse(convert);
+        }
         return result;
 
     }
