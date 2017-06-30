@@ -59,7 +59,7 @@ public class UserPresenter extends Presenter<UserViewContract> implements GetUse
 
     @Override
     public void onGetUserPostsError(String errorMessage) {
-
+        view.showError(errorMessage);
     }
 
     public void onVote(PostViewModel postViewModel) {

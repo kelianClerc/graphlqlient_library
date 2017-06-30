@@ -53,7 +53,6 @@ public class ServiceUserRepository implements UserRepository {
         QLResponse<UserListResponse> response = graphql.send(request);
 
         QLCall<UserListResponse> call = graphql.call(request);
-        
         // TODO (kelianclerc) 14/6/17 to simplify
         return mapper.mapList(response.getResponse());
     }

@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.applidium.graphql.client.R;
@@ -31,6 +32,7 @@ public class UsersActivity extends BaseActivity implements UsersViewContract, Us
 
     @BindView(R.id.user_list) RecyclerView recyclerView;
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.error_message) TextView error_message;
 
     @Inject UsersPresenter presenter;
     private UsersAdapter adapter;
@@ -76,6 +78,12 @@ public class UsersActivity extends BaseActivity implements UsersViewContract, Us
     @Override
     public void showUsers(List<UserViewModel> users) {
         adapter.setContentViewModels(users);
+        error_message.setText("");
+    }
+
+    @Override
+    public void showError(String errorMessage) {
+        error_message.setText(errorMessage);
     }
 
     @Override

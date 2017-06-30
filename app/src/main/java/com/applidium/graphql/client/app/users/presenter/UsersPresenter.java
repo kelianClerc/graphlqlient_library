@@ -47,7 +47,7 @@ public class UsersPresenter extends Presenter<UsersViewContract> implements GetL
 
     @Override
     public void onGetListOfUsersError(String errorMessage) {
-
+        view.showError(errorMessage);
     }
 
     public void userClicked(String id) {

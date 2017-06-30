@@ -1,7 +1,7 @@
 query UserList{
 #-list-
     users {
-        name,
+        names,
         email,
         id,
         created_at,
