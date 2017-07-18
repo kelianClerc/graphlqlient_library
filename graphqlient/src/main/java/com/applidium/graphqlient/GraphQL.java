@@ -30,7 +30,7 @@ public class GraphQL {
         if (response != null && response.isErrorResponse()) {
             throw new QLException(response.getErrorsResponse().toString());
         }
-        return send(call);
+        return response;
     }
 
     public <T> QLResponse<T> send(QLCall<T> call) throws QLException {
@@ -40,7 +40,9 @@ public class GraphQL {
         } catch (IOException e) {
             throw new QLException("Connection to server non available : " + e.getMessage());
         }
-        if (response != null && response.isErrorResponse()) {
+        if (response == null) {
+            throw new QLException("Null response");
+        } else if (response.isErrorResponse()) {
             throw new QLException(response.getErrorsResponse().toString());
         }
         return response;
