@@ -14,7 +14,6 @@ import com.applidium.graphql.client.data.net.graphql.mapper.ListUserMapper;
 import com.applidium.graphql.client.data.net.graphql.mapper.UserPostMapper;
 import com.applidium.graphql.client.data.net.graphql.mapper.VoteQLMapper;
 import com.applidium.graphqlient.GraphQL;
-import com.applidium.graphqlient.call.QLCall;
 import com.applidium.graphqlient.call.QLResponse;
 import com.applidium.graphqlient.converter.gson.GsonConverterFactory;
 import com.applidium.graphqlient.exceptions.QLException;
@@ -52,10 +51,10 @@ public class ServiceUserRepository implements UserRepository {
         UserListRequest request = new UserListRequest();
         QLResponse<UserListResponse> response = graphql.send(request);
 
-        QLCall<UserListResponse> call = graphql.call(request);
-        
-        // TODO (kelianclerc) 14/6/17 to simplify
-        return mapper.mapList(response.getResponse());
+        if (response.getResponse() != null) {
+            return mapper.mapList(response.getResponse());
+        }
+        throw new QLException("Null response");
     }
 
     @Override

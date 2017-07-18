@@ -10,7 +10,6 @@ import java.io.IOException;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.ResponseBody;
 
 public class GraphQL {
     private final OkHttpClient client;
@@ -27,7 +26,11 @@ public class GraphQL {
 
     public <T> QLResponse<T> send(QLRequest request) throws QLException {
         QLCall<T> call = call(request);
-        return send(call);
+        QLResponse<T> response = send(call);
+        if (response != null && response.isErrorResponse()) {
+            throw new QLException(response.getErrorsResponse().toString());
+        }
+        return response;
     }
 
     public <T> QLResponse<T> send(QLCall<T> call) throws QLException {
@@ -36,6 +39,11 @@ public class GraphQL {
             response = call.execute();
         } catch (IOException e) {
             throw new QLException("Connection to server non available : " + e.getMessage());
+        }
+        if (response == null) {
+            throw new QLException("Null response");
+        } else if (response.isErrorResponse()) {
+            throw new QLException(response.getErrorsResponse().toString());
         }
         return response;
     }
@@ -54,7 +62,7 @@ public class GraphQL {
             .url(toCallUrl)
             .build();
 
-        Converter<ResponseBody, T> responseBodyConverter = (Converter<ResponseBody, T>)(converterFactory.responseBodyConverter
+        Converter<T> responseBodyConverter = (Converter<T>)(converterFactory.responseBodyConverter
             (query.target()));
         QLCall<T> call = new QLCall<>(query, client.newCall(request), responseBodyConverter);
 

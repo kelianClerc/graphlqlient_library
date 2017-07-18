@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface UsersViewContract extends ViewContract {
     void showUsers(List<UserViewModel> users);
+
+    void showError(String errorMessage);
 }

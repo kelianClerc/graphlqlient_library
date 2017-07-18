@@ -1,12 +1,15 @@
 package com.applidium.graphqlient.call;
 
 import com.applidium.graphqlient.QLResponseModel;
+import com.applidium.graphqlient.errorhandling.QLErrorsResponse;
 
 import okhttp3.Response;
 
 public class QLResponse<T> {
     private Response rawResponse;
     private T response;
+    private boolean isErrorResponse;
+    private QLErrorsResponse errorsResponse;
 
     public QLResponse() {
     }
@@ -22,6 +25,14 @@ public class QLResponse<T> {
     public QLResponse(Response rawResponse, T response) {
         this.rawResponse = rawResponse;
         this.response = response;
+        isErrorResponse = false;
+    }
+
+    public QLResponse(Response rawResponse, boolean isErrorResponse, QLErrorsResponse
+        errorsResponse) {
+        this.rawResponse = rawResponse;
+        this.isErrorResponse = isErrorResponse;
+        this.errorsResponse = errorsResponse;
     }
 
     public QLResponse(Response response, QLResponseModel convert) {
@@ -43,7 +54,19 @@ public class QLResponse<T> {
         this.rawResponse = rawResponse;
     }
 
-    public static <T> QLResponse<T> create(Response response, T convert) {
-        return new QLResponse<>(response, convert);
+    public boolean isErrorResponse() {
+        return isErrorResponse;
+    }
+
+    public void setErrorResponse(boolean errorResponse) {
+        isErrorResponse = errorResponse;
+    }
+
+    public QLErrorsResponse getErrorsResponse() {
+        return errorsResponse;
+    }
+
+    public void setErrorsResponse(QLErrorsResponse errorsResponse) {
+        this.errorsResponse = errorsResponse;
     }
 }
