@@ -169,8 +169,7 @@ dependencies {
     testApt "com.google.dagger:dagger-compiler:$versions.dagger"
     testCompile "joda-time:joda-time:$versions.joda"
     testCompile "de.bechte.junit:junit-hierarchicalcontextrunner:$versions.hierarchicalRunner"
-//    compile project(path: ':graphqlient')
-    compile 'com.github.kelianClerc.graphlqlient_library:graphqlient:412fe8cbf9'
+    compile project(path: ':graphqlient')
     compile project(path: ':gson')
 }
 

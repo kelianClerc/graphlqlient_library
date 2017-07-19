@@ -26,5 +26,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.google.code.gson:gson:2.8.1'
-    compile project(path: ':graphqlient')
+    compile project(':graphqlient')
 }
