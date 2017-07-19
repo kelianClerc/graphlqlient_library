@@ -88,7 +88,8 @@ Add to module's `build.gradle` :
 apply plugin: 'com.applidium.qlrequest'
 
 dependencies {
-    compile "com.github.kelianClerc:graphqlient_library:develop-SNAPSHOT"
+    compile "com.github.kelianClerc.graphqlient_library:graphqlient:develop-SNAPSHOT"
+    compile "com.github.kelianClerc.graphqlient_library:gson:develop-SNAPSHOT"
 }
 ```
 
