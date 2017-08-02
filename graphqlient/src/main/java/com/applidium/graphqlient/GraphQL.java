@@ -6,6 +6,8 @@ import com.applidium.graphqlient.converters.Converter;
 import com.applidium.graphqlient.exceptions.QLException;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -17,11 +19,18 @@ public class GraphQL {
     private final static String QUERY_PARAMETER = "query";
     private final static String VARIABLE_PARAMETER = "variables";
     private final Converter.Factory converterFactory;
+    private final Map<String, String> headers = new HashMap<>();
 
     public GraphQL(String baseUrl, Converter.Factory converterFactory) {
         this.baseUrl = baseUrl;
         this.converterFactory = converterFactory;
         client = new OkHttpClient();
+    }
+
+    public GraphQL(String baseUrl, Converter.Factory converterFactory, OkHttpClient client) {
+        this.baseUrl = baseUrl;
+        this.converterFactory = converterFactory;
+        this.client = client;
     }
 
     public <T> QLResponse<T> send(QLRequest request) throws QLException {
@@ -48,7 +57,15 @@ public class GraphQL {
         return response;
     }
 
+    public void addHeader(String key, String value) {
+        headers.put(key, value);
+    }
+
     public <T> QLCall<T> call(QLRequest query) throws QLException {
+        return call(query, false);
+    }
+
+    public <T> QLCall<T> call(QLRequest query, boolean withHeaders) throws QLException {
         HttpUrl.Builder builder = HttpUrl.parse(baseUrl).newBuilder();
 
         builder.addQueryParameter(QUERY_PARAMETER, query.query());
@@ -58,9 +75,16 @@ public class GraphQL {
         }
         HttpUrl toCallUrl = builder.build();
 
-        Request request = new Request.Builder()
-            .url(toCallUrl)
-            .build();
+        Request.Builder requestBuilder = new Request.Builder()
+            .url(toCallUrl);
+
+        if (withHeaders) {
+            for (String key : headers.keySet()) {
+                requestBuilder.addHeader(key, headers.get(key));
+            }
+        }
+
+        Request request = requestBuilder.build();
 
         Converter<T> responseBodyConverter = (Converter<T>)(converterFactory.responseBodyConverter
             (query.target()));
@@ -72,6 +96,7 @@ public class GraphQL {
     public static final class Builder {
         private String baseUrl;
         private Converter.Factory converterFactory;
+        private OkHttpClient client;
 
         public Builder() {}
 
@@ -90,6 +115,11 @@ public class GraphQL {
             return this;
         }
 
+        public Builder client(OkHttpClient client) {
+            this.client = client;
+            return this;
+        }
+
         public GraphQL build() {
             if (baseUrl == null) {
                 throw new IllegalStateException("Base URL required");
@@ -97,8 +127,12 @@ public class GraphQL {
             if (converterFactory == null) {
                 throw new IllegalStateException("GraphQL library needs a converter factory");
             }
+            if (client == null) {
+                return new GraphQL(this.baseUrl, this.converterFactory);
+            } else {
+                return new GraphQL(this.baseUrl, this.converterFactory, this.client);
+            }
 
-            return new GraphQL(this.baseUrl, this.converterFactory);
         }
     }
 }
