@@ -27,6 +27,12 @@ public class GraphQL {
         client = new OkHttpClient();
     }
 
+    public GraphQL(String baseUrl, Converter.Factory converterFactory, OkHttpClient client) {
+        this.baseUrl = baseUrl;
+        this.converterFactory = converterFactory;
+        this.client = client;
+    }
+
     public <T> QLResponse<T> send(QLRequest request) throws QLException {
         QLCall<T> call = call(request);
         QLResponse<T> response = send(call);
@@ -90,6 +96,7 @@ public class GraphQL {
     public static final class Builder {
         private String baseUrl;
         private Converter.Factory converterFactory;
+        private OkHttpClient client;
 
         public Builder() {}
 
@@ -108,6 +115,11 @@ public class GraphQL {
             return this;
         }
 
+        public Builder client(OkHttpClient client) {
+            this.client = client;
+            return this;
+        }
+
         public GraphQL build() {
             if (baseUrl == null) {
                 throw new IllegalStateException("Base URL required");
@@ -115,8 +127,12 @@ public class GraphQL {
             if (converterFactory == null) {
                 throw new IllegalStateException("GraphQL library needs a converter factory");
             }
+            if (client == null) {
+                return new GraphQL(this.baseUrl, this.converterFactory);
+            } else {
+                return new GraphQL(this.baseUrl, this.converterFactory, this.client);
+            }
 
-            return new GraphQL(this.baseUrl, this.converterFactory);
         }
     }
 }
