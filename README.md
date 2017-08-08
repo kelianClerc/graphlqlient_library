@@ -10,8 +10,8 @@ It goes along with gradle plugin named
 implementing `QLRequest` and another implementing `QLResponseModel`.
 
 
-Having a `QLRequest`, *GraphQLient Library* can communicates with the server. It uses `OkHttp` client to 
-send requests. When receiving the response, it returns a well completed `QLResponseModel` associated
+Once it has a `QLRequest`, *GraphQLient Library* can communicate with the server. It uses `OkHttp` client to 
+send requests. When it receives the response, it returns a well completed `QLResponseModel` associated
  with the QLRequest`.
  
 Whichever JSON parser can be interfaced by implementing `Converter.
@@ -88,8 +88,8 @@ Add to module's `build.gradle` :
 apply plugin: 'com.applidium.qlrequest'
 
 dependencies {
-    compile "com.github.kelianClerc.graphqlient_library:graphqlient:develop-SNAPSHOT"
-    compile "com.github.kelianClerc.graphqlient_library:gson:develop-SNAPSHOT"
+    compile 'com.github.kelianClerc.graphlqlient_library:graphqlient:498b237d09'
+    compile 'com.github.kelianClerc.graphlqlient_library:gson:498b237d09'
 }
 ```
 
